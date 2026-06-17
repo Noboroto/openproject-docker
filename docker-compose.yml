@@ -1,7 +1,6 @@
 networks:
   frontend:
   backend:
-  internet:
     external: true
     name: multi-domain
 
@@ -72,7 +71,6 @@ services:
       - web
     networks:
       - frontend
-      - internet
 
   web:
     <<: *app
