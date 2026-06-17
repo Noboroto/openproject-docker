@@ -51,12 +51,28 @@ services:
       POSTGRES_DB: openproject
     networks:
       - backend
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: "512m"
+        reservations:
+          cpus: "0.25"
+          memory: "256m"
 
   cache:
     image: memcached
     <<: *restart_policy
     networks:
       - backend
+    deploy:
+      resources:
+        limits:
+          cpus: "0.25"
+          memory: "128m"
+        reservations:
+          cpus: "0.05"
+          memory: "64m"
 
   proxy:
     build:
@@ -71,6 +87,14 @@ services:
       - web
     networks:
       - frontend
+    deploy:
+      resources:
+        limits:
+          cpus: "0.25"
+          memory: "64m"
+        reservations:
+          cpus: "0.05"
+          memory: "32m"
 
   web:
     <<: *app
@@ -91,6 +115,14 @@ services:
       timeout: 3s
       retries: 3
       start_period: 30s
+    deploy:
+      resources:
+        limits:
+          cpus: "1.5"
+          memory: "1g"
+        reservations:
+          cpus: "0.5"
+          memory: "256m"
 
   autoheal:
     image: willfarrell/autoheal:1.2.0
@@ -100,6 +132,11 @@ services:
       AUTOHEAL_CONTAINER_LABEL: autoheal
       AUTOHEAL_START_PERIOD: 600
       AUTOHEAL_INTERVAL: 30
+    deploy:
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: "32m"
 
   worker:
     <<: *app
@@ -110,6 +147,14 @@ services:
       - db
       - cache
       - seeder
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: "768m"
+        reservations:
+          cpus: "0.25"
+          memory: "256m"
 
   cron:
     <<: *app
@@ -120,6 +165,14 @@ services:
       - db
       - cache
       - seeder
+    deploy:
+      resources:
+        limits:
+          cpus: "0.25"
+          memory: "256m"
+        reservations:
+          cpus: "0.05"
+          memory: "64m"
 
   seeder:
     <<: *app
@@ -127,6 +180,11 @@ services:
     restart: on-failure
     networks:
       - backend
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: "512m"
 
   hocuspocus:
     image: openproject/hocuspocus:17.5.1
@@ -138,3 +196,11 @@ services:
       - backend
       - frontend
     <<: *restart_policy
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: "256m"
+        reservations:
+          cpus: "0.1"
+          memory: "64m"
