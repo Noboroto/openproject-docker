@@ -24,7 +24,7 @@ x-op-app: &app
     OPENPROJECT_RAILS__RELATIVE__URL__ROOT: "${OPENPROJECT_RAILS__RELATIVE__URL__ROOT:-}"
     OPENPROJECT_COLLABORATIVE__EDITING__HOCUSPOCUS__URL: "${COLLABORATIVE_SERVER_URL:-wss://${OPENPROJECT_HOST__NAME}/hocuspocus}"
     OPENPROJECT_COLLABORATIVE__EDITING__HOCUSPOCUS__SECRET: "${COLLABORATIVE_SERVER_SECRET:-OVERRIDE_ME_PLEASE}"
-    DATABASE_URL: "${DATABASE_URL:-postgres://postgres:p4ssw0rd@db/openproject?pool=20&encoding=unicode&reconnect=true}"
+    DATABASE_URL: "${DATABASE_URL:-postgres://postgres:p4ssw0rd@op-db/openproject?pool=20&encoding=unicode&reconnect=true}"
     RAILS_MIN_THREADS: ${RAILS_MIN_THREADS:-4}
     RAILS_MAX_THREADS: ${RAILS_MAX_THREADS:-16}
     # set to true to enable the email receiving feature. See ./docker/cron for more options
@@ -34,7 +34,7 @@ x-op-app: &app
     - "${OPDATA:-opdata}:/var/openproject/assets"
 
 services:
-  db:
+  op-db:
     # The default here should really be 17 but is still 13 as to not break existing setups.
     # New installations using the provided .env.example will use 17 to begin with.
     # The default here will change to 17 as well with the next major update (18).
@@ -104,7 +104,7 @@ services:
       - frontend
       - backend
     depends_on:
-      - db
+      - op-db
       - cache
       - seeder
     labels:
@@ -144,7 +144,7 @@ services:
     networks:
       - backend
     depends_on:
-      - db
+      - op-db
       - cache
       - seeder
     deploy:
@@ -162,7 +162,7 @@ services:
     networks:
       - backend
     depends_on:
-      - db
+      - op-db
       - cache
       - seeder
     deploy:
