@@ -1,0 +1,57 @@
+<%#
+  Server-rendered action board with drag-drop columns.
+
+  The drag-drop interaction is driven by a small Stimulus controller
+  (frontend/board_drag_controller.js). On drop it issues the PATCH to
+  action_board_move_card_path; the server applies the move through
+  WorkPackages::UpdateService and returns 200 (card stays moved) or 422
+  (illegal transition / no permission -> the controller reverts the card).
+
+  WHERE ANGULAR WOULD GO: OpenProject's core boards/work-package views are
+  Angular. A production-grade integration would register an Angular component
+  under frontend/module/ and mount it via the OP frontend module system
+  (see https://www.openproject.org/docs/development/frontend/). This
+  Stimulus/server-rendered version is the deliberate first iteration per the
+  plan ("start with server-rendered columns + a small Stimulus controller").
+%>
+<h2><%= @board.name %></h2>
+<p><%= t(:"action_boards.action_type.#{@board.action_type}") %></p>
+
+<div class="op-action-board"
+     data-controller="board-drag"
+     data-board-drag-move-url-template-value="<%= action_board_move_card_path(@project, board_id: @board.id) %>"
+     data-board-drag-csrf-value="<%= form_authenticity_token %>">
+  <div class="op-action-board--columns" style="display:flex; gap:1rem; align-items:flex-start;">
+    <% @columns.each do |column| %>
+      <section class="op-action-board--column"
+               data-board-drag-target="column"
+               data-column-id="<%= column.id %>"
+               style="flex:1; min-width:220px; border:1px solid #ddd; border-radius:4px; padding:.5rem;">
+        <h3><%= column.title %></h3>
+
+        <ul class="op-action-board--cards"
+            data-board-drag-target="dropzone"
+            data-column-id="<%= column.id %>"
+            style="list-style:none; margin:0; padding:0; min-height:40px;">
+          <% Array(@cards_by_column[column]).each do |wp| %>
+            <li class="op-action-board--card"
+                draggable="true"
+                data-board-drag-target="card"
+                data-work-package-id="<%= wp.id %>"
+                style="border:1px solid #ccc; border-radius:4px; padding:.4rem; margin:.4rem 0; background:#fff;">
+              <%= link_to card_label(wp), work_package_path(wp) %>
+            </li>
+          <% end %>
+
+          <% if Array(@cards_by_column[column]).empty? %>
+            <li class="op-action-board--empty" style="color:#999;"><%= t(:"action_boards.no_cards") %></li>
+          <% end %>
+        </ul>
+      </section>
+    <% end %>
+  </div>
+</div>
+
+<p style="margin-top:1rem;">
+  <%= link_to t(:button_back), project_action_boards_path(@project), class: "button" %>
+</p>

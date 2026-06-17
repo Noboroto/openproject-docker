@@ -1,0 +1,43 @@
+<% html_title t(:"date_alerts.admin_title") %>
+
+<h2><%= t(:"date_alerts.admin_title") %></h2>
+
+<p class="form--field-instructions"><%= t(:"date_alerts.admin_intro") %></p>
+
+<%= styled_form_tag({ controller: "/date_alerts/admin_settings", action: :update },
+                    method: :patch) do %>
+  <section class="form--section">
+    <fieldset class="form--fieldset">
+      <legend class="form--fieldset-legend"><%= t(:"date_alerts.admin_title") %></legend>
+
+      <div class="form--field">
+        <label class="form--label" for="settings_default_lead_days">
+          <%= t(:"date_alerts.default_lead_days") %>
+        </label>
+        <div class="form--field-container">
+          <%= number_field_tag "settings[default_lead_days]",
+                               @settings["default_lead_days"],
+                               id: "settings_default_lead_days",
+                               min: 0, max: 365,
+                               class: "form--text-field -tiny" %>
+        </div>
+      </div>
+
+      <div class="form--field">
+        <div class="form--field-container">
+          <label class="form--label-with-check-box">
+            <%= hidden_field_tag "settings[send_email]", "0" %>
+            <%= check_box_tag "settings[send_email]", "1",
+                              ActiveModel::Type::Boolean.new.cast(@settings["send_email"]),
+                              id: "settings_send_email" %>
+            <%= t(:"date_alerts.send_email") %>
+          </label>
+        </div>
+      </div>
+    </fieldset>
+  </section>
+
+  <p>
+    <%= styled_button_tag t(:button_save), class: "-with-icon icon-checkmark" %>
+  </p>
+<% end %>

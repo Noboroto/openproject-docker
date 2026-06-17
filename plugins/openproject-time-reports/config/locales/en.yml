@@ -1,0 +1,54 @@
+en:
+  project_module_time_reports: "Time & cost reports"
+  permission_view_time_reports: "View time reports"
+  permission_view_cost_reports: "View cost reports"
+  permission_manage_budgets: "Manage budgets"
+  time_reports:
+    menu_caption: "Time reports"
+    report_title: "Time report"
+    pivot_title: "Pivot (users x work packages)"
+    from_date: "From"
+    to_date: "To"
+    filter: "Filter"
+    export_csv: "Export CSV"
+    total_hours: "Total hours"
+    col_date: "Date"
+    col_user: "User"
+    col_work_package: "Work package"
+    col_activity: "Activity"
+    col_hours: "Hours"
+  cost:
+    menu_caption: "Cost report"
+    report_title: "Cost report"
+    rate: "Rate"
+    cost: "Cost"
+    currency: "Currency"
+    valid_from: "Valid from"
+    total: "Total"
+  budget:
+    menu_caption: "Budgets"
+    title: "Budgets"
+    new: "New budget"
+    edit: "Edit"
+    delete: "Delete"
+    delete_confirm: "Delete this budget?"
+    save: "Save"
+    cancel: "Cancel"
+    saved: "Budget has been saved."
+    deleted: "Budget has been deleted."
+    name: "Name"
+    amount: "Amount"
+    currency: "Currency"
+    period_start: "Period start"
+    period_end: "Period end"
+    spent: "Spent"
+    remaining: "Remaining"
+    percent_used: "% used"
+    over_budget: "Over budget"
+  activerecord:
+    errors:
+      models:
+        time_reports/budget:
+          attributes:
+            period_end:
+              greater_than_or_equal_to_start: "must be on or after the period start"

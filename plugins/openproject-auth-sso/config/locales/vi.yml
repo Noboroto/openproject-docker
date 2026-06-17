@@ -1,0 +1,52 @@
+vi:
+  auth_sso:
+    menu_caption: "Nhà cung cấp SSO"
+    title: "Đăng nhập một lần (SAML / OIDC)"
+    add_provider: "Thêm nhà cung cấp"
+    edit_provider: "Sửa nhà cung cấp"
+    none_configured: "Chưa cấu hình nhà cung cấp SSO nào."
+    name: "Tên"
+    kind: "Loại"
+    kind_saml: "SAML 2.0"
+    kind_oidc: "OpenID Connect"
+    active: "Đang bật"
+    actions: "Thao tác"
+    edit: "Sửa"
+    delete: "Xóa"
+    delete_confirm: "Xóa nhà cung cấp SSO này? Người dùng phụ thuộc vào nó sẽ không thể đăng nhập qua SSO nữa."
+    activate: "Bật"
+    deactivate: "Tắt"
+    save: "Lưu"
+    cancel: "Hủy"
+    yes: "Có"
+    no: "Không"
+    saved_restart: "Đã lưu nhà cung cấp. Cần khởi động lại để thay đổi có hiệu lực."
+    deleted: "Đã xóa nhà cung cấp. Cần khởi động lại để thay đổi có hiệu lực."
+    restart_required_notice: >-
+      Các chiến lược SSO được tạo khi ứng dụng khởi động. Sau khi thêm, sửa, bật
+      hoặc xóa một nhà cung cấp, bạn phải khởi động lại tiến trình web OpenProject
+      để thay đổi có hiệu lực.
+    break_glass_notice: >-
+      Đăng nhập bằng mật khẩu cục bộ tại /login luôn khả dụng như một phương án dự
+      phòng. Hãy giữ ít nhất một tài khoản quản trị cục bộ để không bao giờ bị khóa
+      nếu nhà cung cấp danh tính cấu hình sai.
+    mapping_email: "Thuộc tính email"
+    mapping_name: "Thuộc tính tên"
+    idp_url: "URL dịch vụ SSO của IdP"
+    idp_cert: "Chứng chỉ IdP (PEM)"
+    idp_cert_fingerprint: "Vân tay chứng chỉ IdP"
+    sp_entity_id: "SP entity ID"
+    name_id_format: "Định dạng NameID"
+    clock_drift: "Độ lệch đồng hồ cho phép (giây)"
+    sp_private_key: "Khóa riêng SP (tùy chọn)"
+    issuer: "URL issuer"
+    client_id: "Client ID"
+    client_secret: "Client secret"
+    discovery: "Dùng discovery (.well-known)"
+    scopes: "Phạm vi (scopes)"
+    uid_field: "Trường UID"
+    host: "Host (chỉ cấu hình thủ công)"
+    callback_url: "URL callback"
+    callback_url_hint: "Để trống để dùng /auth/<strategy>/callback. Đăng ký đúng URL này với IdP của bạn."
+    secret_unchanged: "Để trống để giữ secret hiện tại"
+    failed: "Đăng nhập một lần thất bại (%{reason}). Vui lòng thử lại hoặc đăng nhập bằng tài khoản cục bộ."

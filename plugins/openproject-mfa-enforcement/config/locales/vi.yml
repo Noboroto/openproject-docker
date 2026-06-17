@@ -1,0 +1,40 @@
+vi:
+  mfa_enforcement:
+    menu_caption: "Bắt buộc 2FA"
+    title: "Bắt buộc xác thực hai yếu tố"
+    intro: >-
+      Yêu cầu người dùng thiết lập xác thực hai yếu tố (2FA). Tính năng này dựa
+      trên 2FA TOTP có sẵn của OpenProject — không thay thế nó. Người dùng chưa có
+      thiết bị 2FA đang hoạt động sẽ bị chặn sau khi hết thời gian gia hạn.
+    policy_legend: "Chính sách bắt buộc"
+    enforced: "Yêu cầu xác thực hai yếu tố"
+    enforced_hint: >-
+      Khi bật, người dùng thuộc phạm vi áp dụng phải thiết lập 2FA. Việc bật sẽ
+      bắt đầu đếm ngược thời gian gia hạn cho mọi người dùng liên quan.
+    grace_period_days: "Thời gian gia hạn (ngày)"
+    grace_period_hint: >-
+      Số ngày người dùng có thể tiếp tục làm việc trước khi bị bắt buộc thiết lập
+      2FA. Đếm ngược bắt đầu khi chính sách được bật (hoặc từ thời điểm tạo tài
+      khoản đối với người dùng tạo sau). Dùng 0 để bắt buộc ngay lập tức.
+    group: "Áp dụng cho"
+    group_all: "Tất cả người dùng"
+    group_hint: "Giới hạn bắt buộc cho một nhóm, hoặc áp dụng cho tất cả người dùng."
+    compliance: "Tình trạng 2FA: %{with}/%{total} người dùng đã có 2FA; %{without} chưa có."
+    saved: "Đã lưu cài đặt bắt buộc 2FA."
+    banner: >-
+      Tài khoản của bạn sẽ sớm bắt buộc xác thực hai yếu tố. Vui lòng thiết lập
+      trước khi hết thời gian gia hạn.
+    blocked_title: "Bắt buộc xác thực hai yếu tố"
+    blocked_body: >-
+      Quản trị viên yêu cầu bật xác thực hai yếu tố cho tài khoản của bạn. Hãy
+      thiết lập thiết bị 2FA ngay để tiếp tục sử dụng OpenProject.
+    blocked_hint: >-
+      Sau khi đăng ký thiết bị, bạn sẽ truy cập OpenProject bình thường.
+    set_up_now: "Thiết lập xác thực hai yếu tố ngay"
+    kill_switch_active: >-
+      Việc bắt buộc đang bị tắt bởi biến môi trường
+      OPENPROJECT_2FA_ENFORCEMENT_DISABLED. Các cài đặt bên dưới không có hiệu lực
+      cho đến khi biến này được gỡ bỏ.
+    escape_title: "Lối thoát qua console (khôi phục khi bị khóa)"
+    escape_body: >-
+      Nếu việc bắt buộc gây ra sự cố, hãy tắt nó từ Rails console bằng:

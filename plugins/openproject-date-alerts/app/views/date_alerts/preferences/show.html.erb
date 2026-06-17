@@ -1,0 +1,65 @@
+<% html_title t(:"date_alerts.title") %>
+
+<h2><%= t(:"date_alerts.title") %></h2>
+
+<p class="form--field-instructions"><%= t(:"date_alerts.intro") %></p>
+
+<%= styled_form_tag({ controller: "/date_alerts/preferences", action: :update },
+                    method: :patch) do %>
+  <section class="form--section">
+    <fieldset class="form--fieldset">
+      <legend class="form--fieldset-legend"><%= t(:"date_alerts.title") %></legend>
+
+      <div class="form--field">
+        <div class="form--field-container">
+          <label class="form--label-with-check-box">
+            <%= check_box_tag "alert_preference[start_date_enabled]", "1",
+                              @preference.start_date_enabled,
+                              id: "alert_preference_start_date_enabled" %>
+            <%= t(:"date_alerts.start_enabled") %>
+          </label>
+        </div>
+      </div>
+
+      <div class="form--field">
+        <div class="form--field-container">
+          <label class="form--label-with-check-box">
+            <%= check_box_tag "alert_preference[due_date_enabled]", "1",
+                              @preference.due_date_enabled,
+                              id: "alert_preference_due_date_enabled" %>
+            <%= t(:"date_alerts.due_enabled") %>
+          </label>
+        </div>
+      </div>
+
+      <div class="form--field">
+        <label class="form--label" for="alert_preference_lead_days">
+          <%= t(:"date_alerts.lead_days") %>
+        </label>
+        <div class="form--field-container">
+          <%= number_field_tag "alert_preference[lead_days]",
+                               @preference.lead_days,
+                               id: "alert_preference_lead_days",
+                               min: 0, max: 365,
+                               class: "form--text-field -tiny" %>
+          <p class="form--field-instructions"><%= t(:"date_alerts.lead_days_hint") %></p>
+        </div>
+      </div>
+
+      <div class="form--field">
+        <div class="form--field-container">
+          <label class="form--label-with-check-box">
+            <%= check_box_tag "alert_preference[email]", "1",
+                              @preference.email,
+                              id: "alert_preference_email" %>
+            <%= t(:"date_alerts.email") %>
+          </label>
+        </div>
+      </div>
+    </fieldset>
+  </section>
+
+  <p>
+    <%= styled_button_tag t(:button_save), class: "-with-icon icon-checkmark" %>
+  </p>
+<% end %>

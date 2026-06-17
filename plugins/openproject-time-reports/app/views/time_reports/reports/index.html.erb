@@ -1,0 +1,47 @@
+<%# Time report listing (hours only). %>
+<h2><%= t(:"time_reports.report_title") %></h2>
+
+<%= form_with url: project_time_reports_reports_path(@project), method: :get, local: true do %>
+  <label><%= t(:"time_reports.from_date") %>
+    <%= date_field_tag :from_date, params[:from_date] %>
+  </label>
+  <label><%= t(:"time_reports.to_date") %>
+    <%= date_field_tag :to_date, params[:to_date] %>
+  </label>
+  <%= submit_tag t(:"time_reports.filter") %>
+<% end %>
+
+<p>
+  <%= link_to t(:"time_reports.pivot_title"), pivot_project_time_reports_reports_path(@project, request.query_parameters) %>
+  |
+  <%= link_to t(:"time_reports.export_csv"), export_project_time_reports_reports_path(@project, request.query_parameters) %>
+</p>
+
+<table class="generic-table">
+  <thead>
+    <tr>
+      <th><%= t(:"time_reports.col_date") %></th>
+      <th><%= t(:"time_reports.col_user") %></th>
+      <th><%= t(:"time_reports.col_work_package") %></th>
+      <th><%= t(:"time_reports.col_activity") %></th>
+      <th><%= t(:"time_reports.col_hours") %></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @entries.each do |entry| %>
+      <tr>
+        <td><%= entry.spent_on %></td>
+        <td><%= entry.user&.name %></td>
+        <td><%= entry.work_package&.subject %></td>
+        <td><%= entry.activity&.name %></td>
+        <td><%= entry.hours %></td>
+      </tr>
+    <% end %>
+  </tbody>
+  <tfoot>
+    <tr>
+      <th colspan="4"><%= t(:"time_reports.total_hours") %></th>
+      <th><%= @total_hours %></th>
+    </tr>
+  </tfoot>
+</table>

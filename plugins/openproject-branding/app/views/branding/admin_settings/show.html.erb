@@ -1,0 +1,101 @@
+<% html_title t(:"branding.title") %>
+
+<h2><%= t(:"branding.title") %></h2>
+
+<%= styled_form_tag({ controller: "/branding/admin_settings", action: :update },
+                    method: :patch, multipart: true) do %>
+  <section class="form--section">
+    <fieldset class="form--fieldset">
+      <legend class="form--fieldset-legend"><%= t(:"branding.colors_legend") %></legend>
+
+      <div class="form--field">
+        <label class="form--label" for="settings_primary_color">
+          <%= t(:"branding.primary_color") %>
+        </label>
+        <div class="form--field-container">
+          <%= color_field_tag "settings[primary_color]",
+                              @settings["primary_color"],
+                              id: "settings_primary_color",
+                              class: "form--text-field" %>
+        </div>
+      </div>
+
+      <div class="form--field">
+        <label class="form--label" for="settings_accent_color">
+          <%= t(:"branding.accent_color") %>
+        </label>
+        <div class="form--field-container">
+          <%= color_field_tag "settings[accent_color]",
+                              @settings["accent_color"],
+                              id: "settings_accent_color",
+                              class: "form--text-field" %>
+        </div>
+      </div>
+    </fieldset>
+  </section>
+
+  <section class="form--section">
+    <fieldset class="form--fieldset">
+      <legend class="form--fieldset-legend"><%= t(:"branding.logo") %></legend>
+
+      <% if @theme.logo_data_uri.present? %>
+        <div class="form--field">
+          <span class="form--label"><%= t(:"branding.current_logo") %></span>
+          <div class="form--field-container">
+            <%= image_tag @theme.logo_data_uri, alt: t(:"branding.logo"),
+                          style: "max-height:64px;max-width:240px;" %>
+          </div>
+        </div>
+      <% end %>
+
+      <div class="form--field">
+        <label class="form--label" for="theme_logo"><%= t(:"branding.logo") %></label>
+        <div class="form--field-container">
+          <%= file_field_tag "theme[logo]",
+                             id: "theme_logo",
+                             accept: "image/png,image/jpeg,image/webp,image/svg+xml",
+                             class: "form--file-field" %>
+          <p class="form--field-instructions">
+            <%= t(:"branding.logo_hint") %>
+          </p>
+        </div>
+      </div>
+    </fieldset>
+  </section>
+
+  <section class="form--section">
+    <fieldset class="form--fieldset">
+      <legend class="form--fieldset-legend"><%= t(:"branding.custom_css") %></legend>
+
+      <div class="form--field">
+        <label class="form--label" for="settings_custom_css">
+          <%= t(:"branding.custom_css") %>
+        </label>
+        <div class="form--field-container">
+          <%= text_area_tag "settings[custom_css]",
+                            @settings["custom_css"],
+                            id: "settings_custom_css",
+                            rows: 12,
+                            class: "form--text-area",
+                            spellcheck: false %>
+          <p class="form--field-instructions">
+            <%= t(:"branding.css_sanitized_notice") %>
+          </p>
+        </div>
+      </div>
+    </fieldset>
+  </section>
+
+  <p>
+    <%= styled_button_tag t(:button_save), class: "-with-icon icon-checkmark" %>
+  </p>
+<% end %>
+
+<%= styled_form_tag({ controller: "/branding/admin_settings", action: :reset },
+                    method: :post) do %>
+  <p>
+    <%= styled_button_tag t(:"branding.reset"),
+                          class: "-with-icon icon-undo",
+                          data: { confirm: t(:"branding.reset_confirm") } %>
+  </p>
+<% end %>

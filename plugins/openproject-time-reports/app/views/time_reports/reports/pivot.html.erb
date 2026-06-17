@@ -1,0 +1,23 @@
+<%# Pivot: rows = users, columns = work packages, cells = hours. %>
+<h2><%= t(:"time_reports.pivot_title") %></h2>
+
+<table class="generic-table">
+  <thead>
+    <tr>
+      <th><%= t(:"time_reports.col_user") %></th>
+      <% @columns.each do |col| %>
+        <th><%= col %></th>
+      <% end %>
+    </tr>
+  </thead>
+  <tbody>
+    <% @pivot.each do |user_name, row| %>
+      <tr>
+        <td><%= user_name %></td>
+        <% @columns.each do |col| %>
+          <td><%= row[col].nonzero? ? row[col] : "" %></td>
+        <% end %>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

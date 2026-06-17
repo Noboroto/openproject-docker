@@ -1,0 +1,39 @@
+en:
+  mfa_enforcement:
+    menu_caption: "2FA enforcement"
+    title: "Two-factor authentication enforcement"
+    intro: >-
+      Require users to configure two-factor authentication (2FA). This builds on
+      OpenProject's built-in TOTP 2FA — it does not replace it. Users without an
+      active 2FA device are blocked after the grace period expires.
+    policy_legend: "Enforcement policy"
+    enforced: "Require two-factor authentication"
+    enforced_hint: >-
+      When enabled, targeted users must set up 2FA. Enabling starts the grace
+      countdown for every targeted user.
+    grace_period_days: "Grace period (days)"
+    grace_period_hint: >-
+      Days a targeted user may keep working before 2FA setup is enforced. The
+      countdown starts when the policy is enabled (or from account creation for
+      users created later). Use 0 to enforce immediately.
+    group: "Apply to"
+    group_all: "All users"
+    group_hint: "Restrict enforcement to a single group, or apply to all users."
+    compliance: "2FA status: %{with} of %{total} users have 2FA; %{without} do not."
+    saved: "2FA enforcement settings have been saved."
+    banner: >-
+      Two-factor authentication will soon be required on your account. Please set
+      it up before your grace period ends.
+    blocked_title: "Two-factor authentication required"
+    blocked_body: >-
+      Your administrator requires two-factor authentication on your account. Set
+      up a 2FA device now to continue using OpenProject.
+    blocked_hint: >-
+      After registering a device you will be able to access OpenProject normally.
+    set_up_now: "Set up two-factor authentication now"
+    kill_switch_active: >-
+      Enforcement is currently disabled by the OPENPROJECT_2FA_ENFORCEMENT_DISABLED
+      environment kill switch. The settings below have no effect until it is removed.
+    escape_title: "Console escape (lock-out recovery)"
+    escape_body: >-
+      If enforcement ever causes problems, disable it from a Rails console with:

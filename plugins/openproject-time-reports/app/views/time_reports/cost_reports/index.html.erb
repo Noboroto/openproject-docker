@@ -1,0 +1,49 @@
+<%# Cost report: time entries with rate + cost columns and a grand total. %>
+<h2><%= t(:"cost.report_title") %></h2>
+
+<%= form_with url: project_time_reports_cost_reports_path(@project), method: :get, local: true do %>
+  <label><%= t(:"time_reports.from_date") %>
+    <%= date_field_tag :from_date, params[:from_date] %>
+  </label>
+  <label><%= t(:"time_reports.to_date") %>
+    <%= date_field_tag :to_date, params[:to_date] %>
+  </label>
+  <%= submit_tag t(:"time_reports.filter") %>
+<% end %>
+
+<p>
+  <%= link_to t(:"time_reports.export_csv"), export_project_time_reports_cost_reports_path(@project, request.query_parameters) %>
+</p>
+
+<table class="generic-table">
+  <thead>
+    <tr>
+      <th><%= t(:"time_reports.col_date") %></th>
+      <th><%= t(:"time_reports.col_user") %></th>
+      <th><%= t(:"time_reports.col_activity") %></th>
+      <th><%= t(:"time_reports.col_hours") %></th>
+      <th><%= t(:"cost.rate") %></th>
+      <th><%= t(:"cost.cost") %></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @entries.each do |entry| %>
+      <tr>
+        <td><%= entry.spent_on %></td>
+        <td><%= entry.user&.name %></td>
+        <td><%= entry.activity&.name %></td>
+        <td><%= entry.hours %></td>
+        <td><%= number_to_currency(@calculator.rate_for(entry), unit: @currency + " ") %></td>
+        <td><%= number_to_currency(@calculator.line_cost(entry), unit: @currency + " ") %></td>
+      </tr>
+    <% end %>
+  </tbody>
+  <tfoot>
+    <tr>
+      <th colspan="3"><%= t(:"cost.total") %></th>
+      <th><%= @total_hours %></th>
+      <th></th>
+      <th><%= number_to_currency(@total_cost, unit: @currency + " ") %></th>
+    </tr>
+  </tfoot>
+</table>

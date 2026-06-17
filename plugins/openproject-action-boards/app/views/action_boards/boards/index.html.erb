@@ -1,0 +1,41 @@
+<%# Project-scoped list of action boards. Server-rendered; no Angular needed. %>
+<h2><%= t(:"action_boards.title") %></h2>
+
+<% if can_manage_action_boards?(@project) %>
+  <p>
+    <%= link_to t(:"action_boards.new"),
+                new_project_action_board_path(@project),
+                class: "button -primary" %>
+  </p>
+<% end %>
+
+<% if @boards.empty? %>
+  <p class="op-empty-state"><%= t(:"action_boards.empty") %></p>
+<% else %>
+  <table class="generic-table">
+    <thead>
+      <tr>
+        <th><%= t(:"action_boards.name") %></th>
+        <th><%= t(:"action_boards.action_type.label") %></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @boards.each do |board| %>
+        <tr>
+          <td><%= link_to board.name, project_action_board_path(@project, board) %></td>
+          <td><%= t(:"action_boards.action_type.#{board.action_type}") %></td>
+          <td>
+            <% if can_manage_action_boards?(@project) %>
+              <%= link_to t(:"action_boards.delete"),
+                          project_action_board_path(@project, board),
+                          method: :delete,
+                          data: { confirm: t(:"action_boards.delete_confirm") },
+                          class: "button -danger" %>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

@@ -1,0 +1,7 @@
+<% html_title t(:"auth_sso.add_provider") %>
+
+<h2><%= t(:"auth_sso.add_provider") %></h2>
+
+<%= render "form",
+           form_url: auth_sso_sso_providers_path,
+           form_method: :post %>

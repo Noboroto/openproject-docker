@@ -1,0 +1,31 @@
+en:
+  date_alerts:
+    menu_caption: "Date alerts"
+    title: "Date alerts"
+    intro: >-
+      Get notified before your work packages' start and due dates arrive.
+      Choose which dates to be alerted about and how many days in advance.
+    start_enabled: "Alert me about upcoming start dates"
+    due_enabled: "Alert me about upcoming due dates"
+    lead_days: "Lead time (days)"
+    lead_days_hint: "How many days before the date you want to be alerted (0 = on the day)."
+    email: "Also send me an email reminder"
+    saved: "Date alert settings have been saved."
+    notification_due: "Due date approaching: %{subject}"
+    notification_start: "Start date approaching: %{subject}"
+    admin_menu_caption: "Date alerts"
+    admin_title: "Date alerts defaults"
+    admin_intro: >-
+      Instance-wide defaults applied to users who have not set their own date
+      alert preferences.
+    default_lead_days: "Default lead time (days)"
+    send_email: "Send email reminders by default"
+  activerecord:
+    models:
+      date_alerts/alert_preference: "Date alert preference"
+    attributes:
+      date_alerts/alert_preference:
+        start_date_enabled: "Alert on start dates"
+        due_date_enabled: "Alert on due dates"
+        lead_days: "Lead time (days)"
+        email: "Send email reminder"

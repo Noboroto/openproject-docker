@@ -1,0 +1,26 @@
+<%#
+  Injected into the layout <head> via OpenProject::Branding::Hooks
+  (view_layouts_base_html_head). Emits the compiled, sanitized theme CSS plus an
+  optional favicon override.
+
+  Safe-mode escape hatch: append ?branding=off to any URL to skip injection if
+  custom CSS breaks the layout (documented in the README and the admin notice).
+%>
+<% unless defined?(controller) && controller.respond_to?(:params) && controller.params[:branding].to_s == "off" %>
+  <% branding_settings = Setting.plugin_openproject_branding || {} %>
+  <% compiled_css = Branding::CssCompiler.call(
+       branding_settings,
+       logo_data_uri: branding_settings["logo_data_uri"]
+     ) %>
+
+  <%# CssCompiler has already stripped </style>, @import, expression(), and
+      unsafe url() schemes. raw is intentional: the content is server-sanitized
+      CSS, not user-facing HTML. %>
+  <style type="text/css" data-openproject-branding="1">
+    <%= raw compiled_css %>
+  </style>
+
+  <% if branding_settings["logo_data_uri"].present? %>
+    <link rel="icon" href="<%= branding_settings["logo_data_uri"] %>" />
+  <% end %>
+<% end %>

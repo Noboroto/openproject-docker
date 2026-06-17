@@ -1,0 +1,31 @@
+vi:
+  date_alerts:
+    menu_caption: "Cảnh báo ngày"
+    title: "Cảnh báo ngày"
+    intro: >-
+      Nhận thông báo trước khi đến ngày bắt đầu và ngày hết hạn của các gói công
+      việc. Chọn loại ngày muốn được nhắc và số ngày báo trước.
+    start_enabled: "Nhắc tôi về ngày bắt đầu sắp tới"
+    due_enabled: "Nhắc tôi về ngày hết hạn sắp tới"
+    lead_days: "Thời gian báo trước (ngày)"
+    lead_days_hint: "Số ngày báo trước khi đến ngày (0 = đúng ngày)."
+    email: "Đồng thời gửi email nhắc nhở cho tôi"
+    saved: "Đã lưu cài đặt cảnh báo ngày."
+    notification_due: "Sắp đến ngày hết hạn: %{subject}"
+    notification_start: "Sắp đến ngày bắt đầu: %{subject}"
+    admin_menu_caption: "Cảnh báo ngày"
+    admin_title: "Mặc định cảnh báo ngày"
+    admin_intro: >-
+      Cài đặt mặc định toàn hệ thống áp dụng cho người dùng chưa thiết lập tùy
+      chọn cảnh báo ngày của riêng họ.
+    default_lead_days: "Thời gian báo trước mặc định (ngày)"
+    send_email: "Gửi email nhắc nhở theo mặc định"
+  activerecord:
+    models:
+      date_alerts/alert_preference: "Tùy chọn cảnh báo ngày"
+    attributes:
+      date_alerts/alert_preference:
+        start_date_enabled: "Cảnh báo ngày bắt đầu"
+        due_date_enabled: "Cảnh báo ngày hết hạn"
+        lead_days: "Thời gian báo trước (ngày)"
+        email: "Gửi email nhắc nhở"

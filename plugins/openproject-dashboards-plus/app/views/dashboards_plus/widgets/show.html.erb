@@ -1,0 +1,30 @@
+<h2><%= t(:"dashboards_plus.title") %></h2>
+
+<section class="op-widget op-widget--health">
+  <h3><%= t(:"dashboards_plus.project_health") %></h3>
+  <% health = @kpi.health %>
+  <ul>
+    <li><%= t(:"dashboards_plus.open") %>: <strong><%= health[:open] %></strong></li>
+    <li><%= t(:"dashboards_plus.closed") %>: <strong><%= health[:closed] %></strong></li>
+    <li><%= t(:"dashboards_plus.overdue") %>: <strong><%= health[:overdue] %></strong></li>
+  </ul>
+</section>
+
+<section class="op-widget op-widget--status">
+  <h3><%= t(:"dashboards_plus.wp_status_summary") %></h3>
+  <table class="generic-table">
+    <thead>
+      <tr>
+        <th><%= t(:"dashboards_plus.status") %></th>
+        <th><%= t(:"dashboards_plus.count") %></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @kpi.status_summary.each do |name, count| %>
+        <tr><td><%= name %></td><td><%= count %></td></tr>
+      <% end %>
+    </tbody>
+  </table>
+</section>
+
+<%= render partial: "dashboards_plus/widgets/budget", locals: { widget: @budget } %>

@@ -1,0 +1,27 @@
+en:
+  branding:
+    menu_caption: "Branding"
+    title: "Branding"
+    colors_legend: "Colors"
+    primary_color: "Primary color"
+    accent_color: "Accent color"
+    custom_css: "Custom CSS"
+    logo: "Logo"
+    current_logo: "Current logo"
+    logo_hint: "PNG, JPG, WEBP or SVG. Maximum 1 MB. SVG files are sanitized server-side."
+    saved: "Branding settings have been saved."
+    reset: "Reset to defaults"
+    reset_confirm: "This will remove your logo and reset colors and custom CSS. Continue?"
+    reset_done: "Branding has been reset to defaults."
+    css_sanitized_notice: >-
+      Custom CSS is sanitized on the server: closing style tags, @import rules,
+      CSS expression() and unsafe url() schemes are removed. Append ?branding=off
+      to any URL to temporarily disable branding if custom CSS breaks the layout.
+  activerecord:
+    errors:
+      models:
+        branding/theme:
+          attributes:
+            logo_blob:
+              too_large: "is too large (maximum is 1 MB)"
+              invalid_type: "has an unsupported file type (allowed: PNG, JPG, WEBP, SVG)"

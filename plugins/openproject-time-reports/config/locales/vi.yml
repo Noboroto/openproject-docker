@@ -1,0 +1,54 @@
+vi:
+  project_module_time_reports: "Báo cáo thời gian & chi phí"
+  permission_view_time_reports: "Xem báo cáo thời gian"
+  permission_view_cost_reports: "Xem báo cáo chi phí"
+  permission_manage_budgets: "Quản lý ngân sách"
+  time_reports:
+    menu_caption: "Báo cáo thời gian"
+    report_title: "Báo cáo thời gian"
+    pivot_title: "Bảng tổng hợp (người dùng x gói công việc)"
+    from_date: "Từ ngày"
+    to_date: "Đến ngày"
+    filter: "Lọc"
+    export_csv: "Xuất CSV"
+    total_hours: "Tổng số giờ"
+    col_date: "Ngày"
+    col_user: "Người dùng"
+    col_work_package: "Gói công việc"
+    col_activity: "Hoạt động"
+    col_hours: "Số giờ"
+  cost:
+    menu_caption: "Báo cáo chi phí"
+    report_title: "Báo cáo chi phí"
+    rate: "Đơn giá"
+    cost: "Chi phí"
+    currency: "Tiền tệ"
+    valid_from: "Hiệu lực từ"
+    total: "Tổng cộng"
+  budget:
+    menu_caption: "Ngân sách"
+    title: "Ngân sách"
+    new: "Ngân sách mới"
+    edit: "Sửa"
+    delete: "Xóa"
+    delete_confirm: "Xóa ngân sách này?"
+    save: "Lưu"
+    cancel: "Hủy"
+    saved: "Đã lưu ngân sách."
+    deleted: "Đã xóa ngân sách."
+    name: "Tên"
+    amount: "Số tiền"
+    currency: "Tiền tệ"
+    period_start: "Bắt đầu kỳ"
+    period_end: "Kết thúc kỳ"
+    spent: "Đã chi"
+    remaining: "Còn lại"
+    percent_used: "% đã dùng"
+    over_budget: "Vượt ngân sách"
+  activerecord:
+    errors:
+      models:
+        time_reports/budget:
+          attributes:
+            period_end:
+              greater_than_or_equal_to_start: "phải bằng hoặc sau ngày bắt đầu kỳ"

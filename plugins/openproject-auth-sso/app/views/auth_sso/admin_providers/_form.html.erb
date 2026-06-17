@@ -1,0 +1,117 @@
+<%#
+  Provider add/edit form. A single `kind` toggle reveals SAML or OIDC fields.
+  Secret fields (client_secret / sp_private_key) are write-only: they are never
+  rendered back, and a blank submission preserves the stored encrypted value.
+%>
+<%= form_with url: form_url, method: form_method, local: true do |f| %>
+  <% c = @provider.config.with_indifferent_access %>
+
+  <section class="form--section">
+    <div class="form--field">
+      <%= f.label :name, t(:"auth_sso.name") %>
+      <%= f.text_field :name, name: "provider[name]", value: @provider.name, required: true %>
+    </div>
+
+    <div class="form--field">
+      <%= f.label :kind, t(:"auth_sso.kind") %>
+      <%= f.select :kind, options_for_select(
+            [[t(:"auth_sso.kind_saml"), "saml"], [t(:"auth_sso.kind_oidc"), "oidc"]],
+            @provider.kind), {}, name: "provider[kind]" %>
+    </div>
+
+    <div class="form--field">
+      <%= f.label :active, t(:"auth_sso.active") %>
+      <%= f.check_box :active, { name: "provider[active]", checked: @provider.active? }, "true", "false" %>
+    </div>
+
+    <div class="form--field">
+      <%= f.label :mapping_email, t(:"auth_sso.mapping_email") %>
+      <%= f.text_field :mapping_email, name: "provider[mapping_email]", value: @provider.mapping_email %>
+    </div>
+    <div class="form--field">
+      <%= f.label :mapping_name, t(:"auth_sso.mapping_name") %>
+      <%= f.text_field :mapping_name, name: "provider[mapping_name]", value: @provider.mapping_name %>
+    </div>
+
+    <div class="form--field">
+      <%= f.label :callback_url, t(:"auth_sso.callback_url") %>
+      <%= f.text_field :callback_url, name: "provider[callback_url]", value: c[:callback_url] %>
+      <span class="form--field-instructions"><%= t(:"auth_sso.callback_url_hint") %></span>
+    </div>
+  </section>
+
+  <%# ---- SAML fields ---- %>
+  <fieldset class="form--fieldset">
+    <legend><%= t(:"auth_sso.kind_saml") %></legend>
+    <div class="form--field">
+      <%= label_tag "provider_idp_sso_service_url", t(:"auth_sso.idp_url") %>
+      <%= text_field_tag "provider[idp_sso_service_url]", c[:idp_sso_service_url] %>
+    </div>
+    <div class="form--field">
+      <%= label_tag "provider_idp_cert", t(:"auth_sso.idp_cert") %>
+      <%= text_area_tag "provider[idp_cert]", c[:idp_cert], rows: 5 %>
+    </div>
+    <div class="form--field">
+      <%= label_tag "provider_idp_cert_fingerprint", t(:"auth_sso.idp_cert_fingerprint") %>
+      <%= text_field_tag "provider[idp_cert_fingerprint]", c[:idp_cert_fingerprint] %>
+    </div>
+    <div class="form--field">
+      <%= label_tag "provider_sp_entity_id", t(:"auth_sso.sp_entity_id") %>
+      <%= text_field_tag "provider[sp_entity_id]", c[:sp_entity_id] %>
+    </div>
+    <div class="form--field">
+      <%= label_tag "provider_name_identifier_format", t(:"auth_sso.name_id_format") %>
+      <%= text_field_tag "provider[name_identifier_format]", c[:name_identifier_format] %>
+    </div>
+    <div class="form--field">
+      <%= label_tag "provider_allowed_clock_drift", t(:"auth_sso.clock_drift") %>
+      <%= text_field_tag "provider[allowed_clock_drift]", c[:allowed_clock_drift] %>
+    </div>
+    <div class="form--field">
+      <%= label_tag "provider_sp_private_key", t(:"auth_sso.sp_private_key") %>
+      <%= text_area_tag "provider[sp_private_key]", nil, rows: 4,
+            placeholder: t(:"auth_sso.secret_unchanged") %>
+    </div>
+  </fieldset>
+
+  <%# ---- OIDC fields ---- %>
+  <fieldset class="form--fieldset">
+    <legend><%= t(:"auth_sso.kind_oidc") %></legend>
+    <div class="form--field">
+      <%= label_tag "provider_issuer", t(:"auth_sso.issuer") %>
+      <%= text_field_tag "provider[issuer]", c[:issuer] %>
+    </div>
+    <div class="form--field">
+      <%= label_tag "provider_client_id", t(:"auth_sso.client_id") %>
+      <%= text_field_tag "provider[client_id]", c[:client_id] %>
+    </div>
+    <div class="form--field">
+      <%= label_tag "provider_client_secret", t(:"auth_sso.client_secret") %>
+      <%= password_field_tag "provider[client_secret]", nil, autocomplete: "new-password",
+            placeholder: t(:"auth_sso.secret_unchanged") %>
+    </div>
+    <div class="form--field">
+      <%= label_tag "provider_discovery", t(:"auth_sso.discovery") %>
+      <%= select_tag "provider[discovery]",
+            options_for_select([["true", "true"], ["false", "false"]],
+                               c.fetch(:discovery, "true").to_s) %>
+    </div>
+    <div class="form--field">
+      <%= label_tag "provider_scopes", t(:"auth_sso.scopes") %>
+      <%= text_field_tag "provider[scopes]", c[:scopes] || "openid email profile" %>
+    </div>
+    <div class="form--field">
+      <%= label_tag "provider_uid_field", t(:"auth_sso.uid_field") %>
+      <%= text_field_tag "provider[uid_field]", c[:uid_field] || "sub" %>
+    </div>
+    <div class="form--field">
+      <%= label_tag "provider_host", t(:"auth_sso.host") %>
+      <%= text_field_tag "provider[host]", c[:host] %>
+    </div>
+  </fieldset>
+
+  <p>
+    <%= f.submit t(:"auth_sso.save"), class: "button -primary" %>
+    <%= link_to t(:"auth_sso.cancel"), auth_sso_sso_providers_path, class: "button" %>
+  </p>
+<% end %>

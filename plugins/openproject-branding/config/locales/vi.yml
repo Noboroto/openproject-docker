@@ -1,0 +1,28 @@
+vi:
+  branding:
+    menu_caption: "Thương hiệu"
+    title: "Thương hiệu"
+    colors_legend: "Màu sắc"
+    primary_color: "Màu chính"
+    accent_color: "Màu nhấn"
+    custom_css: "CSS tùy chỉnh"
+    logo: "Logo"
+    current_logo: "Logo hiện tại"
+    logo_hint: "PNG, JPG, WEBP hoặc SVG. Tối đa 1 MB. Tệp SVG được làm sạch phía máy chủ."
+    saved: "Đã lưu cài đặt thương hiệu."
+    reset: "Đặt lại mặc định"
+    reset_confirm: "Thao tác này sẽ xóa logo và đặt lại màu sắc cùng CSS tùy chỉnh. Tiếp tục?"
+    reset_done: "Đã đặt lại thương hiệu về mặc định."
+    css_sanitized_notice: >-
+      CSS tùy chỉnh được làm sạch trên máy chủ: thẻ đóng style, quy tắc @import,
+      CSS expression() và các lược đồ url() không an toàn sẽ bị loại bỏ. Thêm
+      ?branding=off vào URL bất kỳ để tạm thời tắt thương hiệu nếu CSS tùy chỉnh
+      làm hỏng bố cục.
+  activerecord:
+    errors:
+      models:
+        branding/theme:
+          attributes:
+            logo_blob:
+              too_large: "quá lớn (tối đa 1 MB)"
+              invalid_type: "có định dạng tệp không được hỗ trợ (cho phép: PNG, JPG, WEBP, SVG)"

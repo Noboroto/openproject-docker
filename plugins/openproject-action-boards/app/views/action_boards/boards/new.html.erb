@@ -1,0 +1,36 @@
+<%# Create a new action board. Columns are auto-seeded from the project's
+    available statuses / members / versions for the chosen type (see
+    BoardsController#build_columns_for). %>
+<h2><%= t(:"action_boards.new") %></h2>
+
+<%= form_with model: @board, url: project_action_boards_path(@project), method: :post, local: true do |f| %>
+  <% if @board.errors.any? %>
+    <div class="op-toast -error">
+      <ul>
+        <% @board.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form--field">
+    <%= f.label :name, t(:"action_boards.name"), class: "form--label" %>
+    <%= f.text_field :name, class: "form--text-field" %>
+  </div>
+
+  <div class="form--field">
+    <%= f.label :action_type, t(:"action_boards.action_type.label"), class: "form--label" %>
+    <%= f.select :action_type,
+                 ActionBoards::Board::ACTION_TYPES.map { |type|
+                   [t(:"action_boards.action_type.#{type}"), type]
+                 },
+                 {},
+                 class: "form--select" %>
+  </div>
+
+  <div class="form--field">
+    <%= f.submit t(:"action_boards.create"), class: "button -primary" %>
+    <%= link_to t(:button_cancel), project_action_boards_path(@project), class: "button" %>
+  </div>
+<% end %>

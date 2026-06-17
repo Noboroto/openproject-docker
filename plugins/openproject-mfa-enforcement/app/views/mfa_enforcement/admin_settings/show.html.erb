@@ -1,0 +1,98 @@
+<% html_title t(:"mfa_enforcement.title") %>
+
+<h2><%= t(:"mfa_enforcement.title") %></h2>
+
+<p class="form--field-instructions">
+  <%= t(:"mfa_enforcement.intro") %>
+</p>
+
+<% if @policy.kill_switch_active? %>
+  <div class="op-toast -warning" role="alert">
+    <div class="op-toast--content">
+      <%= t(:"mfa_enforcement.kill_switch_active") %>
+    </div>
+  </div>
+<% end %>
+
+<% if @compliance %>
+  <div class="op-toast -info">
+    <div class="op-toast--content">
+      <%= t(:"mfa_enforcement.compliance",
+            with: @compliance[:with_2fa],
+            without: @compliance[:without_2fa],
+            total: @compliance[:total]) %>
+    </div>
+  </div>
+<% end %>
+
+<%= styled_form_tag({ controller: "/mfa_enforcement/admin_settings", action: :update },
+                    method: :patch) do %>
+  <section class="form--section">
+    <fieldset class="form--fieldset">
+      <legend class="form--fieldset-legend"><%= t(:"mfa_enforcement.policy_legend") %></legend>
+
+      <div class="form--field">
+        <label class="form--label-with-check-box">
+          <span class="form--check-box-container">
+            <%= hidden_field_tag "settings[enforced]", "0" %>
+            <%= check_box_tag "settings[enforced]", "1",
+                              @policy.enforced?,
+                              id: "settings_enforced",
+                              class: "form--check-box" %>
+          </span>
+          <%= t(:"mfa_enforcement.enforced") %>
+        </label>
+        <p class="form--field-instructions">
+          <%= t(:"mfa_enforcement.enforced_hint") %>
+        </p>
+      </div>
+
+      <div class="form--field">
+        <label class="form--label" for="settings_grace_period_days">
+          <%= t(:"mfa_enforcement.grace_period_days") %>
+        </label>
+        <div class="form--field-container">
+          <%= number_field_tag "settings[grace_period_days]",
+                               @policy.grace_period_days,
+                               id: "settings_grace_period_days",
+                               min: 0, step: 1,
+                               class: "form--text-field -tiny" %>
+        </div>
+        <p class="form--field-instructions">
+          <%= t(:"mfa_enforcement.grace_period_hint") %>
+        </p>
+      </div>
+
+      <div class="form--field">
+        <label class="form--label" for="settings_enforced_group_id">
+          <%= t(:"mfa_enforcement.group") %>
+        </label>
+        <div class="form--field-container">
+          <%= select_tag "settings[enforced_group_id]",
+                         options_for_select(
+                           [[t(:"mfa_enforcement.group_all"), ""]] +
+                             @groups.map { |g| [g.name, g.id] },
+                           @policy.enforced_group_id
+                         ),
+                         id: "settings_enforced_group_id",
+                         class: "form--select" %>
+        </div>
+        <p class="form--field-instructions">
+          <%= t(:"mfa_enforcement.group_hint") %>
+        </p>
+      </div>
+    </fieldset>
+  </section>
+
+  <p>
+    <%= styled_button_tag t(:button_save), class: "-with-icon icon-checkmark" %>
+  </p>
+<% end %>
+
+<hr />
+
+<p class="form--field-instructions">
+  <strong><%= t(:"mfa_enforcement.escape_title") %></strong><br />
+  <%= t(:"mfa_enforcement.escape_body") %>
+  <code>Setting.plugin_openproject_mfa_enforcement = { "enforced" =&gt; false }</code>
+</p>

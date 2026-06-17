@@ -1,0 +1,52 @@
+<% html_title t(:"auth_sso.title") %>
+
+<h2><%= t(:"auth_sso.title") %></h2>
+
+<div class="op-toast -warning" role="alert">
+  <div class="op-toast--content">
+    <p><%= t(:"auth_sso.restart_required_notice") %></p>
+    <p><%= t(:"auth_sso.break_glass_notice") %></p>
+  </div>
+</div>
+
+<p>
+  <%= link_to t(:"auth_sso.add_provider"),
+              new_auth_sso_sso_provider_path,
+              class: "button -primary" %>
+</p>
+
+<% if @providers.any? %>
+  <table class="generic-table">
+    <thead>
+      <tr>
+        <th><%= t(:"auth_sso.name") %></th>
+        <th><%= t(:"auth_sso.kind") %></th>
+        <th><%= t(:"auth_sso.active") %></th>
+        <th><%= t(:"auth_sso.callback_url") %></th>
+        <th><%= t(:"auth_sso.actions") %></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @providers.each do |provider| %>
+        <tr>
+          <td><%= provider.name %></td>
+          <td><%= t(:"auth_sso.kind_#{provider.kind}") %></td>
+          <td><%= provider.active? ? t(:"auth_sso.yes") : t(:"auth_sso.no") %></td>
+          <td><code><%= provider.config["callback_url"].presence || provider.default_callback_url %></code></td>
+          <td>
+            <%= link_to t(:"auth_sso.edit"), edit_auth_sso_sso_provider_path(provider) %> |
+            <%= link_to (provider.active? ? t(:"auth_sso.deactivate") : t(:"auth_sso.activate")),
+                        toggle_auth_sso_sso_provider_path(provider),
+                        method: :patch %> |
+            <%= link_to t(:"auth_sso.delete"),
+                        auth_sso_sso_provider_path(provider),
+                        method: :delete,
+                        data: { confirm: t(:"auth_sso.delete_confirm") } %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <p><em><%= t(:"auth_sso.none_configured") %></em></p>
+<% end %>

@@ -1,0 +1,18 @@
+<% html_title t(:"mfa_enforcement.blocked_title") %>
+
+<div class="op-toast -warning" role="alert">
+  <div class="op-toast--content">
+    <h2 class="op-toast--title"><%= t(:"mfa_enforcement.blocked_title") %></h2>
+    <p><%= t(:"mfa_enforcement.blocked_body") %></p>
+  </div>
+</div>
+
+<p>
+  <%= link_to t(:"mfa_enforcement.set_up_now"),
+              @setup_path,
+              class: "button -highlight -with-icon icon-two-factor-authentication" %>
+</p>
+
+<p class="form--field-instructions">
+  <%= t(:"mfa_enforcement.blocked_hint") %>
+</p>

@@ -1,0 +1,41 @@
+<%= form_with model: @budget,
+              url: (@budget.persisted? ?
+                    project_time_reports_budget_path(@project, @budget) :
+                    project_time_reports_budgets_path(@project)),
+              method: (@budget.persisted? ? :patch : :post),
+              local: true do |f| %>
+  <% if @budget.errors.any? %>
+    <div class="errorExplanation">
+      <ul>
+        <% @budget.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <p>
+    <%= f.label :name, t(:"budget.name") %>
+    <%= f.text_field :name %>
+  </p>
+  <p>
+    <%= f.label :amount, t(:"budget.amount") %>
+    <%= f.number_field :amount, step: "0.01" %>
+  </p>
+  <p>
+    <%= f.label :currency, t(:"budget.currency") %>
+    <%= f.text_field :currency %>
+  </p>
+  <p>
+    <%= f.label :period_start, t(:"budget.period_start") %>
+    <%= f.date_field :period_start %>
+  </p>
+  <p>
+    <%= f.label :period_end, t(:"budget.period_end") %>
+    <%= f.date_field :period_end %>
+  </p>
+  <p>
+    <%= f.submit t(:"budget.save") %>
+    <%= link_to t(:"budget.cancel"), project_time_reports_budgets_path(@project) %>
+  </p>
+<% end %>

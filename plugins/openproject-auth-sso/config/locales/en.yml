@@ -1,0 +1,56 @@
+en:
+  auth_sso:
+    menu_caption: "SSO Providers"
+    title: "Single Sign-On (SAML / OIDC)"
+    add_provider: "Add provider"
+    edit_provider: "Edit provider"
+    none_configured: "No SSO providers configured yet."
+    name: "Name"
+    kind: "Type"
+    kind_saml: "SAML 2.0"
+    kind_oidc: "OpenID Connect"
+    active: "Active"
+    actions: "Actions"
+    edit: "Edit"
+    delete: "Delete"
+    delete_confirm: "Delete this SSO provider? Users who rely on it will no longer be able to sign in via SSO."
+    activate: "Activate"
+    deactivate: "Deactivate"
+    save: "Save"
+    cancel: "Cancel"
+    yes: "Yes"
+    no: "No"
+    saved_restart: "Provider saved. A restart is required for the change to take effect."
+    deleted: "Provider deleted. A restart is required for the change to take effect."
+    restart_required_notice: >-
+      SSO strategies are built when the application boots. After adding, editing,
+      activating or deleting a provider you must restart the OpenProject web
+      process for the change to take effect.
+    break_glass_notice: >-
+      Local-password login at /login always remains available as a break-glass
+      fallback. Keep at least one local administrator account so you can never be
+      locked out if an identity provider is misconfigured.
+    # Attribute mapping
+    mapping_email: "Email attribute"
+    mapping_name: "Name attribute"
+    # SAML fields
+    idp_url: "IdP SSO service URL"
+    idp_cert: "IdP certificate (PEM)"
+    idp_cert_fingerprint: "IdP certificate fingerprint"
+    sp_entity_id: "SP entity ID"
+    name_id_format: "NameID format"
+    clock_drift: "Allowed clock drift (seconds)"
+    sp_private_key: "SP private key (optional)"
+    # OIDC fields
+    issuer: "Issuer URL"
+    client_id: "Client ID"
+    client_secret: "Client secret"
+    discovery: "Use discovery (.well-known)"
+    scopes: "Scopes"
+    uid_field: "UID field"
+    host: "Host (manual config only)"
+    # Callback / misc
+    callback_url: "Callback URL"
+    callback_url_hint: "Leave blank to use /auth/<strategy>/callback. Register this exact URL with your IdP."
+    secret_unchanged: "Leave blank to keep the current secret"
+    failed: "Single sign-on failed (%{reason}). Please try again or sign in with your local account."

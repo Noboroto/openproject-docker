@@ -1,0 +1,41 @@
+<%# Budget widget partial. `widget` is a DashboardsPlus::BudgetWidget. %>
+<section class="op-widget op-widget--budget">
+  <h3><%= t(:"dashboards_plus.budget_title") %></h3>
+
+  <% unless widget.available? %>
+    <p class="op-widget--hint"><%= t(:"dashboards_plus.budget_unavailable") %></p>
+  <% else %>
+    <% rows = widget.rows %>
+    <% if rows.empty? %>
+      <p class="op-widget--hint"><%= t(:"dashboards_plus.budget_empty") %></p>
+    <% else %>
+      <table class="generic-table">
+        <thead>
+          <tr>
+            <th><%= t(:"dashboards_plus.budget_name") %></th>
+            <th><%= t(:"dashboards_plus.budget_amount") %></th>
+            <th><%= t(:"dashboards_plus.budget_spent") %></th>
+            <th><%= t(:"dashboards_plus.budget_remaining") %></th>
+            <th><%= t(:"dashboards_plus.budget_percent") %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% rows.each do |row| %>
+            <tr>
+              <td><%= row.name %></td>
+              <td><%= number_to_currency(row.amount, unit: row.currency + " ") %></td>
+              <td><%= number_to_currency(row.spent, unit: row.currency + " ") %></td>
+              <td class="<%= "op-budget--over" if row.over_budget %>">
+                <%= number_to_currency(row.remaining, unit: row.currency + " ") %>
+              </td>
+              <td>
+                <progress value="<%= [row.percent_used, 100].min %>" max="100"></progress>
+                <%= row.percent_used %>%
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% end %>
+  <% end %>
+</section>

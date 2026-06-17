@@ -1,0 +1,20 @@
+# frozen_string_literal: true
+
+# OpenProject loads this file after its core Gemfile. Declare custom plugins here
+# (via `path:`) plus any third-party gems those plugins genuinely need.
+# These paths are baked into the custom image (Phase 3, Dockerfile.app) at
+# /app/plugins/<dir>. Locally the dev container mounts ./plugins at /app/plugins.
+
+# --- Third-party (fully-free) gems plugins build on --------------------------
+# MIT OmniAuth strategies for the SSO plugin.
+gem "omniauth-saml"
+gem "omniauth_openid_connect"
+
+# --- Tier 1 plugins ----------------------------------------------------------
+gem "openproject-branding",        path: "plugins/openproject-branding"
+gem "openproject-auth_sso",        path: "plugins/openproject-auth-sso"
+gem "openproject-mfa_enforcement", path: "plugins/openproject-mfa-enforcement"
+gem "openproject-action_boards",   path: "plugins/openproject-action-boards"
+gem "openproject-time_reports",    path: "plugins/openproject-time-reports"
+gem "openproject-dashboards_plus", path: "plugins/openproject-dashboards-plus"
+gem "openproject-date_alerts",     path: "plugins/openproject-date-alerts"
