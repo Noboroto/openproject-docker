@@ -1,0 +1,50 @@
+# docker-compose.dev.yml
+# Ruby dev container overlay for building & testing custom OpenProject plugins.
+#
+# Usage (local machine only — NOT the 2-vCore server):
+#   docker compose --env-file .env.local -f docker-compose.yml -f docker-compose.dev.yml up -d
+#   docker exec -it openproject-docker-op-dev-1 bash
+#
+# This overlay EXTENDS the production compose; it never replaces it. The op-dev
+# container shares the backend network so it resolves op-db and cache by hostname.
+
+services:
+  op-dev:
+    image: openproject/openproject:${TAG:-17-slim}
+    command: sleep infinity
+    environment:
+      OPENPROJECT_HTTPS: "false"
+      OPENPROJECT_HOST__NAME: "localhost:8080"
+      OPENPROJECT_RAILS__CACHE__STORE: "memcache"
+      OPENPROJECT_CACHE__MEMCACHE__SERVER: "cache:11211"
+      DATABASE_URL: "${DATABASE_URL:-postgres://postgres:p4ssw0rd@op-db/openproject?pool=5&encoding=unicode&reconnect=true}"
+      SECRET_KEY_BASE: "${SECRET_KEY_BASE:-dev_secret_do_not_use_in_prod}"
+      RAILS_ENV: development
+      # Match the base image Bundler config (verify with: bundle config get path)
+      BUNDLE_PATH: /app/vendor/bundle
+    volumes:
+      - "${OPDATA:-opdata}:/var/openproject/assets"
+      - "./plugins:/app/plugins"           # plugin source (rw) — created in Phase 2
+      - "op_dev_bundle:/app/vendor/bundle" # persisted gem cache
+    networks:
+      - backend
+    depends_on:
+      - op-db
+      - cache
+    stdin_open: true
+    tty: true
+    # Dev container is local-only; keep modest so it doesn't starve the stack.
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: "1g"
+
+  # Local-only: expose the MCP server on the host for testing.
+  # Production (docker-compose.yml alone) maps NO host port — proxy-only access.
+  op-mcp:
+    ports:
+      - "127.0.0.1:8000:8000"
+
+volumes:
+  op_dev_bundle:

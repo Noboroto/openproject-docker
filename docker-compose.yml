@@ -204,3 +204,37 @@ services:
         reservations:
           cpus: "0.1"
           memory: "64m"
+
+  # Standalone MCP (Model Context Protocol) server for OpenProject.
+  # Independent service — talks to OP only via REST API v3. No Ruby plugin needed.
+  # Build in CI/local and push to a registry; the 2-vCore server should `pull`.
+  op-mcp:
+    build:
+      context: ./mcp-server
+      dockerfile: Dockerfile
+    image: openproject-mcp:local
+    environment:
+      OPENPROJECT_URL: "${OPENPROJECT_URL:-http://web:8080}"
+      OPENPROJECT_TOKEN: "${OPENPROJECT_TOKEN:-}"        # API token (opapi-...), preferred
+      OPENPROJECT_API_KEY: "${OPENPROJECT_API_KEY:-}"    # legacy fallback
+      TRANSPORT: "streamable-http"
+      HOST: "0.0.0.0"
+      PORT: "8000"
+    # No host port mapping in deploy — reach op-mcp only via the proxy.
+    # On `frontend` so the external proxy (NPM) can route a subdomain to op-mcp:8000.
+    # For local testing, docker-compose.dev.yml adds a 127.0.0.1:8000 mapping.
+    networks:
+      - backend
+      - frontend
+    depends_on:
+      web:
+        condition: service_healthy
+    <<: *restart_policy
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: "256m"
+        reservations:
+          cpus: "0.1"
+          memory: "64m"
