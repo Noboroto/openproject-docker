@@ -47,7 +47,14 @@ module Branding
     def logo
       theme = Theme.find_by(name: "default")
       if theme&.logo_blob.present?
+        # Defense-in-depth: the regex SVG sanitizer (attach_logo) is best-effort,
+        # so neutralize script execution at serve time regardless of content.
+        #   - nosniff: browser won't reinterpret the bytes as HTML
+        #   - CSP default-src 'none' + sandbox: even a missed inline <script> /
+        #     on*-handler in an SVG cannot execute or fetch anything.
         response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["Content-Security-Policy"] =
+          "default-src 'none'; style-src 'unsafe-inline'; sandbox"
         send_data theme.logo_blob,
                   type: theme.logo_content_type,
                   disposition: "inline"

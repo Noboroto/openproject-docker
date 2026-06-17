@@ -58,15 +58,38 @@ module AuthSso
     end
 
     # Match an already-provisioned user: first by the SSO identity_url (stable
-    # across email changes), then by email.
+    # across email changes), then — only when safe — by email.
     def find_existing_user(email)
       by_identity = ::User.find_by(identity_url: identity_url)
       return by_identity if by_identity
+
+      # SECURITY: linking an SSO login to a pre-existing LOCAL account by email is
+      # an account-takeover vector — an attacker can register an IdP account using
+      # a victim's email and inherit the victim's OP account. So the email fallback
+      # is gated: the IdP must assert the email is verified AND an admin must have
+      # explicitly enabled email linking for SSO (setting `allow_email_linking`,
+      # default OFF). When not allowed, we return nil so a FRESH account is created
+      # (build_user) instead of hijacking an existing one.
+      return nil unless email_linking_allowed?
 
       # VERIFY against the running 17-slim image: OP stores emails on the User
       # (`mail`) and on `UserEmail`/`EmailAddress`. `User.find_by(mail:)` is the
       # canonical lookup in current OP.
       ::User.find_by(mail: email)
+    end
+
+    # Email linking permitted only if (a) admin opted in AND (b) the IdP asserts
+    # the email is verified. Both default to false/absent → safe by default.
+    def email_linking_allowed?
+      return false unless ActiveModel::Type::Boolean.new.cast(settings["allow_email_linking"])
+
+      email_verified_claim?
+    end
+
+    def email_verified_claim?
+      claim = @auth.dig("info", "email_verified")
+      claim = @auth.dig("extra", "raw_info", "email_verified") if claim.nil?
+      ActiveModel::Type::Boolean.new.cast(claim) == true
     end
 
     def build_user(email)
