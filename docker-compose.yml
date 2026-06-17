@@ -54,7 +54,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "1"
+          cpus: "1.5"
           memory: "512m"
         reservations:
           cpus: "0.25"
@@ -150,7 +150,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "1"
+          cpus: "2"
           memory: "768m"
         reservations:
           cpus: "0.25"
@@ -183,7 +183,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "0.5"
+          cpus: "1"
           memory: "512m"
 
   hocuspocus:
