@@ -9,7 +9,7 @@ volumes:
   opdata:
 
 x-op-restart-policy: &restart_policy
-  restart: unless-stopped
+  restart: on-failure:3
 x-op-image: &image
   image: openproject/openproject:${TAG:-17-slim}
 x-op-app: &app
