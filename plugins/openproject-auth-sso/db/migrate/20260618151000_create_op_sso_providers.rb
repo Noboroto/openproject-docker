@@ -6,7 +6,7 @@
 #     cat /app/Gemfile.lock | grep -E '^    rails '
 class CreateOpSsoProviders < ActiveRecord::Migration[7.1]
   def change
-    create_table :op_sso_providers do |t|
+    create_table :op_sso_providers, if_not_exists: true do |t|
       t.string  :name,   null: false                 # human label + basis of strategy name
       t.string  :kind,   null: false                 # "saml" | "oidc"
       t.boolean :active, null: false, default: false
@@ -28,7 +28,7 @@ class CreateOpSsoProviders < ActiveRecord::Migration[7.1]
       t.timestamps
     end
 
-    add_index :op_sso_providers, :name, unique: true
-    add_index :op_sso_providers, %i[active kind]
+    add_index :op_sso_providers, :name, unique: true, if_not_exists: true
+    add_index :op_sso_providers, %i[active kind], if_not_exists: true
   end
 end

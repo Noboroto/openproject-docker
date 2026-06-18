@@ -3,7 +3,7 @@
 # Rails 7.1 — OpenProject 17 runs on Rails 7.1+.
 class CreateOpCostBudgets < ActiveRecord::Migration[7.1]
   def change
-    create_table :op_cost_budgets do |t|
+    create_table :op_cost_budgets, if_not_exists: true do |t|
       t.references :project, null: false, foreign_key: true
       t.string  :name, null: false
 
@@ -19,6 +19,6 @@ class CreateOpCostBudgets < ActiveRecord::Migration[7.1]
       t.timestamps
     end
 
-    add_index :op_cost_budgets, %i[project_id name]
+    add_index :op_cost_budgets, %i[project_id name], if_not_exists: true
   end
 end

@@ -6,13 +6,13 @@
 #     cat /app/Gemfile.lock | grep -E '^    rails '
 class CreateOpBoardsBoards < ActiveRecord::Migration[7.1]
   def change
-    create_table :op_boards_boards do |t|
+    create_table :op_boards_boards, if_not_exists: true do |t|
       t.references :project, null: false, foreign_key: true
       t.string  :name,        null: false
       t.string  :action_type, null: false # "status" | "assignee" | "version"
       t.timestamps
     end
 
-    add_index :op_boards_boards, %i[project_id name]
+    add_index :op_boards_boards, %i[project_id name], if_not_exists: true
   end
 end

@@ -6,7 +6,7 @@
 #     cat /app/Gemfile.lock | grep -E '^    rails '
 class CreateOpMfaAuditEvents < ActiveRecord::Migration[7.1]
   def change
-    create_table :op_mfa_audit_events do |t|
+    create_table :op_mfa_audit_events, if_not_exists: true do |t|
       # Admin who changed the policy. Nullable + no FK cascade requirement so an
       # event survives the acting user's deletion.
       t.references :user, foreign_key: true, null: true
@@ -17,6 +17,6 @@ class CreateOpMfaAuditEvents < ActiveRecord::Migration[7.1]
       t.datetime :created_at, null: false
     end
 
-    add_index :op_mfa_audit_events, :created_at
+    add_index :op_mfa_audit_events, :created_at, if_not_exists: true
   end
 end

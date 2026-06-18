@@ -5,7 +5,7 @@
 #     cat /app/Gemfile.lock | grep -E '^    rails '
 class CreateOpBrandingThemes < ActiveRecord::Migration[7.1]
   def change
-    create_table :op_branding_themes do |t|
+    create_table :op_branding_themes, if_not_exists: true do |t|
       t.string :name, null: false, default: "default"
       t.binary :logo_blob           # raw image bytes (capped at 1 MB by the model)
       t.string :logo_content_type
@@ -13,6 +13,6 @@ class CreateOpBrandingThemes < ActiveRecord::Migration[7.1]
       t.timestamps
     end
 
-    add_index :op_branding_themes, :name, unique: true
+    add_index :op_branding_themes, :name, unique: true, if_not_exists: true
   end
 end

@@ -4,7 +4,7 @@
 # op_boards_boards table.
 class CreateOpBoardsColumns < ActiveRecord::Migration[7.1]
   def change
-    create_table :op_boards_columns do |t|
+    create_table :op_boards_columns, if_not_exists: true do |t|
       t.references :board, null: false,
                            foreign_key: { to_table: :op_boards_boards }
       t.string  :title,    null: false
@@ -13,6 +13,6 @@ class CreateOpBoardsColumns < ActiveRecord::Migration[7.1]
       t.timestamps
     end
 
-    add_index :op_boards_columns, %i[board_id position]
+    add_index :op_boards_columns, %i[board_id position], if_not_exists: true
   end
 end

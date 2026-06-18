@@ -5,7 +5,7 @@
 #     cat /app/Gemfile.lock | grep -E '^    rails '
 class CreateOpDatesAlertPreferences < ActiveRecord::Migration[7.1]
   def change
-    create_table :op_dates_alert_preferences do |t|
+    create_table :op_dates_alert_preferences, if_not_exists: true do |t|
       t.references :user, null: false, foreign_key: true, index: { unique: true }
       t.boolean :start_date_enabled, null: false, default: true
       t.boolean :due_date_enabled,   null: false, default: true

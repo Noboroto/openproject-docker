@@ -8,7 +8,7 @@
 # Namespaced table prefix op_cact_ keeps the schema isolated from core tables.
 class CreateOpCactCustomActions < ActiveRecord::Migration[7.1]
   def change
-    create_table :op_cact_custom_actions do |t|
+    create_table :op_cact_custom_actions, if_not_exists: true do |t|
       t.string  :name,       null: false
       t.integer :position,   null: false, default: 1
       # When the action is applicable: { "status_id":1, "type_ids":[3,4] }
@@ -19,6 +19,6 @@ class CreateOpCactCustomActions < ActiveRecord::Migration[7.1]
       t.timestamps
     end
 
-    add_index :op_cact_custom_actions, :position
+    add_index :op_cact_custom_actions, :position, if_not_exists: true
   end
 end

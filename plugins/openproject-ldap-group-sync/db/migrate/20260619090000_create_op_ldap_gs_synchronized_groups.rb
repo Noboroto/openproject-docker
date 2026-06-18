@@ -5,7 +5,7 @@
 #     cat /app/Gemfile.lock | grep -E '^    rails '
 class CreateOpLdapGsSynchronizedGroups < ActiveRecord::Migration[7.1]
   def change
-    create_table :op_ldap_gs_synchronized_groups do |t|
+    create_table :op_ldap_gs_synchronized_groups, if_not_exists: true do |t|
       # verify against running 17-slim image: CE stores LDAP auth sources in the
       # `ldap_auth_sources` table (LdapAuthSource STI on auth_sources in some
       # older versions). No DB foreign_key constraint is declared here so the
@@ -23,10 +23,11 @@ class CreateOpLdapGsSynchronizedGroups < ActiveRecord::Migration[7.1]
       t.timestamps
     end
 
-    add_index :op_ldap_gs_synchronized_groups, :ldap_auth_source_id
+    add_index :op_ldap_gs_synchronized_groups, :ldap_auth_source_id, if_not_exists: true
     add_index :op_ldap_gs_synchronized_groups,
               %i[ldap_auth_source_id dn],
               unique: true,
-              name: "idx_ldap_gs_unique_dn_per_source"
+              name: "idx_ldap_gs_unique_dn_per_source",
+              if_not_exists: true
   end
 end

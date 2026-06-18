@@ -10,7 +10,7 @@
 # saved-view preferences are persisted here.
 class CreateTeamplannerCeSavedViews < ActiveRecord::Migration[7.1]
   def change
-    create_table :op_teamplanner_ce_saved_views do |t|
+    create_table :op_teamplanner_ce_saved_views, if_not_exists: true do |t|
       t.references :project, null: false, foreign_key: true
       t.references :user,    null: false, foreign_key: true
       t.string :name,    null: false
@@ -18,6 +18,6 @@ class CreateTeamplannerCeSavedViews < ActiveRecord::Migration[7.1]
       t.timestamps
     end
 
-    add_index :op_teamplanner_ce_saved_views, %i[user_id project_id]
+    add_index :op_teamplanner_ce_saved_views, %i[user_id project_id], if_not_exists: true
   end
 end

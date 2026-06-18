@@ -5,7 +5,7 @@
 #     cat /app/Gemfile.lock | grep -E '^    rails '
 class CreateOpProjtplTemplates < ActiveRecord::Migration[7.1]
   def change
-    create_table :op_projtpl_templates do |t|
+    create_table :op_projtpl_templates, if_not_exists: true do |t|
       # The source project this template clones from. Deleting the project
       # removes the template registration (it is meaningless without a source).
       t.references :project,
@@ -22,6 +22,6 @@ class CreateOpProjtplTemplates < ActiveRecord::Migration[7.1]
       t.timestamps
     end
 
-    add_index :op_projtpl_templates, :name, unique: true
+    add_index :op_projtpl_templates, :name, unique: true, if_not_exists: true
   end
 end

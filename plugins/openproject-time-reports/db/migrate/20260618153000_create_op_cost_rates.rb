@@ -6,7 +6,7 @@
 #     cat /app/Gemfile.lock | grep -E '^    rails '
 class CreateOpCostRates < ActiveRecord::Migration[7.1]
   def change
-    create_table :op_cost_rates do |t|
+    create_table :op_cost_rates, if_not_exists: true do |t|
       # Nullable user → a NULL user_id means a project-wide (any user) rate.
       t.references :user, foreign_key: true, null: true
 
@@ -30,6 +30,6 @@ class CreateOpCostRates < ActiveRecord::Migration[7.1]
     end
 
     # Supports the effective-rate selection query (project + user + valid_from).
-    add_index :op_cost_rates, %i[project_id user_id valid_from]
+    add_index :op_cost_rates, %i[project_id user_id valid_from], if_not_exists: true
   end
 end

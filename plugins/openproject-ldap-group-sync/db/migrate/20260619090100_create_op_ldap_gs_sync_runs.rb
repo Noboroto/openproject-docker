@@ -3,7 +3,7 @@
 # OpenProject 17 runs on Rails 7.1+.
 class CreateOpLdapGsSyncRuns < ActiveRecord::Migration[7.1]
   def change
-    create_table :op_ldap_gs_sync_runs do |t|
+    create_table :op_ldap_gs_sync_runs, if_not_exists: true do |t|
       # Nullable: a "full run" covers all mappings and has no single group.
       t.references :synchronized_group, null: true,
                    foreign_key: { to_table: :op_ldap_gs_synchronized_groups }
@@ -18,6 +18,6 @@ class CreateOpLdapGsSyncRuns < ActiveRecord::Migration[7.1]
       t.timestamps
     end
 
-    add_index :op_ldap_gs_sync_runs, %i[status started_at]
+    add_index :op_ldap_gs_sync_runs, %i[status started_at], if_not_exists: true
   end
 end

@@ -5,7 +5,7 @@
 # Rails 7.1 migration (see note in 20260618154000_create_op_dates_alert_preferences.rb).
 class CreateOpDatesSentAlerts < ActiveRecord::Migration[7.1]
   def change
-    create_table :op_dates_sent_alerts do |t|
+    create_table :op_dates_sent_alerts, if_not_exists: true do |t|
       t.references :user, null: false, foreign_key: true
       # e.g. "date_alert:due:1234" — identifies the work package + alert kind.
       t.string :alert_key, null: false
@@ -19,6 +19,7 @@ class CreateOpDatesSentAlerts < ActiveRecord::Migration[7.1]
     add_index :op_dates_sent_alerts,
               %i[user_id alert_key sent_on],
               unique: true,
-              name: "index_op_dates_sent_alerts_unique"
+              name: "index_op_dates_sent_alerts_unique",
+              if_not_exists: true
   end
 end

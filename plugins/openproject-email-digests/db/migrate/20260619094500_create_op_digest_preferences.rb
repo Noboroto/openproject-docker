@@ -6,7 +6,7 @@
 #     cat /app/Gemfile.lock | grep -E '^    rails '
 class CreateOpDigestPreferences < ActiveRecord::Migration[7.1]
   def change
-    create_table :op_digest_preferences do |t|
+    create_table :op_digest_preferences, if_not_exists: true do |t|
       t.references :user, null: false, foreign_key: true, index: { unique: true }
       # off / daily / weekly
       t.string  :frequency, null: false, default: "daily"

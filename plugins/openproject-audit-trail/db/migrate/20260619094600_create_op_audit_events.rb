@@ -11,7 +11,7 @@
 # event time (may differ slightly when recorded asynchronously).
 class CreateOpAuditEvents < ActiveRecord::Migration[7.1]
   def change
-    create_table :op_audit_events do |t|
+    create_table :op_audit_events, if_not_exists: true do |t|
       # The acting user (nil for system/unauthenticated events). Nullable + no
       # cascade so an event survives the actor's later deletion.
       t.references :actor, foreign_key: { to_table: :users }, null: true
@@ -32,8 +32,8 @@ class CreateOpAuditEvents < ActiveRecord::Migration[7.1]
       t.datetime :created_at,  null: false
     end
 
-    add_index :op_audit_events, %i[event occurred_at]
-    add_index :op_audit_events, %i[target_type target_id]
-    add_index :op_audit_events, :occurred_at
+    add_index :op_audit_events, %i[event occurred_at], if_not_exists: true
+    add_index :op_audit_events, %i[target_type target_id], if_not_exists: true
+    add_index :op_audit_events, :occurred_at, if_not_exists: true
   end
 end
