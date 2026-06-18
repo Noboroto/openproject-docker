@@ -10,8 +10,10 @@
   system. This styled server-rendered version is the deliberate first iteration.
 %>
 <style>
-  .op-ab { margin: 0 0 1rem; }
-  .op-ab__head { display:flex; align-items:baseline; gap:.5rem; margin:0 0 1rem; }
+  /* Page padding so content clears the project sidebar toggle / window edges
+     (the project layout renders plugin views flush-left otherwise). */
+  .op-ab { margin: 0; padding: 1.5rem 2rem; }
+  .op-ab__head { display:flex; align-items:baseline; gap:.5rem; margin:0 0 1.25rem; padding-top:.25rem; }
   .op-ab__type { color:#6e7781; font-size:.875rem; }
   .op-ab__cols {
     display:flex; gap:1rem; align-items:flex-start;
