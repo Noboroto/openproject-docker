@@ -47,7 +47,7 @@ module Baselines
     end
 
     def find_baseline
-      @baseline = Baseline.find(params[:id])
+      @baseline = Baseline.for_project(@project).find(params[:id])
     rescue ActiveRecord::RecordNotFound
       render_404
     end

@@ -49,7 +49,7 @@ module PublicShare
     end
 
     def find_link
-      @link = ShareLink.find(params[:id])
+      @link = ShareLink.where(work_package_id: @project.work_package_ids).find(params[:id])
     rescue ActiveRecord::RecordNotFound
       render_404
     end
