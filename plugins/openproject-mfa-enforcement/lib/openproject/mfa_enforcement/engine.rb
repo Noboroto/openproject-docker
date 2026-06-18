@@ -49,7 +49,7 @@ module OpenProject
              # VERIFY against running 17-slim image: icon name
              # "two-factor-authentication" must exist in OP's icon set; fall back
              # to "locked" if the build complains.
-             icon:    "two-factor-authentication",
+             icon:    "shield-lock",
              after:   :authentication
       end
 

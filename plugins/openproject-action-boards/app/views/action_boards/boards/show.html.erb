@@ -19,7 +19,7 @@
 
 <div class="op-action-board"
      data-controller="board-drag"
-     data-board-drag-move-url-template-value="<%= action_board_move_card_path(@project, board_id: @board.id) %>"
+     data-board-drag-move-url-template-value="<%= project_action_board_move_card_path(@project, board_id: @board.id) %>"
      data-board-drag-csrf-value="<%= form_authenticity_token %>">
   <div class="op-action-board--columns" style="display:flex; gap:1rem; align-items:flex-start;">
     <% @columns.each do |column| %>

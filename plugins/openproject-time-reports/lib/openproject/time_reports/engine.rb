@@ -60,7 +60,7 @@ module OpenProject
              { controller: "/time_reports/reports", action: :index },
              param: :project_id,
              caption: :"time_reports.menu_caption",
-             icon: "stats",
+             icon: "graph",
              after: :work_packages,
              if: ->(project) { project.module_enabled?(:time_reports) }
 
@@ -69,7 +69,7 @@ module OpenProject
              { controller: "/time_reports/cost_reports", action: :index },
              param: :project_id,
              caption: :"cost.menu_caption",
-             icon: "budget",
+             icon: "meter",
              parent: :time_reports,
              if: ->(project) { project.module_enabled?(:time_reports) }
 
@@ -78,7 +78,7 @@ module OpenProject
              { controller: "/time_reports/budgets", action: :index },
              param: :project_id,
              caption: :"budget.menu_caption",
-             icon: "budget",
+             icon: "meter",
              parent: :time_reports,
              if: ->(project) { project.module_enabled?(:time_reports) }
       end

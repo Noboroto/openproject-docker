@@ -6,7 +6,19 @@
   Safe-mode escape hatch: append ?branding=off to any URL to skip injection if
   custom CSS breaks the layout (documented in the README and the admin notice).
 %>
-<% unless defined?(controller) && controller.respond_to?(:params) && controller.params[:branding].to_s == "off" %>
+<%
+  # Safe-mode escape hatch (?branding=off). Guard defensively: in the view-hook
+  # context the controller may have no live request, so calling #params raises
+  # ("undefined method 'filtered_parameters' for nil"). Rescue to a safe default.
+  branding_off =
+    begin
+      defined?(controller) && controller.respond_to?(:params) &&
+        controller.params[:branding].to_s == "off"
+    rescue StandardError
+      false
+    end
+%>
+<% unless branding_off %>
   <% branding_settings = Setting.plugin_openproject_branding || {} %>
   <% compiled_css = Branding::CssCompiler.call(
        branding_settings,

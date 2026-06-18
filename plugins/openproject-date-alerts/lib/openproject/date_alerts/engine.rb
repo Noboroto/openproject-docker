@@ -59,7 +59,7 @@ module OpenProject
              :date_alerts_settings,
              { controller: "/date_alerts/admin_settings", action: :show },
              caption: :"date_alerts.admin_menu_caption",
-             icon: "reminder",
+             icon: "bell",
              after: :settings
 
       end

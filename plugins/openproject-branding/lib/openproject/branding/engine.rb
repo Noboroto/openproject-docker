@@ -42,7 +42,7 @@ module OpenProject
              :branding_settings,
              { controller: "/branding/admin_settings", action: :show },
              caption: :"branding.menu_caption",
-             icon:    "design",
+             icon:    "paintbrush",
              after:   :settings
       end
 

@@ -36,7 +36,7 @@ module OpenProject
              { controller: "/dashboards_plus/widgets", action: :show },
              param: :project_id,
              caption: :"dashboards_plus.menu_caption",
-             icon: "dashboard",
+             icon: "meter",
              after: :overview,
              if: ->(project) { project.module_enabled?(:dashboards_plus) }
       end

@@ -51,7 +51,7 @@ module OpenProject
              :action_boards,
              { controller: "/action_boards/boards", action: :index },
              caption: :"action_boards.menu_caption",
-             icon: "board",
+             icon: "columns",
              after: :work_packages,
              if: ->(project) { project.module_enabled?(:action_boards) }
       end
