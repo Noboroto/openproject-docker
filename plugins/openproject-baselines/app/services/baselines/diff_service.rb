@@ -48,7 +48,7 @@ module Baselines
     def ids_existing_at(project, at)
       Journal
         .where(journable_type: "WorkPackage")
-        .where("created_at <= ?", at)
+        .where("journals.created_at <= ?", at)
         .joins("INNER JOIN work_packages ON work_packages.id = journals.journable_id")
         .where(work_packages: { project_id: project.id })
         .distinct

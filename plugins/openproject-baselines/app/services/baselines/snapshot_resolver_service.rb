@@ -8,7 +8,7 @@ module Baselines
 
     def attributes_at(work_package, at)
       journal = work_package.journals
-                            .where("created_at <= ?", at)
+                            .where("journals.created_at <= ?", at)
                             .order(:created_at)
                             .last
       return nil if journal.nil?
@@ -22,7 +22,7 @@ module Baselines
       wp_ids = work_packages.map(&:id)
       journals = Journal
                    .where(journable_type: "WorkPackage", journable_id: wp_ids)
-                   .where("created_at <= ?", at)
+                   .where("journals.created_at <= ?", at)
                    .order(:created_at)
 
       # Keep only the last journal per WP.

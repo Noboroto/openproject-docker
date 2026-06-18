@@ -2,8 +2,8 @@
 
 <h2><%= t("baselines.new") %></h2>
 
-<%= form_with model: [@project, @baseline], url: project_baselines_path(@project) do |f| %>
-  <%= render "components/shared/error_messages", object: @baseline %>
+<%= form_with model: @baseline, url: baselines_path(@project), scope: :baseline do |f| %>
+  <%= error_messages_for :baseline %>
 
   <div class="form--field">
     <%= f.label :name, t("baselines.name_label"), class: "form--label" %>
@@ -21,6 +21,6 @@
 
   <div class="form--actions">
     <%= f.submit t("button_create"), class: "button -highlight" %>
-    <%= link_to t("button_cancel"), project_baselines_path(@project), class: "button" %>
+    <%= link_to t("button_cancel"), baselines_path(@project), class: "button" %>
   </div>
 <% end %>
