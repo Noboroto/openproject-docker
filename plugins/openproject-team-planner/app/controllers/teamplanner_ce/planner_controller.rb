@@ -17,15 +17,54 @@ module TeamplannerCe
 
     def show
       @from, @to = date_range
-      @assignee_ids = Array(params[:assignee_ids]).reject(&:blank?)
-
-      query = AssignmentQuery.new(project: @project,
-                                  user: current_user,
-                                  from: @from,
-                                  to: @to,
-                                  assignee_ids: @assignee_ids)
-      @grid = AssignmentGrid.new(from: @from, to: @to, rows: query.rows)
       @saved_views = saved_views_scope.order(:name)
+    end
+
+    # JSON endpoint consumed by the Angular FullCalendar component.
+    # Returns resources (assignee rows) and events (WP bars) in FullCalendar format.
+    # Authorization: same :view_teamplanner_ce permission as #show (enforced by
+    # before_action :authorize via permission→action mapping in the engine).
+    def data
+      from, to = date_range
+      assignee_ids = Array(params[:assignee_ids]).reject(&:blank?)
+
+      query = AssignmentQuery.new(
+        project: @project,
+        user: current_user,
+        from: from,
+        to: to,
+        assignee_ids: assignee_ids.presence
+      )
+
+      resources = []
+      events    = []
+
+      query.rows.each do |assignee, wps|
+        next if assignee.nil?
+
+        resources << {
+          id:    assignee.id.to_s,
+          title: assignee.name
+        }
+
+        wps.each do |wp|
+          events << {
+            id:         wp.id.to_s,
+            resourceId: assignee.id.to_s,
+            title:      wp.subject,
+            start:      wp.start_date&.iso8601,
+            end:        wp.due_date ? (wp.due_date + 1).iso8601 : nil,
+            color:      wp.type&.color&.hexcode || "#1A67A3",
+            url:        "/work_packages/#{wp.id}",
+            extendedProps: {
+              status:  wp.status&.name,
+              typeId:  wp.type_id
+            }
+          }
+        end
+      end
+
+      render json: { resources: resources, events: events }
     end
 
     # Persist the current date range + assignee filter as a per-user saved view.

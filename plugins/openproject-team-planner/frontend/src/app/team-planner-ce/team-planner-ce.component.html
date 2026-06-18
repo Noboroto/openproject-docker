@@ -1,0 +1,8 @@
+<div class="op-tp-ce-wrapper">
+  @if (error) {
+    <div class="op-tp-ce-error notification -error">
+      <span>{{ error }}</span>
+    </div>
+  }
+  <full-calendar #calendar [options]="calendarOptions"></full-calendar>
+</div>

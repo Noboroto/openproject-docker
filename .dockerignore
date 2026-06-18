@@ -12,3 +12,5 @@ control/
 **/__pycache__/
 **/.pytest_cache/
 **/spec/
+plugins/openproject-team-planner/frontend/node_modules/
+plugins/openproject-team-planner/frontend/dist/
