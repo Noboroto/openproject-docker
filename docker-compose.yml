@@ -131,7 +131,7 @@ services:
       interval: 10s
       timeout: 3s
       retries: 3
-      start_period: 30s
+      start_period: 180s
     # Primary app (Puma). Largest share on the 3 vCPU / 8 GB host.
     deploy:
       resources:
