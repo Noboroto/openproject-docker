@@ -16,9 +16,9 @@
 
     <div class="form--field">
       <span class="form--label"><%= t(:"mcp_ce.shortcut_path") %></span>
-      <div class="form--field-container">
+      <div class="form--field-container" style="display:block">
         <code id="mcp-client-path"><%= client_path %></code>
-        <clipboard-copy for="mcp-client-path" class="button" aria-label="<%= t(:"mcp_ce.copy") %>">
+        <clipboard-copy for="mcp-client-path" class="button" style="margin-left:8px" aria-label="<%= t(:"mcp_ce.copy") %>">
           <%= t(:"mcp_ce.copy") %>
         </clipboard-copy>
       </div>
@@ -44,7 +44,7 @@
     <% @snippets.each do |key, code| %>
       <div class="form--field">
         <span class="form--label"><%= t(:"mcp_ce.client.#{key}") %></span>
-        <div class="form--field-container">
+        <div class="form--field-container" style="display:block">
           <pre style="max-width:680px;overflow:auto;margin:0 0 4px;"><code id="snippet-<%= key %>"><%= code %></code></pre>
           <clipboard-copy for="snippet-<%= key %>" class="button" aria-label="<%= t(:"mcp_ce.copy") %>">
             <%= t(:"mcp_ce.copy") %>
@@ -62,9 +62,9 @@
 
     <div class="form--field">
       <span class="form--label"><%= t(:"mcp_ce.endpoint_internal") %></span>
-      <div class="form--field-container">
+      <div class="form--field-container" style="display:block">
         <code id="mcp-endpoint-internal"><%= @mcp_endpoint %></code>
-        <clipboard-copy for="mcp-endpoint-internal" class="button" aria-label="<%= t(:"mcp_ce.copy") %>">
+        <clipboard-copy for="mcp-endpoint-internal" class="button" style="margin-left:8px" aria-label="<%= t(:"mcp_ce.copy") %>">
           <%= t(:"mcp_ce.copy") %>
         </clipboard-copy>
         <p class="form--field-instructions"><%= t(:"mcp_ce.endpoint_internal_hint") %></p>
@@ -73,10 +73,10 @@
 
     <div class="form--field">
       <span class="form--label"><%= t(:"mcp_ce.endpoint_public") %></span>
-      <div class="form--field-container">
+      <div class="form--field-container" style="display:block">
         <% if @public_endpoint.present? %>
           <code id="mcp-endpoint-public"><%= @public_endpoint %></code>
-          <clipboard-copy for="mcp-endpoint-public" class="button" aria-label="<%= t(:"mcp_ce.copy") %>">
+          <clipboard-copy for="mcp-endpoint-public" class="button" style="margin-left:8px" aria-label="<%= t(:"mcp_ce.copy") %>">
             <%= t(:"mcp_ce.copy") %>
           </clipboard-copy>
           <% if @public_derived %>
@@ -91,7 +91,7 @@
 
     <div class="form--field">
       <span class="form--label"><%= t(:"mcp_ce.health_url") %></span>
-      <div class="form--field-container">
+      <div class="form--field-container" style="display:block">
         <code><%= @health_url %></code>
       </div>
     </div>
@@ -105,7 +105,7 @@
 
     <% if @health.present? %>
       <div class="form--field">
-        <div class="form--field-container">
+        <div class="form--field-container" style="display:block">
           <% if @health["ok"] %>
             <span class="op-status op-status_success">&#10003; <%= @health["message"] %></span>
           <% else %>
