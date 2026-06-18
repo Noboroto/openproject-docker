@@ -40,6 +40,12 @@ services:
           cpus: "1"
           memory: "1g"
 
+  # Local-only: publish OpenProject web on the host for local testing /
+  # Playwright. Production (docker-compose.yml alone) keeps web proxy-only.
+  web:
+    ports:
+      - "127.0.0.1:8080:8080"
+
   # Local-only: expose the MCP server on the host for testing.
   # Production (docker-compose.yml alone) maps NO host port — proxy-only access.
   op-mcp:

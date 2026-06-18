@@ -3,5 +3,7 @@
 .env.*.local
 
 docker-compose.override.yml
+.playwright-mcp/
+kanban-board*.png
 backups/
 /plans
