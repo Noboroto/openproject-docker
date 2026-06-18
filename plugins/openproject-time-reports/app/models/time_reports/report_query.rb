@@ -17,7 +17,9 @@ module TimeReports
       scope = ::TimeEntry
               .where(project: @project)
               .where(spent_on: @from_date..@to_date)
-              .includes(:user, :work_package, :activity)
+              .includes(:user, :activity)
+              # NOTE: `entity` is polymorphic and cannot be eager-loaded via
+              # includes(); it's resolved lazily (see PivotBuilder.work_package_for).
 
       scope = scope.where(user_id: @user_ids) if @user_ids.present?
       scope

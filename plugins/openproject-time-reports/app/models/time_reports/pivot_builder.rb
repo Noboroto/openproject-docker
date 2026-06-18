@@ -13,16 +13,23 @@ module TimeReports
       pivot = Hash.new { |h, k| h[k] = Hash.new(0.0) }
       @entries.each do |entry|
         user_name = entry.user&.name || "(unknown)"
-        wp_label  = entry.work_package ? "##{entry.work_package.id}" : "(no WP)"
+        wp = self.class.work_package_for(entry)
+        wp_label  = wp ? "##{wp.id}" : "(no WP)"
         pivot[user_name][wp_label] += entry.hours.to_f
       end
       pivot
     end
 
     def all_work_packages
-      @entries.filter_map { |e| e.work_package ? "##{e.work_package.id}" : nil }
+      @entries.filter_map { |e| (wp = self.class.work_package_for(e)) ? "##{wp.id}" : nil }
               .uniq
               .sort
+    end
+
+    # OP 17 time entries are polymorphic via `entity`; the work package is the
+    # entity when entity_type == "WorkPackage".
+    def self.work_package_for(entry)
+      entry.entity if entry.respond_to?(:entity) && entry.entity_type == "WorkPackage"
     end
   end
 end

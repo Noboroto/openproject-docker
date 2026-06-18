@@ -11,6 +11,11 @@ module DateAlerts
     # that enforces an authenticated session (the My-account area requires it).
     before_action :require_login
 
+    # OP enforces zero-trust: every action MUST declare an authorization check.
+    # This is a personal "My account" page — no project/global permission applies;
+    # access is scoped to current_user (the record is keyed by current_user.id).
+    no_authorization_required! :show, :update
+
     # Renders inside the "My account" area.
     # verify against running 17-slim image: the My-account layout name ("my").
     layout "my"

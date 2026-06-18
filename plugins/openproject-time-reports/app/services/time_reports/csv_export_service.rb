@@ -33,7 +33,7 @@ module TimeReports
       base = [
         entry.spent_on&.iso8601,
         entry.user&.name,
-        entry.work_package&.subject || "",
+        (PivotBuilder.work_package_for(entry)&.subject || ""),
         entry.activity&.name,
         entry.hours,
         entry.comments.to_s.truncate(200)

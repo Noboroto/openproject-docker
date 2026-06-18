@@ -32,7 +32,7 @@
       <tr>
         <td><%= entry.spent_on %></td>
         <td><%= entry.user&.name %></td>
-        <td><%= entry.work_package&.subject %></td>
+        <td><%= TimeReports::PivotBuilder.work_package_for(entry)&.subject %></td>
         <td><%= entry.activity&.name %></td>
         <td><%= entry.hours %></td>
       </tr>
