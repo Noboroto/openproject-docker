@@ -1,50 +1,85 @@
 <%#
-  Server-rendered action board with drag-drop columns.
+  Server-rendered action board with drag-drop columns + scoped styling.
 
-  The drag-drop interaction is driven by a small Stimulus controller
-  (frontend/board_drag_controller.js). On drop it issues the PATCH to
-  action_board_move_card_path; the server applies the move through
-  WorkPackages::UpdateService and returns 200 (card stays moved) or 422
-  (illegal transition / no permission -> the controller reverts the card).
+  Drag-drop is driven by frontend/board_drag_controller.js. On drop it PATCHes
+  project_action_board_move_card_path; the server applies the move through
+  WorkPackages::UpdateService and returns 200 (stays) or 422 (reverts).
 
-  WHERE ANGULAR WOULD GO: OpenProject's core boards/work-package views are
-  Angular. A production-grade integration would register an Angular component
-  under frontend/module/ and mount it via the OP frontend module system
-  (see https://www.openproject.org/docs/development/frontend/). This
-  Stimulus/server-rendered version is the deliberate first iteration per the
-  plan ("start with server-rendered columns + a small Stimulus controller").
+  WHERE ANGULAR WOULD GO: OpenProject core boards are Angular. A production-grade
+  integration would register an Angular component via the OP frontend module
+  system. This styled server-rendered version is the deliberate first iteration.
 %>
-<h2><%= @board.name %></h2>
-<p><%= t(:"action_boards.action_type.#{@board.action_type}") %></p>
+<style>
+  .op-ab { margin: 0 0 1rem; }
+  .op-ab__head { display:flex; align-items:baseline; gap:.5rem; margin:0 0 1rem; }
+  .op-ab__type { color:#6e7781; font-size:.875rem; }
+  .op-ab__cols {
+    display:flex; gap:1rem; align-items:flex-start;
+    overflow-x:auto; padding-bottom:.75rem;
+  }
+  .op-ab__col {
+    flex:0 0 300px; max-width:300px;
+    background:#f6f8fa; border:1px solid #d0d7de; border-radius:8px;
+    display:flex; flex-direction:column; max-height:72vh;
+  }
+  .op-ab__col-head {
+    display:flex; align-items:center; justify-content:space-between;
+    gap:.5rem; padding:.6rem .75rem; border-bottom:1px solid #d0d7de;
+    position:sticky; top:0; background:#f6f8fa; border-radius:8px 8px 0 0;
+  }
+  .op-ab__col-title {
+    margin:0; font-size:.875rem; font-weight:600; color:#24292f;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .op-ab__count {
+    flex:0 0 auto; min-width:1.5rem; text-align:center;
+    background:#eaeef2; color:#57606a; border-radius:999px;
+    padding:.05rem .45rem; font-size:.75rem; font-weight:600;
+  }
+  .op-ab__cards { list-style:none; margin:0; padding:.5rem; overflow-y:auto; min-height:48px; }
+  .op-ab__card {
+    background:#fff; border:1px solid #d0d7de; border-radius:6px;
+    padding:.5rem .6rem; margin:0 0 .5rem;
+    box-shadow:0 1px 0 rgba(27,31,36,.04);
+    cursor:grab; transition:box-shadow .12s, border-color .12s;
+  }
+  .op-ab__card:hover { border-color:#0969da; box-shadow:0 2px 6px rgba(27,31,36,.12); }
+  .op-ab__card:last-child { margin-bottom:0; }
+  .op-ab__card a {
+    color:#24292f; text-decoration:none; font-size:.875rem; line-height:1.35;
+    display:block; overflow-wrap:anywhere; word-break:break-word;
+  }
+  .op-ab__card a:hover { color:#0969da; text-decoration:underline; }
+  .op-ab__empty { color:#8c959f; font-size:.8125rem; font-style:italic; padding:.5rem; }
+  .op-ab__card.-dragging { opacity:.5; }
+  .op-ab__cards.-dragover { background:#ddf4ff; border-radius:6px; }
+</style>
 
-<div class="op-action-board"
-     data-controller="board-drag"
+<div class="op-ab" data-controller="board-drag"
      data-board-drag-move-url-template-value="<%= project_action_board_move_card_path(@project, board_id: @board.id) %>"
      data-board-drag-csrf-value="<%= form_authenticity_token %>">
-  <div class="op-action-board--columns" style="display:flex; gap:1rem; align-items:flex-start;">
-    <% @columns.each do |column| %>
-      <section class="op-action-board--column"
-               data-board-drag-target="column"
-               data-column-id="<%= column.id %>"
-               style="flex:1; min-width:220px; border:1px solid #ddd; border-radius:4px; padding:.5rem;">
-        <h3><%= column.title %></h3>
+  <div class="op-ab__head">
+    <h2 style="margin:0;"><%= @board.name %></h2>
+    <span class="op-ab__type"><%= t(:"action_boards.action_type.#{@board.action_type}") %></span>
+  </div>
 
-        <ul class="op-action-board--cards"
-            data-board-drag-target="dropzone"
-            data-column-id="<%= column.id %>"
-            style="list-style:none; margin:0; padding:0; min-height:40px;">
-          <% Array(@cards_by_column[column]).each do |wp| %>
-            <li class="op-action-board--card"
-                draggable="true"
-                data-board-drag-target="card"
-                data-work-package-id="<%= wp.id %>"
-                style="border:1px solid #ccc; border-radius:4px; padding:.4rem; margin:.4rem 0; background:#fff;">
-              <%= link_to card_label(wp), work_package_path(wp) %>
+  <div class="op-ab__cols">
+    <% @columns.each do |column| %>
+      <% cards = Array(@cards_by_column[column]) %>
+      <section class="op-ab__col" data-board-drag-target="column" data-column-id="<%= column.id %>">
+        <header class="op-ab__col-head">
+          <h3 class="op-ab__col-title" title="<%= column.title %>"><%= column.title %></h3>
+          <span class="op-ab__count"><%= cards.size %></span>
+        </header>
+        <ul class="op-ab__cards" data-board-drag-target="dropzone" data-column-id="<%= column.id %>">
+          <% cards.each do |wp| %>
+            <li class="op-ab__card" draggable="true"
+                data-board-drag-target="card" data-work-package-id="<%= wp.id %>">
+              <%= link_to card_label(wp), work_package_path(wp), title: card_label(wp) %>
             </li>
           <% end %>
-
-          <% if Array(@cards_by_column[column]).empty? %>
-            <li class="op-action-board--empty" style="color:#999;"><%= t(:"action_boards.no_cards") %></li>
+          <% if cards.empty? %>
+            <li class="op-ab__empty"><%= t(:"action_boards.no_cards") %></li>
           <% end %>
         </ul>
       </section>
