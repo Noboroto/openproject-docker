@@ -1,0 +1,58 @@
+vi:
+  mcp_ce:
+    menu_caption: "MCP Server"
+    title: "MCP Server"
+    intro: >-
+      Kết nối các trình AI (Claude Code, Claude Desktop, Codex, …) tới OpenProject
+      này thông qua máy chủ MCP độc lập. Trang này hiển thị đường dẫn kết nối và
+      cho phép kiểm tra máy chủ có hoạt động hay không.
+    shortcuts_legend: "Lối tắt"
+    shortcut_path: "Đường dẫn kết nối MCP"
+    shortcut_token: "API token"
+    copy: "Sao chép"
+    get_token: "Lấy API token"
+    token_hint: >-
+      Client MCP xác thực bằng API token của OpenProject. Mở Tài khoản của tôi →
+      Access tokens ở tab mới để tạo/sao chép token.
+    client_legend: "Cấu hình client"
+    client_intro: >-
+      Cấu hình sao chép-dán cho các client MCP phổ biến. URL dùng đường dẫn kết nối
+      ở trên; bạn có thể đổi tên server nếu muốn.
+    client:
+      claude_code: "Claude Code (CLI)"
+      vscode: "VS Code (.vscode/mcp.json)"
+      codex: "Codex (~/.codex/config.toml)"
+      json: "JSON mẫu (client tổng quát)"
+    connection_legend: "Kết nối"
+    endpoint_internal: "Endpoint nội bộ (trong stack)"
+    endpoint_internal_hint: >-
+      Dùng từ các container khác trong mạng Docker (ví dụ một dịch vụ khác).
+    endpoint_public: "Endpoint công khai"
+    endpoint_public_unset: "Chưa được mở ra ngoài."
+    endpoint_public_derived: >-
+      Suy ra từ OPENPROJECT_HOST__NAME + /mcp (phục vụ trên cùng tên miền qua proxy).
+      Đặt URL gốc công khai bên dưới để ghi đè.
+    endpoint_public_hint: >-
+      URL mà client MCP bên ngoài kết nối tới. Mặc định là tên miền OpenProject của
+      bạn + /mcp, phục vụ trên cùng host qua proxy (cấu hình proxy chuyển /mcp tới
+      op-mcp:8000). Ghi đè bằng URL gốc công khai bên dưới.
+    health_url: "URL kiểm tra (health)"
+    health_legend: "Kiểm tra tình trạng"
+    run_health_check: "Chạy kiểm tra"
+    settings_legend: "Cấu hình"
+    base_url: "MCP base URL (nội bộ)"
+    base_url_hint: >-
+      URL gốc của dịch vụ op-mcp trong mạng Docker. Mặc định http://op-mcp:8000.
+      Endpoint MCP là <base>/mcp; health là <base>/health.
+    public_url: "URL gốc công khai"
+    public_url_hint: >-
+      URL gốc bên ngoài của máy chủ MCP (ví dụ https://mcp.example.com). Để trống
+      nếu chưa mở ra ngoài. Endpoint MCP công khai sẽ là <public base>/mcp.
+    saved: "Đã lưu cấu hình MCP."
+    health:
+      ok: "Máy chủ MCP đang hoạt động."
+      bad_status: "Máy chủ MCP phản hồi HTTP %{status}."
+      unreachable: "Không kết nối được máy chủ MCP: %{error}"
+      bad_url: "URL gốc đã cấu hình không phải URL http(s) hợp lệ."
+      detail_status: "HTTP %{status}"
+      detail_latency: "%{ms} ms"

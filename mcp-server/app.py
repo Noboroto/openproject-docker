@@ -9,6 +9,8 @@ from __future__ import annotations
 from contextlib import asynccontextmanager
 
 from mcp.server.fastmcp import FastMCP
+from starlette.requests import Request
+from starlette.responses import JSONResponse
 
 from client import OpenProjectClient
 
@@ -46,3 +48,22 @@ mcp = FastMCP(
     stateless_http=True,
     lifespan=lifespan,
 )
+
+
+@mcp.custom_route("/health", methods=["GET"])
+async def health(_request: Request) -> JSONResponse:
+    """Liveness probe for the streamable-http transport.
+
+    Used by the OpenProject MCP-CE plugin admin page (and any orchestrator) to
+    confirm the server is up WITHOUT speaking the MCP handshake. Returns 200 as
+    soon as the process is serving; `mcp` reports whether the upstream client was
+    initialized by the lifespan. The MCP protocol endpoint itself stays at /mcp.
+    """
+    return JSONResponse(
+        {
+            "status": "ok",
+            "server": "openproject-mcp",
+            "mcp_endpoint": "/mcp",
+            "client_initialized": _client is not None,
+        }
+    )

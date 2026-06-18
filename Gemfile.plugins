@@ -33,3 +33,8 @@ gem "openproject-custom_actions",  path: "plugins/openproject-custom-actions"
 gem "openproject-audit_trail",     path: "plugins/openproject-audit-trail"
 # Thin extension — CE already ships attribute help texts; this only adds tooltip CSS.
 gem "openproject-attribute-help-texts", path: "plugins/openproject-attribute-help-texts"
+
+# --- Companion: MCP server guide + health check ------------------------------
+# Admin page that shows the op-mcp connection path and health-checks it.
+# Settings-only (no DB table / no migration).
+gem "openproject-mcp-ce",          path: "plugins/openproject-mcp-ce"

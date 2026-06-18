@@ -1,0 +1,179 @@
+<% html_title t(:"mcp_ce.title") %>
+<%= render Primer::OpenProject::PageHeader.new do |header|
+      header.with_title { t(:"mcp_ce.title") }
+      header.with_breadcrumbs(nil)
+    end %>
+
+<p class="op-toast-zen"><%= t(:"mcp_ce.intro") %></p>
+
+<%# ── Shortcuts ────────────────────────────────────────────────────── %>
+<%# The path clients connect to: public (derived from this domain) if available,
+    otherwise the in-stack endpoint. Copy buttons use Primer's <clipboard-copy>. %>
+<% client_path = @public_endpoint.presence || @mcp_endpoint %>
+<section class="form--section">
+  <fieldset class="form--fieldset">
+    <legend class="form--fieldset-legend"><%= t(:"mcp_ce.shortcuts_legend") %></legend>
+
+    <div class="form--field">
+      <span class="form--label"><%= t(:"mcp_ce.shortcut_path") %></span>
+      <div class="form--field-container">
+        <code id="mcp-client-path"><%= client_path %></code>
+        <clipboard-copy for="mcp-client-path" class="button" aria-label="<%= t(:"mcp_ce.copy") %>">
+          <%= t(:"mcp_ce.copy") %>
+        </clipboard-copy>
+      </div>
+    </div>
+
+    <div class="form--field">
+      <span class="form--label"><%= t(:"mcp_ce.shortcut_token") %></span>
+      <div class="form--field-container">
+        <%= link_to t(:"mcp_ce.get_token"), "/my/access_token",
+                    class: "button -with-icon icon-key", target: "_blank", rel: "noopener" %>
+        <p class="form--field-instructions"><%= t(:"mcp_ce.token_hint") %></p>
+      </div>
+    </div>
+  </fieldset>
+</section>
+
+<%# ── Client setup (copy-ready) ─────────────────────────────────────── %>
+<section class="form--section">
+  <fieldset class="form--fieldset">
+    <legend class="form--fieldset-legend"><%= t(:"mcp_ce.client_legend") %></legend>
+    <p class="form--field-instructions"><%= t(:"mcp_ce.client_intro") %></p>
+
+    <% @snippets.each do |key, code| %>
+      <div class="form--field">
+        <span class="form--label"><%= t(:"mcp_ce.client.#{key}") %></span>
+        <div class="form--field-container">
+          <pre style="max-width:680px;overflow:auto;margin:0 0 4px;"><code id="snippet-<%= key %>"><%= code %></code></pre>
+          <clipboard-copy for="snippet-<%= key %>" class="button" aria-label="<%= t(:"mcp_ce.copy") %>">
+            <%= t(:"mcp_ce.copy") %>
+          </clipboard-copy>
+        </div>
+      </div>
+    <% end %>
+  </fieldset>
+</section>
+
+<%# ── Connection paths ─────────────────────────────────────────────── %>
+<section class="form--section">
+  <fieldset class="form--fieldset">
+    <legend class="form--fieldset-legend"><%= t(:"mcp_ce.connection_legend") %></legend>
+
+    <div class="form--field">
+      <span class="form--label"><%= t(:"mcp_ce.endpoint_internal") %></span>
+      <div class="form--field-container">
+        <code id="mcp-endpoint-internal"><%= @mcp_endpoint %></code>
+        <clipboard-copy for="mcp-endpoint-internal" class="button" aria-label="<%= t(:"mcp_ce.copy") %>">
+          <%= t(:"mcp_ce.copy") %>
+        </clipboard-copy>
+        <p class="form--field-instructions"><%= t(:"mcp_ce.endpoint_internal_hint") %></p>
+      </div>
+    </div>
+
+    <div class="form--field">
+      <span class="form--label"><%= t(:"mcp_ce.endpoint_public") %></span>
+      <div class="form--field-container">
+        <% if @public_endpoint.present? %>
+          <code id="mcp-endpoint-public"><%= @public_endpoint %></code>
+          <clipboard-copy for="mcp-endpoint-public" class="button" aria-label="<%= t(:"mcp_ce.copy") %>">
+            <%= t(:"mcp_ce.copy") %>
+          </clipboard-copy>
+          <% if @public_derived %>
+            <p class="form--field-instructions"><%= t(:"mcp_ce.endpoint_public_derived") %></p>
+          <% end %>
+        <% else %>
+          <em><%= t(:"mcp_ce.endpoint_public_unset") %></em>
+        <% end %>
+        <p class="form--field-instructions"><%= t(:"mcp_ce.endpoint_public_hint") %></p>
+      </div>
+    </div>
+
+    <div class="form--field">
+      <span class="form--label"><%= t(:"mcp_ce.health_url") %></span>
+      <div class="form--field-container">
+        <code><%= @health_url %></code>
+      </div>
+    </div>
+  </fieldset>
+</section>
+
+<%# ── Health check ─────────────────────────────────────────────────── %>
+<section class="form--section">
+  <fieldset class="form--fieldset">
+    <legend class="form--fieldset-legend"><%= t(:"mcp_ce.health_legend") %></legend>
+
+    <% if @health.present? %>
+      <div class="form--field">
+        <div class="form--field-container">
+          <% if @health["ok"] %>
+            <span class="op-status op-status_success">&#10003; <%= @health["message"] %></span>
+          <% else %>
+            <span class="op-status op-status_error">&#10007; <%= @health["message"] %></span>
+          <% end %>
+          <p class="form--field-instructions">
+            <% if @health["status"].present? %>
+              <%= t(:"mcp_ce.health.detail_status", status: @health["status"]) %>
+            <% end %>
+            <% if @health["latency_ms"].present? %>
+              · <%= t(:"mcp_ce.health.detail_latency", ms: @health["latency_ms"]) %>
+            <% end %>
+          </p>
+          <% if @health["body"].present? %>
+            <pre style="max-width:640px;overflow:auto;"><%= @health["body"].is_a?(Hash) || @health["body"].is_a?(Array) ? JSON.pretty_generate(@health["body"]) : @health["body"] %></pre>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <%= styled_form_tag({ controller: "/mcp_ce/admin_settings", action: :health_check },
+                        method: :post) do %>
+      <p>
+        <%= styled_button_tag t(:"mcp_ce.run_health_check"),
+                              class: "-with-icon icon-refresh" %>
+      </p>
+    <% end %>
+  </fieldset>
+</section>
+
+<%# ── Settings ─────────────────────────────────────────────────────── %>
+<%= styled_form_tag({ controller: "/mcp_ce/admin_settings", action: :update },
+                    method: :patch) do %>
+  <section class="form--section">
+    <fieldset class="form--fieldset">
+      <legend class="form--fieldset-legend"><%= t(:"mcp_ce.settings_legend") %></legend>
+
+      <div class="form--field">
+        <label class="form--label" for="settings_mcp_base_url">
+          <%= t(:"mcp_ce.base_url") %>
+        </label>
+        <div class="form--field-container">
+          <%= text_field_tag "settings[mcp_base_url]",
+                             @settings["mcp_base_url"],
+                             id: "settings_mcp_base_url",
+                             class: "form--text-field",
+                             spellcheck: false %>
+          <p class="form--field-instructions"><%= t(:"mcp_ce.base_url_hint") %></p>
+        </div>
+      </div>
+
+      <div class="form--field">
+        <label class="form--label" for="settings_mcp_public_url">
+          <%= t(:"mcp_ce.public_url") %>
+        </label>
+        <div class="form--field-container">
+          <%= text_field_tag "settings[mcp_public_url]",
+                             @settings["mcp_public_url"],
+                             id: "settings_mcp_public_url",
+                             class: "form--text-field",
+                             spellcheck: false %>
+          <p class="form--field-instructions"><%= t(:"mcp_ce.public_url_hint") %></p>
+        </div>
+      </div>
+    </fieldset>
+  </section>
+
+  <p>
+    <%= styled_button_tag t(:button_save), class: "-with-icon icon-checkmark" %>
+  </p>
+<% end %>

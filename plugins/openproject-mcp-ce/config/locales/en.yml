@@ -1,0 +1,58 @@
+en:
+  mcp_ce:
+    menu_caption: "MCP Server"
+    title: "MCP Server"
+    intro: >-
+      Connect AI clients (Claude Code, Claude Desktop, Codex, …) to this
+      OpenProject instance through the standalone MCP server. This page shows the
+      connection path and lets you verify the server is reachable.
+    shortcuts_legend: "Shortcuts"
+    shortcut_path: "MCP connection path"
+    shortcut_token: "API token"
+    copy: "Copy"
+    get_token: "Get API token"
+    token_hint: >-
+      MCP clients authenticate with an OpenProject API token. Opens My account →
+      Access tokens in a new tab to create/copy one.
+    client_legend: "Client setup"
+    client_intro: >-
+      Copy-paste configuration for common MCP clients. The URL uses your connection
+      path above; adjust the server name if you like.
+    client:
+      claude_code: "Claude Code (CLI)"
+      vscode: "VS Code (.vscode/mcp.json)"
+      codex: "Codex (~/.codex/config.toml)"
+      json: "Sample JSON (generic client)"
+    connection_legend: "Connection"
+    endpoint_internal: "In-stack endpoint"
+    endpoint_internal_hint: >-
+      Use this from other containers on the Docker network (e.g. another service).
+    endpoint_public: "Public endpoint"
+    endpoint_public_unset: "Not exposed publicly yet."
+    endpoint_public_derived: >-
+      Derived from OPENPROJECT_HOST__NAME + /mcp (served on the same domain via the
+      proxy). Set a public base URL below to override.
+    endpoint_public_hint: >-
+      The URL external MCP clients connect to. By default it is your OpenProject
+      domain + /mcp, served on the same host through the proxy (configure the proxy
+      to forward /mcp to op-mcp:8000). Override with a public base URL below.
+    health_url: "Health URL"
+    health_legend: "Health check"
+    run_health_check: "Run health check"
+    settings_legend: "Settings"
+    base_url: "MCP base URL (in-stack)"
+    base_url_hint: >-
+      Base URL of the op-mcp service on the Docker network. Default
+      http://op-mcp:8000. The MCP endpoint is <base>/mcp; health is <base>/health.
+    public_url: "Public base URL"
+    public_url_hint: >-
+      External base URL of the MCP server (e.g. https://mcp.example.com). Leave
+      blank if not exposed. The public MCP endpoint becomes <public base>/mcp.
+    saved: "MCP settings have been saved."
+    health:
+      ok: "MCP server is reachable."
+      bad_status: "MCP server responded with HTTP %{status}."
+      unreachable: "MCP server is unreachable: %{error}"
+      bad_url: "The configured base URL is not a valid http(s) URL."
+      detail_status: "HTTP %{status}"
+      detail_latency: "%{ms} ms"

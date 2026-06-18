@@ -18,6 +18,10 @@ and works against any OpenProject (Community or Enterprise).
 Plus MCP **Resources** (`openproject://projects`, `openproject://work_packages/{id}`)
 and **Prompts** (`weekly_time_report`, `sprint_backlog`).
 
+A plain-HTTP **`GET /health`** liveness route (no MCP handshake) returns
+`{"status":"ok", "mcp_endpoint":"/mcp", "client_initialized":true}` — used by the
+`openproject-mcp-ce` plugin's admin health check and any orchestrator probe.
+
 ## Configuration
 
 | Env var | Purpose |
