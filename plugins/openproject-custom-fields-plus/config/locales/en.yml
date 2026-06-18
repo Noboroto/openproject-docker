@@ -1,0 +1,27 @@
+en:
+  custom_fields_plus:
+    admin:
+      title: "Advanced Custom Fields"
+      new_field: "New Advanced Field"
+      edit_field: "Edit Advanced Field"
+      no_fields: "No advanced custom fields defined yet."
+    field:
+      name: "Field name"
+      type: "Field type"
+    field_type:
+      multi_list: "Multi-select list"
+      hierarchy: "Hierarchy (tree)"
+      multi_user: "Multi-user"
+      multi_version: "Multi-version"
+    scope:
+      project: "Restrict to projects (leave blank for all)"
+      group: "Restrict to groups (leave blank for all)"
+      global: "All projects"
+    flash:
+      saved: "Advanced custom field saved."
+      deleted: "Advanced custom field deleted."
+    errors:
+      cycle: "cannot create a cycle in hierarchy"
+  permission_view_advanced_cfs: "View advanced custom fields"
+  permission_manage_advanced_cfs: "Manage advanced custom field values"
+  project_module_custom_fields_plus: "Advanced custom fields"

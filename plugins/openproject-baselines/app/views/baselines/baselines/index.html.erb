@@ -1,0 +1,42 @@
+<% html_title t("baselines.title") %>
+
+<%= render Primer::OpenProject::PageHeader.new do |header|
+      header.with_title { t("baselines.title") }
+      header.with_breadcrumbs(nil)
+    end %>
+
+<% if User.current.allowed_in_project?(:manage_baselines, @project) %>
+  <div style="margin-bottom: 1rem;">
+    <%= link_to t("baselines.new"), new_baseline_path(@project), class: "button -primary" %>
+  </div>
+<% end %>
+
+<% if @baselines.empty? %>
+  <p><%= t("baselines.no_baselines") %></p>
+<% else %>
+  <table class="generic-table">
+    <thead>
+      <tr>
+        <th><%= t("baselines.name_label") %></th>
+        <th><%= t("baselines.captured_at") %></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @baselines.each do |baseline| %>
+        <tr>
+          <td><%= link_to baseline.name, baseline_path(@project, baseline) %></td>
+          <td><%= format_time(baseline.captured_at) %></td>
+          <td>
+            <% if User.current.allowed_in_project?(:manage_baselines, @project) %>
+              <%= link_to t("button_delete"),
+                          baseline_path(@project, baseline),
+                          method: :delete,
+                          data: { confirm: t("text_are_you_sure") } %>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

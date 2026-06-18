@@ -1,0 +1,21 @@
+vi:
+  public_share:
+    title: "Liên kết chia sẻ công khai"
+    create: "Tạo liên kết chia sẻ"
+    revoke: "Thu hồi"
+    expires_at: "Hết hạn lúc"
+    expired: "Đã hết hạn"
+    revoked_label: "Đã thu hồi"
+    active_label: "Đang hoạt động"
+    copy_link: "Sao chép liên kết"
+    no_links: "Chưa có liên kết chia sẻ nào."
+    wp_label: "Công việc"
+    access_count_label: "Lượt xem"
+    status_label: "Trạng thái"
+    public:
+      read_only_notice: "Đây là chế độ xem công khai, chỉ đọc. Đăng nhập để truy cập đầy đủ."
+    flash:
+      created: "Đã tạo liên kết chia sẻ. Sao chép token ngay — sẽ không hiển thị lại: %{token}"
+      revoked: "Đã thu hồi liên kết chia sẻ."
+  permission_manage_public_shares: "Quản lý liên kết chia sẻ công khai"
+  project_module_public_share: "Liên kết chia sẻ công khai"

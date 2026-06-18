@@ -1,0 +1,48 @@
+<% html_title t("pdf_styler.admin.title") %>
+
+<%= render Primer::OpenProject::PageHeader.new do |header|
+      header.with_title { t("pdf_styler.admin.title") }
+      header.with_breadcrumbs(nil)
+    end %>
+
+<div style="margin-bottom: 1rem;">
+  <%= link_to t("button_add"), new_pdf_styler_admin_template_path, class: "button -primary" %>
+</div>
+
+<% if @templates.empty? %>
+  <p><%= t("pdf_styler.no_templates") %></p>
+<% else %>
+  <table class="generic-table">
+    <thead>
+      <tr>
+        <th><%= t("pdf_styler.template.name") %></th>
+        <th><%= t("pdf_styler.template.font") %></th>
+        <th><%= t("pdf_styler.template.accent") %></th>
+        <th><%= t("attributes.active") %></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @templates.each do |tmpl| %>
+        <tr>
+          <td><%= tmpl.name %></td>
+          <td><%= tmpl.font_family %></td>
+          <td>
+            <span style="background:<%= h(tmpl.accent_color) %>;
+                         display:inline-block;width:20px;height:20px;
+                         border-radius:3px;vertical-align:middle;margin-right:4px">
+            </span>
+            <%= h(tmpl.accent_color) %>
+          </td>
+          <td><%= tmpl.active? ? t("general_text_yes") : t("general_text_no") %></td>
+          <td>
+            <%= link_to t("button_edit"), edit_pdf_styler_admin_template_path(tmpl) %>
+            <%= link_to t("button_delete"), pdf_styler_admin_template_path(tmpl),
+                        method: :delete,
+                        data: { confirm: t("text_are_you_sure") } %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

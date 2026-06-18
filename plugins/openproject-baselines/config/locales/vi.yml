@@ -1,0 +1,19 @@
+vi:
+  baselines:
+    title: "Đường cơ sở"
+    new: "Tạo đường cơ sở mới"
+    name_label: "Tên"
+    captured_at: "Thời điểm chụp"
+    no_baselines: "Chưa có đường cơ sở nào."
+    diff:
+      added: "Công việc được thêm"
+      removed: "Công việc bị xóa"
+      changed: "Công việc thay đổi"
+      none: "Không có sự khác biệt so với đường cơ sở này."
+      changes_label: "Thay đổi"
+    flash:
+      created: "Đã tạo đường cơ sở."
+      destroyed: "Đã xóa đường cơ sở."
+  permission_view_baselines: "Xem đường cơ sở"
+  permission_manage_baselines: "Quản lý đường cơ sở"
+  project_module_baselines: "Đường cơ sở"

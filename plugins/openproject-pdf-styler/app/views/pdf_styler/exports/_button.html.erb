@@ -1,0 +1,11 @@
+<%# Injects a "Styled PDF" export button alongside the core export actions.
+    Double-gated: feature flag + project module. %>
+<% if OpenProject::PdfStyler.feature_enabled? && @project&.module_enabled?(:pdf_styler) %>
+  <% if User.current.allowed_in_project?(:export_styled_pdf, @project) %>
+    <%= link_to t("pdf_styler.export.button"),
+                pdf_styler_project_exports_path(@project),
+                method: :post,
+                class: "button",
+                data: { turbo: false } %>
+  <% end %>
+<% end %>

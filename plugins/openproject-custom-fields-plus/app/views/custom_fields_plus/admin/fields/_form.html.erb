@@ -1,0 +1,40 @@
+<%= form_with model: @field,
+             url: @field.new_record? ? custom_fields_plus_admin_fields_path : custom_fields_plus_admin_field_path(@field),
+             method: @field.new_record? ? :post : :patch do |f| %>
+
+  <%= render "components/shared/error_messages", object: @field %>
+
+  <div class="form--field">
+    <%= f.label :name, t("custom_fields_plus.field.name"), class: "form--label" %>
+    <div class="form--field-container">
+      <%= f.text_field :name, class: "form--text-field" %>
+    </div>
+  </div>
+
+  <div class="form--field">
+    <%= f.label :field_type, t("custom_fields_plus.field.type"), class: "form--label" %>
+    <div class="form--field-container">
+      <%= f.select :field_type,
+                   CustomFieldsPlus::AdvancedField.field_types.keys.map { |k|
+                     [t("custom_fields_plus.field_type.#{k}"), k]
+                   },
+                   {},
+                   class: "form--select" %>
+    </div>
+  </div>
+
+  <div class="form--field">
+    <label class="form--label"><%= t("custom_fields_plus.scope.project") %></label>
+    <div class="form--field-container">
+      <%= f.select :scope_project_ids,
+                   Project.active.order(:name).map { |p| [p.name, p.id] },
+                   { include_blank: t("custom_fields_plus.scope.global") },
+                   { multiple: true, class: "form--select" } %>
+    </div>
+  </div>
+
+  <div class="form--actions">
+    <%= f.submit t("button_save"), class: "button -highlight" %>
+    <%= link_to t("button_cancel"), custom_fields_plus_admin_fields_path, class: "button" %>
+  </div>
+<% end %>

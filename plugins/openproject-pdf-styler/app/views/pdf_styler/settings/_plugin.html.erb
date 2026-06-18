@@ -1,0 +1,11 @@
+<div class="form--field">
+  <label class="form--label" for="settings_enabled">
+    <%= hidden_field_tag "settings[enabled]", "false", id: nil %>
+    <%= check_box_tag "settings[enabled]", "true", settings["enabled"].to_s == "true", id: "settings_enabled" %>
+    Enable Styled PDF Export
+  </label>
+  <p class="form--field-instructions">
+    When enabled, adds an admin-managed PDF export template system alongside the core export.
+    Runs with pure-Ruby Prawn (no binary system dependencies).
+  </p>
+</div>

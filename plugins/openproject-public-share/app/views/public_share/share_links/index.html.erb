@@ -1,0 +1,63 @@
+<% html_title t("public_share.title") %>
+
+<%= render Primer::OpenProject::PageHeader.new do |header|
+      header.with_title { t("public_share.title") }
+      header.with_breadcrumbs(nil)
+    end %>
+
+<p class="public-share-notice"><%= t("public_share.public.read_only_notice") %></p>
+
+<% if @links.empty? %>
+  <p><%= t("public_share.no_links") %></p>
+<% else %>
+  <table class="generic-table">
+    <thead>
+      <tr>
+        <th><%= t("public_share.wp_label") %></th>
+        <th><%= t("public_share.expires_at") %></th>
+        <th><%= t("public_share.access_count_label") %></th>
+        <th><%= t("public_share.status_label") %></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @links.each do |link| %>
+        <tr>
+          <td>
+            <% if link.work_package %>
+              #<%= link.work_package_id %> <%= link.work_package.subject %>
+            <% end %>
+          </td>
+          <td>
+            <% if link.expires_at %>
+              <%= format_date(link.expires_at) %>
+              <% if link.expires_at.past? %>
+                <span class="badge -destructive"><%= t("public_share.expired") %></span>
+              <% end %>
+            <% else %>
+              —
+            <% end %>
+          </td>
+          <td><%= link.access_count %></td>
+          <td>
+            <% if link.revoked_at %>
+              <span class="badge -destructive"><%= t("public_share.revoked_label") %></span>
+            <% elsif link.active? %>
+              <span class="badge -success"><%= t("public_share.active_label") %></span>
+            <% else %>
+              <span class="badge"><%= t("public_share.expired") %></span>
+            <% end %>
+          </td>
+          <td>
+            <% if link.active? %>
+              <%= link_to t("public_share.revoke"),
+                          share_link_path(@project, link),
+                          method: :delete,
+                          data: { confirm: t("text_are_you_sure") } %>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

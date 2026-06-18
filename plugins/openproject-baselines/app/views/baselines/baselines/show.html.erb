@@ -1,0 +1,65 @@
+<% html_title @baseline.name %>
+
+<%= render Primer::OpenProject::PageHeader.new do |header|
+      header.with_title { @baseline.name }
+      header.with_breadcrumbs(nil)
+    end %>
+
+<p>
+  <%= link_to t("baselines.title"), baselines_path(@project) %> &rsaquo; <%= @baseline.name %>
+</p>
+
+<p class="baseline-captured-at">
+  <%= t("baselines.captured_at") %>: <strong><%= format_time(@baseline.captured_at) %></strong>
+</p>
+
+<div class="baseline-diff">
+  <% if @diff[:added].empty? && @diff[:removed].empty? && @diff[:changed].empty? %>
+    <p><%= t("baselines.diff.none") %></p>
+  <% else %>
+    <% if @diff[:added].any? %>
+      <h3><%= t("baselines.diff.added") %> (<%= @diff[:added].count %>)</h3>
+      <ul>
+        <% @diff[:added].each do |wp_id| %>
+          <li>#<%= wp_id %></li>
+        <% end %>
+      </ul>
+    <% end %>
+
+    <% if @diff[:removed].any? %>
+      <h3><%= t("baselines.diff.removed") %> (<%= @diff[:removed].count %>)</h3>
+      <ul>
+        <% @diff[:removed].each do |wp_id| %>
+          <li>#<%= wp_id %></li>
+        <% end %>
+      </ul>
+    <% end %>
+
+    <% if @diff[:changed].any? %>
+      <h3><%= t("baselines.diff.changed") %> (<%= @diff[:changed].count %>)</h3>
+      <table class="generic-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th><%= t("baselines.diff.changes_label") %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @diff[:changed].each do |entry| %>
+            <tr>
+              <td>#<%= entry[:id] %></td>
+              <td>
+                <% entry[:changes].each do |attr, old_val| %>
+                  <div>
+                    <strong><%= attr %>:</strong>
+                    <%= old_val %> → <%= WorkPackage.find_by(id: entry[:id])&.read_attribute(attr) %>
+                  </div>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% end %>
+  <% end %>
+</div>

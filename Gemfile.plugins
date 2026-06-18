@@ -34,6 +34,16 @@ gem "openproject-audit_trail",     path: "plugins/openproject-audit-trail"
 # Thin extension — CE already ships attribute help texts; this only adds tooltip CSS.
 gem "openproject-attribute-help-texts", path: "plugins/openproject-attribute-help-texts"
 
+# --- Tier 3 plugins (feature-flagged OFF by default) -------------------------
+# Advanced CF types (multi-select, hierarchy, multi-user, multi-version).
+gem "openproject-custom_fields_plus", path: "plugins/openproject-custom-fields-plus"
+# Point-in-time project snapshots + diff against core journals (read-only).
+gem "openproject-baselines",          path: "plugins/openproject-baselines"
+# Tokenized public read-only links (unauthenticated path, security-sensitive).
+gem "openproject-public_share",       path: "plugins/openproject-public-share"
+# Styled PDF export templates (Prawn-based; SSTI-safe admin HTML sanitization).
+gem "openproject-pdf_styler",         path: "plugins/openproject-pdf-styler"
+
 # --- Companion: MCP server guide + health check ------------------------------
 # Admin page that shows the op-mcp connection path and health-checks it.
 # Settings-only (no DB table / no migration).

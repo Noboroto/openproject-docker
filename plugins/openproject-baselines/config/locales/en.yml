@@ -1,0 +1,19 @@
+en:
+  baselines:
+    title: "Baselines"
+    new: "New Baseline"
+    name_label: "Name"
+    captured_at: "Captured at"
+    no_baselines: "No baselines created yet."
+    diff:
+      added: "Added work packages"
+      removed: "Removed work packages"
+      changed: "Changed work packages"
+      none: "No differences found compared to this baseline."
+      changes_label: "Changes"
+    flash:
+      created: "Baseline created."
+      destroyed: "Baseline deleted."
+  permission_view_baselines: "View baselines"
+  permission_manage_baselines: "Manage baselines"
+  project_module_baselines: "Baselines"

@@ -1,0 +1,34 @@
+<%# Double-gated: flag + project module. Returns empty if either is off. %>
+<% if OpenProject::CustomFieldsPlus::FormHook.gate(@project) %>
+  <%
+    fields = CustomFieldsPlus::AdvancedField.all.select { |f|
+      CustomFieldsPlus::ScopeResolver.new(f, User.current, @project).visible?
+    }
+  %>
+  <% if fields.any? %>
+    <div class="cfp-advanced-fields attributes-group">
+      <div class="attributes-group--header">
+        <div class="attributes-group--header-container">
+          <h3 class="attributes-group--header-text">
+            <%= t("custom_fields_plus.admin.title") %>
+          </h3>
+        </div>
+      </div>
+      <% fields.each do |field| %>
+        <% value = CustomFieldsPlus::FieldValue.find_by(advanced_field: field, work_package: @work_package) %>
+        <div class="attribute-group--content cfp-field" data-field-id="<%= field.id %>">
+          <dt class="attributes-key-value--key"><%= field.name %></dt>
+          <dd class="attributes-key-value--value">
+            <% if value&.value_ids.present? %>
+              <%= value.value_ids.map { |id|
+                CustomFieldsPlus::FieldOption.find_by(id: id)&.label
+              }.compact.join(", ") %>
+            <% else %>
+              <span class="cfp-no-value">—</span>
+            <% end %>
+          </dd>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+<% end %>

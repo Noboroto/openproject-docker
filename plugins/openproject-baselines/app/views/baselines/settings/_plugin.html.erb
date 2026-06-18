@@ -1,0 +1,11 @@
+<div class="form--field">
+  <label class="form--label" for="settings_enabled">
+    <%= hidden_field_tag "settings[enabled]", "false", id: nil %>
+    <%= check_box_tag "settings[enabled]", "true", settings["enabled"].to_s == "true", id: "settings_enabled" %>
+    Enable Project Baselines
+  </label>
+  <p class="form--field-instructions">
+    When enabled, allows capturing point-in-time snapshots of work packages and diffing them against the current state.
+    Reads core journal tables read-only — never modifies them.
+  </p>
+</div>

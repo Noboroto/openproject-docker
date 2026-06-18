@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title><%= t("public_share.title") %></title>
+    <meta name="robots" content="noindex, nofollow">
+    <style>
+      body { font-family: sans-serif; max-width: 800px; margin: 2rem auto; padding: 0 1rem; color: #333; }
+      h1   { font-size: 1.5rem; }
+      dl   { display: grid; grid-template-columns: max-content 1fr; gap: 0.5rem 1rem; }
+      dt   { font-weight: bold; }
+      .public-share-badge { color: #666; font-size: 0.875rem; border: 1px solid #ccc; padding: 0.25rem 0.5rem; display: inline-block; border-radius: 4px; }
+    </style>
+  </head>
+  <body>
+    <%= yield %>
+  </body>
+</html>

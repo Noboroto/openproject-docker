@@ -1,0 +1,26 @@
+<% html_title t("baselines.new") %>
+
+<h2><%= t("baselines.new") %></h2>
+
+<%= form_with model: [@project, @baseline], url: project_baselines_path(@project) do |f| %>
+  <%= render "components/shared/error_messages", object: @baseline %>
+
+  <div class="form--field">
+    <%= f.label :name, t("baselines.name_label"), class: "form--label" %>
+    <div class="form--field-container">
+      <%= f.text_field :name, class: "form--text-field" %>
+    </div>
+  </div>
+
+  <div class="form--field">
+    <%= f.label :captured_at, t("baselines.captured_at"), class: "form--label" %>
+    <div class="form--field-container">
+      <%= f.datetime_local_field :captured_at, class: "form--text-field" %>
+    </div>
+  </div>
+
+  <div class="form--actions">
+    <%= f.submit t("button_create"), class: "button -highlight" %>
+    <%= link_to t("button_cancel"), project_baselines_path(@project), class: "button" %>
+  </div>
+<% end %>

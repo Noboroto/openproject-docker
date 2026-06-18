@@ -1,0 +1,27 @@
+vi:
+  custom_fields_plus:
+    admin:
+      title: "Trường tùy chỉnh nâng cao"
+      new_field: "Tạo trường tùy chỉnh mới"
+      edit_field: "Chỉnh sửa trường tùy chỉnh"
+      no_fields: "Chưa có trường tùy chỉnh nâng cao nào."
+    field:
+      name: "Tên trường"
+      type: "Loại trường"
+    field_type:
+      multi_list: "Danh sách đa chọn"
+      hierarchy: "Phân cấp (cây)"
+      multi_user: "Đa người dùng"
+      multi_version: "Đa phiên bản"
+    scope:
+      project: "Giới hạn theo dự án (để trống = tất cả)"
+      group: "Giới hạn theo nhóm (để trống = tất cả)"
+      global: "Tất cả dự án"
+    flash:
+      saved: "Đã lưu trường tùy chỉnh nâng cao."
+      deleted: "Đã xóa trường tùy chỉnh nâng cao."
+    errors:
+      cycle: "không thể tạo vòng lặp trong phân cấp"
+  permission_view_advanced_cfs: "Xem trường tùy chỉnh nâng cao"
+  permission_manage_advanced_cfs: "Quản lý giá trị trường tùy chỉnh nâng cao"
+  project_module_custom_fields_plus: "Trường tùy chỉnh nâng cao"

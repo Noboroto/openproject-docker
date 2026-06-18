@@ -1,0 +1,65 @@
+<%= form_with model: @template,
+             url: @template.new_record? ? pdf_styler_admin_templates_path : pdf_styler_admin_template_path(@template),
+             method: @template.new_record? ? :post : :patch do |f| %>
+
+  <%= render "components/shared/error_messages", object: @template %>
+
+  <div class="form--field">
+    <%= f.label :name, t("pdf_styler.template.name"), class: "form--label" %>
+    <div class="form--field-container">
+      <%= f.text_field :name, class: "form--text-field" %>
+    </div>
+  </div>
+
+  <div class="form--field">
+    <%= f.label :font_family, t("pdf_styler.template.font"), class: "form--label" %>
+    <div class="form--field-container">
+      <%= f.select :font_family,
+                   PdfStyler::ExportTemplate::ALLOWED_FONT_FAMILIES,
+                   {},
+                   class: "form--select" %>
+    </div>
+  </div>
+
+  <div class="form--field">
+    <%= f.label :accent_color, t("pdf_styler.template.accent"), class: "form--label" %>
+    <div class="form--field-container">
+      <%= f.color_field :accent_color, class: "form--text-field" %>
+    </div>
+  </div>
+
+  <div class="form--field">
+    <%= f.label :cover_html, t("pdf_styler.template.cover"), class: "form--label" %>
+    <div class="form--field-container">
+      <%= f.text_area :cover_html, rows: 6, class: "form--text-area",
+                      placeholder: "<h1>Cover title</h1><p>Sub-text</p>" %>
+    </div>
+    <p class="form--field-instructions"><%= t("pdf_styler.template.html_note") %></p>
+  </div>
+
+  <div class="form--field">
+    <%= f.label :header_html, t("pdf_styler.template.header"), class: "form--label" %>
+    <div class="form--field-container">
+      <%= f.text_area :header_html, rows: 4, class: "form--text-area" %>
+    </div>
+  </div>
+
+  <div class="form--field">
+    <%= f.label :footer_html, t("pdf_styler.template.footer"), class: "form--label" %>
+    <div class="form--field-container">
+      <%= f.text_area :footer_html, rows: 4, class: "form--text-area" %>
+    </div>
+  </div>
+
+  <div class="form--field">
+    <div class="form--field-container">
+      <%= f.check_box :active %>
+      <%= f.label :active, t("attributes.active") %>
+    </div>
+  </div>
+
+  <div class="form--actions">
+    <%= f.submit t("button_save"), class: "button -highlight" %>
+    <%= link_to t("button_cancel"), pdf_styler_admin_templates_path, class: "button" %>
+  </div>
+<% end %>

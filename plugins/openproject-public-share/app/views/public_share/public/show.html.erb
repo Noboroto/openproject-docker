@@ -1,0 +1,22 @@
+<%# Minimal public view — no authentication, no OP nav, no sensitive data. %>
+
+<div class="public-share-container">
+  <div class="public-share-header">
+    <h1><%= @data[:subject] %></h1>
+    <p class="public-share-badge"><%= t("public_share.public.read_only_notice") %></p>
+  </div>
+
+  <dl class="public-share-attributes">
+    <dt><%= t("attributes.status") %></dt>
+    <dd><%= @data[:status] %></dd>
+
+    <dt><%= t("attributes.type") %></dt>
+    <dd><%= @data[:type] %></dd>
+
+    <dt><%= t("attributes.done_ratio") %></dt>
+    <dd><%= @data[:done_ratio] %>%</dd>
+
+    <dt><%= t("attributes.updated_at") %></dt>
+    <dd><%= @data[:updated_at] %></dd>
+  </dl>
+</div>

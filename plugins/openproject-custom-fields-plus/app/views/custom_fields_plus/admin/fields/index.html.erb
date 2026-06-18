@@ -1,0 +1,43 @@
+<% html_title t("custom_fields_plus.admin.title") %>
+
+<%= render Primer::OpenProject::PageHeader.new do |header|
+      header.with_title { t("custom_fields_plus.admin.title") }
+      header.with_breadcrumbs(nil)
+    end %>
+
+<% if @fields.empty? %>
+  <p class="form--field-instructions"><%= t("custom_fields_plus.admin.no_fields") %></p>
+<% else %>
+  <div class="generic-table--container">
+    <table class="generic-table">
+      <thead>
+        <tr>
+          <th><%= t("custom_fields_plus.field.name") %></th>
+          <th><%= t("custom_fields_plus.field.type") %></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @fields.each do |field| %>
+          <tr>
+            <td><%= field.name %></td>
+            <td><%= t("custom_fields_plus.field_type.#{field.field_type}") %></td>
+            <td>
+              <%= link_to t("button_edit"), edit_custom_fields_plus_admin_field_path(field), class: "button -small" %>
+              <%= link_to t("button_delete"), custom_fields_plus_admin_field_path(field),
+                          method: :delete,
+                          data: { confirm: t("text_are_you_sure") },
+                          class: "button -small -danger" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% end %>
+
+<div style="margin-top: 1rem;">
+  <%= link_to t("custom_fields_plus.admin.new_field"),
+              new_custom_fields_plus_admin_field_path,
+              class: "button -primary" %>
+</div>

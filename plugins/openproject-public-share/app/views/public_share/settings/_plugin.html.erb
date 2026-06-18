@@ -1,0 +1,21 @@
+<div class="form--field">
+  <label class="form--label" for="settings_enabled">
+    <%= hidden_field_tag "settings[enabled]", "false", id: nil %>
+    <%= check_box_tag "settings[enabled]", "true", settings["enabled"].to_s == "true", id: "settings_enabled" %>
+    Enable Public Share Links
+  </label>
+  <p class="form--field-instructions">
+    When enabled, allows generating tokenized public read-only links for work packages.
+    Only the SHA-256 digest of each token is stored. Supports expiry, revocation, and a global kill-switch.
+  </p>
+</div>
+<div class="form--field">
+  <label class="form--label" for="settings_kill_switch">
+    <%= hidden_field_tag "settings[kill_switch]", "false", id: nil %>
+    <%= check_box_tag "settings[kill_switch]", "true", settings["kill_switch"].to_s == "true", id: "settings_kill_switch" %>
+    Kill switch (disable all active share links immediately)
+  </label>
+  <p class="form--field-instructions">
+    When checked, all public share links return 404 immediately without revoking them in the database.
+  </p>
+</div>

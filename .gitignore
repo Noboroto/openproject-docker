@@ -7,3 +7,7 @@ docker-compose.override.yml
 kanban-board*.png
 backups/
 /plans
+
+# Local Docker volumes — never commit DB data
+/lib/
+/openproject/

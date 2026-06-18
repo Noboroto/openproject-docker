@@ -1,0 +1,21 @@
+en:
+  public_share:
+    title: "Public Share Links"
+    create: "Create share link"
+    revoke: "Revoke"
+    expires_at: "Expires at"
+    expired: "Expired"
+    revoked_label: "Revoked"
+    active_label: "Active"
+    copy_link: "Copy link"
+    no_links: "No share links created yet."
+    wp_label: "Work Package"
+    access_count_label: "Views"
+    status_label: "Status"
+    public:
+      read_only_notice: "This is a read-only public view. Sign in for full access."
+    flash:
+      created: "Share link created. Copy the token now — it will not be shown again: %{token}"
+      revoked: "Share link revoked."
+  permission_manage_public_shares: "Manage public share links"
+  project_module_public_share: "Public share links"

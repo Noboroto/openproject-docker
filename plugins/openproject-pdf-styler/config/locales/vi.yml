@@ -1,0 +1,22 @@
+vi:
+  pdf_styler:
+    admin:
+      title: "Mẫu xuất PDF"
+      new_template: "Tạo mẫu PDF mới"
+      edit_template: "Chỉnh sửa mẫu PDF"
+    no_templates: "Chưa có mẫu xuất PDF nào."
+    template:
+      name: "Tên mẫu"
+      header: "HTML đầu trang"
+      footer: "HTML cuối trang"
+      cover: "HTML trang bìa"
+      font: "Phông chữ"
+      accent: "Màu nhấn"
+      html_note: "Thẻ cho phép: h1–h3, p, span, div, br, strong, em, ul, ol, li, table, tr, td, th. Script và trình xử lý sự kiện bị loại bỏ. Ảnh: chỉ https và data URI."
+    export:
+      button: "Xuất PDF có định dạng"
+    flash:
+      saved: "Đã lưu mẫu PDF."
+      deleted: "Đã xóa mẫu PDF."
+  permission_export_styled_pdf: "Xuất PDF có định dạng"
+  project_module_pdf_styler: "Xuất PDF có định dạng"

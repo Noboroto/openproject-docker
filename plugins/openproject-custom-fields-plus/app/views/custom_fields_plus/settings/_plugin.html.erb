@@ -1,0 +1,11 @@
+<div class="form--field">
+  <label class="form--label" for="settings_enabled">
+    <%= hidden_field_tag "settings[enabled]", "false", id: nil %>
+    <%= check_box_tag "settings[enabled]", "true", settings["enabled"].to_s == "true", id: "settings_enabled" %>
+    Enable Advanced Custom Field Types
+  </label>
+  <p class="form--field-instructions">
+    When enabled, adds multi-select list, hierarchy, multi-user, and multi-version custom field types.
+    When disabled, no additional fields are rendered and no data is changed.
+  </p>
+</div>

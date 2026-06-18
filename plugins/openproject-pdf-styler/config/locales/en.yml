@@ -1,0 +1,22 @@
+en:
+  pdf_styler:
+    admin:
+      title: "PDF Export Templates"
+      new_template: "New PDF Template"
+      edit_template: "Edit PDF Template"
+    no_templates: "No PDF export templates defined yet."
+    template:
+      name: "Template name"
+      header: "Header HTML"
+      footer: "Footer HTML"
+      cover: "Cover HTML"
+      font: "Font family"
+      accent: "Accent color"
+      html_note: "Allowed tags: h1–h3, p, span, div, br, strong, em, ul, ol, li, table, tr, td, th. Scripts and event handlers are removed. Images: https and data URIs only."
+    export:
+      button: "Styled PDF Export"
+    flash:
+      saved: "PDF template saved."
+      deleted: "PDF template deleted."
+  permission_export_styled_pdf: "Export styled PDF"
+  project_module_pdf_styler: "PDF styled export"
