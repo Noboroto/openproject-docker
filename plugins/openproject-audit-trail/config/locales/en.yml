@@ -1,0 +1,38 @@
+en:
+  audit_trail:
+    menu_caption: "Audit trail"
+    title: "Audit trail / security logging"
+    intro: >-
+      An append-only, immutable record of security-relevant events: membership and
+      role changes, project deletion, account activation, and login events. Events
+      are recorded automatically and cannot be edited. Secrets (passwords, tokens)
+      are never stored.
+    no_events: "No audit events match the current filters."
+    system_actor: "System"
+    fields:
+      actor: "Actor"
+      event: "Event"
+      target: "Target"
+      occurred_at: "When"
+      ip_address: "IP address"
+      changes: "Changes"
+    filters:
+      legend: "Filters"
+      event: "Event"
+      all_events: "All events"
+      from: "From"
+      to: "To"
+      apply: "Apply filters"
+    actions:
+      export_csv: "Export CSV"
+    pagination:
+      previous: "Previous"
+      next: "Next"
+    events:
+      member.created: "Member added"
+      member.updated: "Member updated"
+      member.destroyed: "Member removed"
+      project.deleted: "Project deleted"
+      user.activated: "User activated"
+      user.logged_in: "User logged in"
+      user.logged_out: "User logged out"

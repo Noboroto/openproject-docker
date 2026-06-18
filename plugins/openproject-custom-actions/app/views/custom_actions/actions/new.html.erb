@@ -1,0 +1,9 @@
+<% html_title t(:"custom_actions.new") %>
+<%= render Primer::OpenProject::PageHeader.new do |header|
+      header.with_title { t(:"custom_actions.new") }
+    end %>
+
+<%= render "form",
+           action: @action,
+           form_url: custom_actions_actions_path,
+           form_method: :post %>

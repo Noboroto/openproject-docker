@@ -1,0 +1,33 @@
+<% html_title t(:"email_digests.admin_title") %>
+<%= render Primer::OpenProject::PageHeader.new do |header|
+      header.with_title { t(:"email_digests.admin_title") }
+    end %>
+
+<p class="form--field-instructions"><%= t(:"email_digests.admin_intro") %></p>
+
+<%= styled_form_tag({ controller: "/email_digests/admin_settings", action: :update },
+                    method: :patch) do %>
+  <section class="form--section">
+    <fieldset class="form--fieldset">
+      <legend class="form--fieldset-legend"><%= t(:"email_digests.admin_title") %></legend>
+
+      <div class="form--field">
+        <label class="form--label" for="settings_digest_send_hour">
+          <%= t(:"email_digests.digest_send_hour") %>
+        </label>
+        <div class="form--field-container">
+          <%= number_field_tag "settings[digest_send_hour]",
+                               @settings["digest_send_hour"],
+                               id: "settings_digest_send_hour",
+                               min: 0, max: 23,
+                               class: "form--text-field -tiny" %>
+          <p class="form--field-instructions"><%= t(:"email_digests.digest_send_hour_hint") %></p>
+        </div>
+      </div>
+    </fieldset>
+  </section>
+
+  <p>
+    <%= styled_button_tag t(:button_save), class: "-with-icon icon-checkmark" %>
+  </p>
+<% end %>

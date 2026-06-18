@@ -1,0 +1,105 @@
+<% html_title t(:"audit_trail.title") %>
+<%= render Primer::OpenProject::PageHeader.new do |header|
+      header.with_title { t(:"audit_trail.title") }
+    end %>
+
+<p class="form--field-instructions">
+  <%= t(:"audit_trail.intro") %>
+</p>
+
+<%= form_tag({ controller: "/audit_trail/audit_events", action: :index },
+             method: :get, class: "form -horizontal") do %>
+  <fieldset class="form--fieldset">
+    <legend class="form--fieldset-legend"><%= t(:"audit_trail.filters.legend") %></legend>
+
+    <div class="form--field">
+      <label class="form--label" for="event"><%= t(:"audit_trail.filters.event") %></label>
+      <div class="form--field-container">
+        <%= select_tag :event,
+                       options_for_select(
+                         [[t(:"audit_trail.filters.all_events"), ""]] +
+                           @event_names.map { |e| [t("audit_trail.events.#{e}", default: e), e] },
+                         params[:event]
+                       ),
+                       class: "form--select" %>
+      </div>
+    </div>
+
+    <div class="form--field">
+      <label class="form--label" for="from"><%= t(:"audit_trail.filters.from") %></label>
+      <div class="form--field-container">
+        <%= text_field_tag :from, params[:from], class: "form--text-field", placeholder: "YYYY-MM-DD" %>
+      </div>
+    </div>
+
+    <div class="form--field">
+      <label class="form--label" for="to"><%= t(:"audit_trail.filters.to") %></label>
+      <div class="form--field-container">
+        <%= text_field_tag :to, params[:to], class: "form--text-field", placeholder: "YYYY-MM-DD" %>
+      </div>
+    </div>
+
+    <div class="form--field">
+      <%= submit_tag t(:"audit_trail.filters.apply"), class: "button -highlight" %>
+      <%= link_to t(:"audit_trail.actions.export_csv"),
+                  url_for(params.permit(:event, :from, :to).merge(format: :csv)),
+                  class: "button" %>
+    </div>
+  </fieldset>
+<% end %>
+
+<div class="generic-table--container">
+  <table class="generic-table">
+    <thead>
+      <tr>
+        <th><%= t(:"audit_trail.fields.occurred_at") %></th>
+        <th><%= t(:"audit_trail.fields.event") %></th>
+        <th><%= t(:"audit_trail.fields.actor") %></th>
+        <th><%= t(:"audit_trail.fields.target") %></th>
+        <th><%= t(:"audit_trail.fields.ip_address") %></th>
+        <th><%= t(:"audit_trail.fields.changes") %></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if @events.empty? %>
+        <tr><td colspan="6"><%= t(:"audit_trail.no_events") %></td></tr>
+      <% else %>
+        <% @events.each do |event| %>
+          <tr>
+            <td><%= event.occurred_at&.localtime&.strftime("%Y-%m-%d %H:%M:%S") %></td>
+            <td><%= t("audit_trail.events.#{event.event}", default: event.event) %></td>
+            <td>
+              <% if event.actor_id %>
+                <%= h(event.actor&.name || "##{event.actor_id}") %>
+              <% else %>
+                <em><%= t(:"audit_trail.system_actor") %></em>
+              <% end %>
+            </td>
+            <td>
+              <% if event.target_type %>
+                <%= h("#{event.target_type} ##{event.target_id}") %>
+              <% end %>
+            </td>
+            <td><%= h(event.ip_address) %></td>
+            <td><code><%= h(event.changes.to_json) %></code></td>
+          </tr>
+        <% end %>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<%# Pagination — OP bundles Kaminari-style helpers; degrade gracefully if absent. %>
+<% if @events.respond_to?(:total_pages) && @events.total_pages > 1 %>
+  <div class="pagination">
+    <% if @events.respond_to?(:prev_page) && @events.prev_page %>
+      <%= link_to t(:"audit_trail.pagination.previous"),
+                  url_for(params.permit(:event, :from, :to).merge(page: @events.prev_page)) %>
+    <% end %>
+    <span><%= @events.current_page %> / <%= @events.total_pages %></span>
+    <% if @events.respond_to?(:next_page) && @events.next_page %>
+      <%= link_to t(:"audit_trail.pagination.next"),
+                  url_for(params.permit(:event, :from, :to).merge(page: @events.next_page)) %>
+    <% end %>
+  </div>
+<% end %>

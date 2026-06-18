@@ -1,0 +1,36 @@
+vi:
+  project_module_custom_actions: "Hành động tùy chỉnh"
+  permission_execute_custom_actions: "Áp dụng hành động tùy chỉnh cho gói công việc"
+  custom_actions:
+    menu_caption: "Hành động tùy chỉnh"
+    title: "Hành động tùy chỉnh cho gói công việc"
+    new: "Hành động tùy chỉnh mới"
+    edit: "Sửa hành động tùy chỉnh"
+    delete: "Xóa"
+    save: "Lưu"
+    cancel: "Hủy"
+    delete_confirm: "Xóa hành động tùy chỉnh này? Các gói công việc không bị ảnh hưởng."
+    empty: "Chưa có hành động tùy chỉnh nào. Hãy tạo một hành động để bắt đầu."
+    fields:
+      name: "Tên"
+      position: "Vị trí"
+      conditions: "Điều kiện (khi nào áp dụng)"
+      changes: "Thay đổi (áp dụng những gì)"
+      condition_status_id: "Chỉ khi ID trạng thái là"
+      condition_type_ids: "Chỉ cho các ID loại (phân tách bằng dấu phẩy)"
+      change_status_id: "Đặt ID trạng thái thành"
+      change_assigned_to_id: "Đặt người phụ trách (ID người dùng)"
+      change_priority_id: "Đặt ID độ ưu tiên thành"
+    hints:
+      conditions: "Để trống một trường để bỏ qua điều kiện đó. Tất cả điều kiện đã đặt phải khớp."
+      changes: "Cần ít nhất một thay đổi. Mỗi thay đổi được áp dụng qua dịch vụ cập nhật lõi, nên quy trình và quyền hạn vẫn được áp dụng."
+    flash:
+      created: "Đã tạo hành động tùy chỉnh."
+      updated: "Đã cập nhật hành động tùy chỉnh."
+      deleted: "Đã xóa hành động tùy chỉnh."
+      applied: "Đã áp dụng hành động tùy chỉnh."
+    errors:
+      not_applicable: "Hành động tùy chỉnh này không áp dụng cho gói công việc này."
+      apply_failed: "Không thể áp dụng hành động tùy chỉnh."
+      no_changes: "phải định nghĩa ít nhất một thay đổi"
+      illegal_change_keys: "chứa các thay đổi không được phép: %{keys}"

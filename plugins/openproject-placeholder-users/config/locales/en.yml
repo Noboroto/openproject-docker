@@ -1,0 +1,30 @@
+en:
+  placeholder_users:
+    menu: "Placeholder users"
+    title: "Placeholder users"
+    empty: "No placeholder users yet."
+    fields:
+      name: "Name"
+      login: "Login"
+      mail: "Email"
+      actions: "Actions"
+    actions:
+      create: "Add placeholder user"
+      edit: "Edit"
+      delete: "Delete"
+      convert: "Promote to real user"
+      save: "Save"
+      cancel: "Cancel"
+    confirm:
+      delete: "Delete this placeholder user?"
+    hint:
+      no_login: "Placeholder users cannot log in and have no email. Use them as work package assignees or for resource planning before a real account exists."
+      convert: "Promoting keeps the same id, so all existing work package assignments transfer automatically. The new account is created in 'invited' status."
+    flash:
+      created: "Placeholder user created."
+      updated: "Placeholder user updated."
+      deleted: "Placeholder user deleted."
+      converted: "Placeholder user promoted to a real user."
+    errors:
+      login_required: "A login is required to promote a placeholder user."
+      login_taken: "That login is already taken."

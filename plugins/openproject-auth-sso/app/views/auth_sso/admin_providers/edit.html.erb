@@ -1,6 +1,7 @@
 <% html_title t(:"auth_sso.edit_provider") %>
-
-<h2><%= t(:"auth_sso.edit_provider") %>: <%= @provider.name %></h2>
+<%= render Primer::OpenProject::PageHeader.new do |header|
+      header.with_title { "#{t(:'auth_sso.edit_provider')}: #{@provider.name}" }
+    end %>
 
 <%= render "form",
            form_url: auth_sso_sso_provider_path(@provider),

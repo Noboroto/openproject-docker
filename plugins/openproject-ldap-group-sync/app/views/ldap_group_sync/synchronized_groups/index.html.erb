@@ -1,0 +1,71 @@
+<% html_title t(:"ldap_group_sync.title") %>
+
+<%= render Primer::OpenProject::PageHeader.new do |header|
+      header.with_title { t(:"ldap_group_sync.title") }
+    end %>
+
+<p class="form--field-instructions"><%= t(:"ldap_group_sync.intro") %></p>
+
+<p>
+  <%= link_to t(:"ldap_group_sync.actions.new_mapping"),
+              { action: :new },
+              class: "button -with-icon icon-add" %>
+  <%= button_to t(:"ldap_group_sync.actions.sync_all"),
+                { action: :sync_all },
+                method: :post,
+                class: "button -with-icon icon-refresh" %>
+</p>
+
+<table class="generic-table">
+  <thead>
+    <tr>
+      <th><%= t(:"ldap_group_sync.synchronized_group.dn") %></th>
+      <th><%= t(:"ldap_group_sync.synchronized_group.group") %></th>
+      <th><%= t(:"ldap_group_sync.synchronized_group.sync_users") %></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @mappings.each do |mapping| %>
+      <tr>
+        <td><%= mapping.dn %></td>
+        <td><%= mapping.group&.name %></td>
+        <td><%= mapping.sync_users ? t(:general_text_Yes) : t(:general_text_No) %></td>
+        <td>
+          <%= button_to t(:"ldap_group_sync.actions.sync_now"),
+                        { action: :sync, id: mapping.id },
+                        method: :post, class: "button -small" %>
+          <%= link_to t(:button_edit), { action: :edit, id: mapping.id }, class: "button -small" %>
+          <%= link_to t(:button_delete),
+                      { action: :destroy, id: mapping.id },
+                      method: :delete,
+                      data: { confirm: t(:text_are_you_sure) },
+                      class: "button -small" %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<h3><%= t(:"ldap_group_sync.recent_runs") %></h3>
+
+<table class="generic-table">
+  <thead>
+    <tr>
+      <th><%= t(:"ldap_group_sync.sync_run.started_at") %></th>
+      <th><%= t(:"ldap_group_sync.sync_run.status_label") %></th>
+      <th><%= t(:"ldap_group_sync.sync_run.added") %></th>
+      <th><%= t(:"ldap_group_sync.sync_run.removed") %></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @recent_runs.each do |run| %>
+      <tr>
+        <td><%= run.started_at %></td>
+        <td><%= t(:"ldap_group_sync.sync_run.status.#{run.status}") %></td>
+        <td><%= run.added_count %></td>
+        <td><%= run.removed_count %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

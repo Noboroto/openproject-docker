@@ -1,0 +1,9 @@
+<% html_title t(:"custom_actions.edit") %>
+<%= render Primer::OpenProject::PageHeader.new do |header|
+      header.with_title { "#{t(:'custom_actions.edit')}: #{@action.name}" }
+    end %>
+
+<%= render "form",
+           action: @action,
+           form_url: custom_actions_action_path(@action),
+           form_method: :patch %>

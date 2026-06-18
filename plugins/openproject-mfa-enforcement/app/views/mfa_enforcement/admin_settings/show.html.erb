@@ -1,6 +1,7 @@
 <% html_title t(:"mfa_enforcement.title") %>
-
-<h2><%= t(:"mfa_enforcement.title") %></h2>
+<%= render Primer::OpenProject::PageHeader.new do |header|
+      header.with_title { t(:"mfa_enforcement.title") }
+    end %>
 
 <p class="form--field-instructions">
   <%= t(:"mfa_enforcement.intro") %>

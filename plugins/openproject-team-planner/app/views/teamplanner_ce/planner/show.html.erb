@@ -1,0 +1,147 @@
+<%#
+  Server-rendered, read-only team planner: rows = assignees, columns = days.
+  Each assignee's work packages render as bars spanning their start/due dates.
+
+  Route helpers are `project_`-prefixed because routes.rb uses `scope as: "project"`:
+    project_teamplanner_ce_path(@project)        -> GET show
+    project_save_teamplanner_ce_path(@project)   -> POST save
+    project_teamplanner_ce_view_path(@project, id) -> DELETE destroy
+  (Rails composes the scope prefix + the `as:` on each route; references below use
+   exactly those generated names.)
+
+  WHERE ANGULAR WOULD GO: OpenProject's native Team planner is an Angular calendar
+  with drag-to-reschedule. A production integration would register an Angular
+  component via the OP frontend module system and PATCH moves through
+  WorkPackages::UpdateService. This styled grid is the deliberate read-only v1.
+%>
+<style>
+  .op-tp { margin:0; padding:1.5rem 2rem; }
+  .op-tp__head { display:flex; align-items:baseline; gap:.75rem; margin:0 0 1rem; flex-wrap:wrap; }
+  .op-tp__head h2 { margin:0; }
+  .op-tp__range { color:#6e7781; font-size:.875rem; }
+  .op-tp__filters { display:flex; gap:.5rem; align-items:end; flex-wrap:wrap; margin:0 0 1.25rem; }
+  .op-tp__filters label { display:flex; flex-direction:column; font-size:.75rem; color:#57606a; gap:.2rem; }
+  .op-tp__grid { overflow-x:auto; border:1px solid #d0d7de; border-radius:8px; }
+  .op-tp__table { border-collapse:collapse; width:100%; min-width:640px; }
+  .op-tp__table th, .op-tp__table td { border-bottom:1px solid #eaeef2; }
+  .op-tp__corner, .op-tp__assignee {
+    position:sticky; left:0; background:#f6f8fa; z-index:1;
+    min-width:180px; max-width:180px; text-align:left;
+    padding:.5rem .75rem; font-size:.8125rem; font-weight:600; color:#24292f;
+    border-right:1px solid #d0d7de;
+  }
+  .op-tp__day {
+    padding:.4rem .25rem; font-size:.7rem; color:#57606a; text-align:center;
+    white-space:nowrap; min-width:38px; background:#f6f8fa;
+  }
+  .op-tp__day.-weekend { background:#eef1f4; }
+  .op-tp__lane { position:relative; height:34px; }
+  .op-tp__lane td { padding:0; }
+  .op-tp__bar {
+    position:absolute; top:5px; height:24px; border-radius:6px;
+    background:#0969da; color:#fff; font-size:.72rem; line-height:24px;
+    padding:0 .4rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
+  .op-tp__bar a { color:#fff; text-decoration:none; }
+  .op-tp__bar a:hover { text-decoration:underline; }
+  .op-tp__empty { padding:2rem; text-align:center; color:#8c959f; font-style:italic; }
+  .op-tp__views { margin-top:1.25rem; font-size:.8125rem; }
+  .op-tp__views ul { list-style:none; padding:0; margin:.35rem 0 0; display:flex; gap:.5rem; flex-wrap:wrap; }
+  .op-tp__views li { background:#f6f8fa; border:1px solid #d0d7de; border-radius:999px; padding:.15rem .6rem; }
+</style>
+
+<% html_title t(:"teamplanner_ce.title") %>
+<%= render Primer::OpenProject::PageHeader.new do |header|
+      header.with_title { t(:"teamplanner_ce.title") }
+    end %>
+<div class="op-tp">
+  <div class="op-tp__head">
+    <span class="op-tp__range">
+      <%= t(:"teamplanner_ce.date_range") %>: <%= @from.iso8601 %> – <%= @to.iso8601 %>
+    </span>
+  </div>
+
+  <%# Date-range filter (GET back to #show). %>
+  <%= form_with url: project_teamplanner_ce_path(@project), method: :get, local: true do %>
+    <div class="op-tp__filters">
+      <label>
+        <%= t(:"teamplanner_ce.from") %>
+        <%= date_field_tag :from, @from.iso8601 %>
+      </label>
+      <label>
+        <%= t(:"teamplanner_ce.to") %>
+        <%= date_field_tag :to, @to.iso8601 %>
+      </label>
+      <%= submit_tag t(:"teamplanner_ce.apply"), class: "button -primary" %>
+    </div>
+  <% end %>
+
+  <% if @grid.empty? %>
+    <div class="op-tp__grid">
+      <p class="op-tp__empty"><%= t(:"teamplanner_ce.no_assignments") %></p>
+    </div>
+  <% else %>
+    <div class="op-tp__grid">
+      <table class="op-tp__table">
+        <thead>
+          <tr>
+            <th class="op-tp__corner"><%= t(:"teamplanner_ce.label_assignee") %></th>
+            <% @grid.days.each do |day| %>
+              <th class="op-tp__day <%= '-weekend' if day.saturday? || day.sunday? %>">
+                <%= day.strftime("%d/%m") %>
+              </th>
+            <% end %>
+          </tr>
+        </thead>
+        <tbody>
+          <% @grid.grid_rows.each do |row| %>
+            <%= render partial: "teamplanner_ce/planner/row", locals: { row:, grid: @grid } %>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
+
+  <% if can_manage_teamplanner_ce_views?(@project) %>
+    <%# Save the current range/filter as a per-user view. %>
+    <%= form_with url: project_save_teamplanner_ce_path(@project), method: :post, local: true do %>
+      <%= hidden_field_tag :from, @from.iso8601 %>
+      <%= hidden_field_tag :to, @to.iso8601 %>
+      <% Array(@assignee_ids).each do |aid| %>
+        <%= hidden_field_tag "assignee_ids[]", aid %>
+      <% end %>
+      <div class="op-tp__filters" style="margin-top:1rem;">
+        <label>
+          <%= t(:"teamplanner_ce.view_name") %>
+          <%= text_field_tag :name %>
+        </label>
+        <%= submit_tag t(:"teamplanner_ce.actions.save_view"), class: "button" %>
+      </div>
+    <% end %>
+  <% end %>
+
+  <% if @saved_views.present? %>
+    <div class="op-tp__views">
+      <strong><%= t(:"teamplanner_ce.saved_views") %></strong>
+      <ul>
+        <% @saved_views.each do |view| %>
+          <li>
+            <%= link_to view.name,
+                        project_teamplanner_ce_path(@project,
+                                                  from: view.filters["from"],
+                                                  to: view.filters["to"],
+                                                  assignee_ids: view.assignee_ids) %>
+            <% if can_manage_teamplanner_ce_views?(@project) %>
+              <%= button_to t(:"teamplanner_ce.actions.delete_view"),
+                            project_teamplanner_ce_view_path(@project, view),
+                            method: :delete,
+                            form: { style: "display:inline" },
+                            class: "button -text",
+                            data: { confirm: t(:"teamplanner_ce.delete_confirm") } %>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+</div>

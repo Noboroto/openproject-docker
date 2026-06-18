@@ -1,0 +1,17 @@
+<%# Renders one-click apply buttons for the custom actions applicable to the given
+    work package. Expects locals: work_package, project. Only rendered when the
+    current user may execute custom actions; the server re-checks applicability and
+    permissions on POST. %>
+<% if can_execute_custom_actions?(project) %>
+  <% actions = applicable_custom_actions(work_package) %>
+  <% if actions.any? %>
+    <div class="custom-actions--buttons">
+      <% actions.each do |action| %>
+        <%= button_to action.name,
+                      apply_custom_action_path(project, action, work_package_id: work_package.id),
+                      method: :post,
+                      class: "button" %>
+      <% end %>
+    </div>
+  <% end %>
+<% end %>

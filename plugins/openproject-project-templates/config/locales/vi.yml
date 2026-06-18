@@ -1,0 +1,35 @@
+vi:
+  project_templates:
+    menu_caption: "Mẫu dự án"
+    gallery: "Mẫu dự án"
+    title: "Mẫu dự án"
+    intro: >-
+      Đánh dấu một dự án hiện có làm mẫu có thể tái sử dụng. Người dùng được phép
+      sau đó có thể tạo dự án mới từ mẫu; việc sao chép do bộ máy sao chép lõi của
+      OpenProject thực hiện, nên giữ nguyên cấu trúc phân cấp, trường tùy chỉnh và
+      quyền hạn.
+    empty: "Chưa có mẫu nào được đăng ký."
+    empty_gallery: "Không có mẫu nào khả dụng cho bạn."
+    create_from: "Tạo dự án từ \"%{name}\""
+    create_hint: "Nhập tên (và mã định danh tùy chọn) cho dự án mới."
+    fields:
+      name: "Tên mẫu"
+      description: "Mô tả"
+      source_project: "Dự án nguồn"
+      is_public: "Hiển thị trong thư viện"
+      work_packages: "Gói công việc"
+      new_name: "Tên dự án mới"
+      new_identifier: "Mã định danh (tùy chọn)"
+      identifier_hint: "Để trống để OpenProject tự tạo mã định danh duy nhất từ tên."
+    actions:
+      mark_template: "Đánh dấu dự án làm mẫu"
+      instantiate: "Tạo từ mẫu"
+      delete: "Xóa mẫu"
+      delete_confirm: "Xóa đăng ký mẫu này? Dự án nguồn sẽ không bị xóa."
+    flash:
+      template_created: "Đã tạo mẫu dự án."
+      template_deleted: "Đã xóa mẫu dự án."
+      project_created: "Đã tạo dự án mới từ mẫu."
+    errors:
+      too_large: "Mẫu này quá lớn để sao chép (giới hạn: %{max} gói công việc)."
+      clone_failed: "Không thể tạo dự án từ mẫu."

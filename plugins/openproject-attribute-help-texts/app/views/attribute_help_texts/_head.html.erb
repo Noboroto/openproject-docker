@@ -1,0 +1,56 @@
+<%#
+  Injected into the layout <head> via
+  OpenProject::AttributeHelpTexts::Hooks (view_layouts_base_html_head).
+
+  Scope note: OpenProject Community Edition ALREADY provides the full
+  "Attribute help texts" feature (admin CRUD + the "?" tooltip trigger next to
+  attribute labels). This partial does NOT render help-text content. It only
+  emits a small, STATIC, self-contained stylesheet that makes the existing core
+  tooltip trigger more visible and keyboard-accessible.
+
+  The CSS below is a server-authored constant — no user input is interpolated,
+  so there is no XSS surface here.
+
+  Safe-mode escape hatch: append ?aht_enhance=off to any URL to skip injection.
+%>
+<%
+  # Guard defensively: in the view-hook context the controller may have no live
+  # request, so calling #params raises. Rescue to a safe default.
+  enhance_off =
+    begin
+      defined?(controller) && controller.respond_to?(:params) &&
+        controller.params[:aht_enhance].to_s == "off"
+    rescue StandardError
+      false
+    end
+%>
+<% unless enhance_off %>
+  <style type="text/css" data-openproject-attribute-help-texts="1">
+    /* Make the core attribute help-text trigger ("?") easier to notice and to
+       focus via keyboard. Selectors target core's existing markup; if core
+       changes its class names these rules simply no-op (no breakage). */
+    .attribute-help-text--entry,
+    .help-text--entry,
+    a.help-text--entry {
+      cursor: help;
+      outline-offset: 2px;
+    }
+
+    .attribute-help-text--entry:focus-visible,
+    .help-text--entry:focus-visible,
+    a.help-text--entry:focus-visible {
+      outline: 2px solid currentColor;
+      border-radius: 2px;
+    }
+
+    .attribute-help-text--entry .icon-help1::before,
+    .help-text--entry .icon-help1::before {
+      opacity: 0.85;
+    }
+
+    .attribute-help-text--entry:hover .icon-help1::before,
+    .help-text--entry:hover .icon-help1::before {
+      opacity: 1;
+    }
+  </style>
+<% end %>

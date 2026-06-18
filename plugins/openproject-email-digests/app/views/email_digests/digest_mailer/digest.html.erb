@@ -1,0 +1,12 @@
+<h1><%= t(:"email_digests.subject", count: @items.size) %></h1>
+
+<ul>
+  <% @items.each do |item| %>
+    <li>
+      <strong><%= h item.summary %></strong>
+      <span>(<%= (I18n.l(item.occurred_at, format: :short) rescue item.occurred_at) %>)</span>
+    </li>
+  <% end %>
+</ul>
+
+<p><%= t(:"email_digests.footer", frequency: t(:"email_digests.frequency_#{@frequency}")) %></p>

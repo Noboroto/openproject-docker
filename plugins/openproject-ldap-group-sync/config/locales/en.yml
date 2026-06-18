@@ -1,0 +1,53 @@
+en:
+  ldap_group_sync:
+    menu: "LDAP group sync"
+    title: "LDAP group synchronization"
+    intro: >-
+      Map LDAP groups (by distinguished name) to OpenProject groups. A scheduled
+      job — and optionally each LDAP login — mirrors LDAP group membership into
+      the mapped OpenProject group. Membership changes are applied via core
+      services as the system user.
+    recent_runs: "Recent sync runs"
+    synchronized_group:
+      ldap_auth_source: "LDAP connection"
+      dn: "LDAP group DN"
+      group: "OpenProject group"
+      sync_users: "Synchronize members"
+      confirm_privileged: "I understand this may map a privileged (admin) group"
+    sync_run:
+      started_at: "Started at"
+      status_label: "Status"
+      added: "Added"
+      removed: "Removed"
+      status:
+        running: "Running"
+        success: "Success"
+        failed: "Failed"
+    actions:
+      new_mapping: "New mapping"
+      edit_mapping: "Edit mapping"
+      sync_now: "Sync now"
+      sync_all: "Sync all now"
+    flash:
+      created: "LDAP group mapping created."
+      updated: "LDAP group mapping updated."
+      deleted: "LDAP group mapping deleted."
+      sync_enqueued: "LDAP group synchronization has been enqueued."
+    errors:
+      ldap_unreachable: "Could not reach or bind to the LDAP server."
+  activerecord:
+    models:
+      ldap_group_sync/synchronized_group: "LDAP group mapping"
+      ldap_group_sync/sync_run: "LDAP sync run"
+    attributes:
+      ldap_group_sync/synchronized_group:
+        dn: "LDAP group DN"
+        group: "OpenProject group"
+        ldap_auth_source_id: "LDAP connection"
+        sync_users: "Synchronize members"
+    errors:
+      models:
+        ldap_group_sync/synchronized_group:
+          attributes:
+            group:
+              privileged_requires_confirmation: "maps a privileged group; please confirm explicitly"

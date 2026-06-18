@@ -1,0 +1,53 @@
+vi:
+  ldap_group_sync:
+    menu: "Đồng bộ nhóm LDAP"
+    title: "Đồng bộ nhóm LDAP"
+    intro: >-
+      Ánh xạ nhóm LDAP (theo tên phân biệt DN) sang nhóm OpenProject. Một tác vụ
+      theo lịch — và tùy chọn sau mỗi lần đăng nhập LDAP — sẽ phản chiếu thành
+      viên nhóm LDAP vào nhóm OpenProject tương ứng. Thay đổi thành viên được áp
+      dụng qua các dịch vụ lõi với tư cách người dùng hệ thống.
+    recent_runs: "Các lần đồng bộ gần đây"
+    synchronized_group:
+      ldap_auth_source: "Kết nối LDAP"
+      dn: "DN nhóm LDAP"
+      group: "Nhóm OpenProject"
+      sync_users: "Đồng bộ thành viên"
+      confirm_privileged: "Tôi hiểu rằng việc này có thể ánh xạ một nhóm có đặc quyền (quản trị)"
+    sync_run:
+      started_at: "Bắt đầu lúc"
+      status_label: "Trạng thái"
+      added: "Đã thêm"
+      removed: "Đã xóa"
+      status:
+        running: "Đang chạy"
+        success: "Thành công"
+        failed: "Thất bại"
+    actions:
+      new_mapping: "Ánh xạ mới"
+      edit_mapping: "Sửa ánh xạ"
+      sync_now: "Đồng bộ ngay"
+      sync_all: "Đồng bộ tất cả ngay"
+    flash:
+      created: "Đã tạo ánh xạ nhóm LDAP."
+      updated: "Đã cập nhật ánh xạ nhóm LDAP."
+      deleted: "Đã xóa ánh xạ nhóm LDAP."
+      sync_enqueued: "Đã đưa việc đồng bộ nhóm LDAP vào hàng đợi."
+    errors:
+      ldap_unreachable: "Không thể kết nối hoặc xác thực tới máy chủ LDAP."
+  activerecord:
+    models:
+      ldap_group_sync/synchronized_group: "Ánh xạ nhóm LDAP"
+      ldap_group_sync/sync_run: "Lần đồng bộ LDAP"
+    attributes:
+      ldap_group_sync/synchronized_group:
+        dn: "DN nhóm LDAP"
+        group: "Nhóm OpenProject"
+        ldap_auth_source_id: "Kết nối LDAP"
+        sync_users: "Đồng bộ thành viên"
+    errors:
+      models:
+        ldap_group_sync/synchronized_group:
+          attributes:
+            group:
+              privileged_requires_confirmation: "ánh xạ một nhóm có đặc quyền; vui lòng xác nhận rõ ràng"

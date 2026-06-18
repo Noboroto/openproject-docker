@@ -1,8 +1,10 @@
 <% html_title t(:"mfa_enforcement.blocked_title") %>
+<%= render Primer::OpenProject::PageHeader.new do |header|
+      header.with_title { t(:"mfa_enforcement.blocked_title") }
+    end %>
 
 <div class="op-toast -warning" role="alert">
   <div class="op-toast--content">
-    <h2 class="op-toast--title"><%= t(:"mfa_enforcement.blocked_title") %></h2>
     <p><%= t(:"mfa_enforcement.blocked_body") %></p>
   </div>
 </div>

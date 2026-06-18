@@ -1,5 +1,8 @@
 <%# Pivot: rows = users, columns = work packages, cells = hours. %>
-<h2><%= t(:"time_reports.pivot_title") %></h2>
+<% html_title t(:"time_reports.pivot_title") %>
+<%= render Primer::OpenProject::PageHeader.new do |header|
+      header.with_title { t(:"time_reports.pivot_title") }
+    end %>
 
 <table class="generic-table">
   <thead>

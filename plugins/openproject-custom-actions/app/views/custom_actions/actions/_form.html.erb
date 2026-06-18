@@ -1,0 +1,62 @@
+<%# Shared form for new/edit. Flat fields are folded into the JSONB
+    conditions / change_set hashes by ActionsController#action_params. IDs are
+    entered as plain integers to keep the plugin dependency-free; admins read them
+    from the corresponding core admin screens. %>
+<%= form_with model: action, url: form_url, method: form_method, local: true do |f| %>
+  <% if action.errors.any? %>
+    <div class="op-toast -error">
+      <ul>
+        <% action.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <fieldset class="form--fieldset">
+    <legend><%= t(:"custom_actions.fields.name") %></legend>
+    <div class="form--field">
+      <%= f.label :name, t(:"custom_actions.fields.name") %>
+      <%= f.text_field :name, required: true %>
+    </div>
+    <div class="form--field">
+      <%= f.label :position, t(:"custom_actions.fields.position") %>
+      <%= f.number_field :position, value: action.position %>
+    </div>
+  </fieldset>
+
+  <fieldset class="form--fieldset">
+    <legend><%= t(:"custom_actions.fields.conditions") %></legend>
+    <p class="form--field-instructions"><%= t(:"custom_actions.hints.conditions") %></p>
+    <div class="form--field">
+      <%= label_tag "custom_action[condition_status_id]", t(:"custom_actions.fields.condition_status_id") %>
+      <%= number_field_tag "custom_action[condition_status_id]", action.conditions_config["status_id"] %>
+    </div>
+    <div class="form--field">
+      <%= label_tag "custom_action[condition_type_ids]", t(:"custom_actions.fields.condition_type_ids") %>
+      <%= text_field_tag "custom_action[condition_type_ids]", Array(action.conditions_config["type_ids"]).join(",") %>
+    </div>
+  </fieldset>
+
+  <fieldset class="form--fieldset">
+    <legend><%= t(:"custom_actions.fields.changes") %></legend>
+    <p class="form--field-instructions"><%= t(:"custom_actions.hints.changes") %></p>
+    <div class="form--field">
+      <%= label_tag "custom_action[change_status_id]", t(:"custom_actions.fields.change_status_id") %>
+      <%= number_field_tag "custom_action[change_status_id]", action.changes_config["status_id"] %>
+    </div>
+    <div class="form--field">
+      <%= label_tag "custom_action[change_assigned_to_id]", t(:"custom_actions.fields.change_assigned_to_id") %>
+      <%= number_field_tag "custom_action[change_assigned_to_id]", action.changes_config["assigned_to_id"] %>
+    </div>
+    <div class="form--field">
+      <%= label_tag "custom_action[change_priority_id]", t(:"custom_actions.fields.change_priority_id") %>
+      <%= number_field_tag "custom_action[change_priority_id]", action.changes_config["priority_id"] %>
+    </div>
+  </fieldset>
+
+  <p>
+    <%= f.submit t(:"custom_actions.save"), class: "button -primary" %>
+    <%= link_to t(:"custom_actions.cancel"), custom_actions_actions_path, class: "button" %>
+  </p>
+<% end %>

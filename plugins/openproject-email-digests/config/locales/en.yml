@@ -1,0 +1,40 @@
+en:
+  email_digests:
+    menu_caption: "Email digests"
+    title: "Email digests"
+    intro: >-
+      Batch your work package activity into a periodic email instead of instant
+      notifications. Choose how often to receive it, mute noisy projects or
+      types, and set quiet hours.
+    frequency: "Digest frequency"
+    frequency_off: "Off"
+    frequency_daily: "Daily"
+    frequency_weekly: "Weekly"
+    quiet_from: "Quiet hours from (0-23)"
+    quiet_to: "Quiet hours to (0-23)"
+    quiet_hint: "Activity occurring inside this window is not added to your digest. Leave blank to disable. Windows may wrap past midnight (e.g. 22 to 6)."
+    muted_projects: "Muted projects"
+    muted_projects_hint: "Activity in these projects is excluded from your digest."
+    muted_types: "Muted work package types"
+    muted_types_hint: "Activity on these types is excluded from your digest."
+    saved: "Email digest settings have been saved."
+    subject:
+      one: "Your OpenProject digest: 1 update"
+      other: "Your OpenProject digest: %{count} updates"
+    footer: "You receive this %{frequency} digest because of your notification preferences."
+    admin_menu_caption: "Email digests"
+    admin_title: "Email digest defaults"
+    admin_intro: >-
+      Instance-wide defaults for digest delivery.
+    digest_send_hour: "Daily/weekly send hour (0-23)"
+    digest_send_hour_hint: "The hour of day (instance local time) digests are composed and sent. Weekly digests are sent on Mondays at this hour."
+  activerecord:
+    models:
+      email_digests/digest_preference: "Email digest preference"
+    attributes:
+      email_digests/digest_preference:
+        frequency: "Digest frequency"
+        muted_project_ids: "Muted projects"
+        muted_type_ids: "Muted work package types"
+        quiet_from_hour: "Quiet hours from"
+        quiet_to_hour: "Quiet hours to"

@@ -1,0 +1,47 @@
+<%# Admin: list of custom-action definitions. Server-rendered. %>
+<% html_title t(:"custom_actions.title") %>
+<%= render Primer::OpenProject::PageHeader.new do |header|
+      header.with_title { t(:"custom_actions.title") }
+    end %>
+
+<p>
+  <%= link_to t(:"custom_actions.new"),
+              new_custom_actions_action_path,
+              class: "button -primary" %>
+</p>
+
+<% if @actions.empty? %>
+  <p class="op-empty-state"><%= t(:"custom_actions.empty") %></p>
+<% else %>
+  <table class="generic-table">
+    <thead>
+      <tr>
+        <th><%= t(:"custom_actions.fields.position") %></th>
+        <th><%= t(:"custom_actions.fields.name") %></th>
+        <th><%= t(:"custom_actions.fields.conditions") %></th>
+        <th><%= t(:"custom_actions.fields.changes") %></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @actions.each do |action| %>
+        <tr>
+          <td><%= action.position %></td>
+          <td><%= link_to action.name, edit_custom_actions_action_path(action) %></td>
+          <td><code><%= action.conditions_config.to_json %></code></td>
+          <td><code><%= action.changes_config.to_json %></code></td>
+          <td>
+            <%= link_to t(:"custom_actions.edit"),
+                        edit_custom_actions_action_path(action),
+                        class: "button" %>
+            <%= link_to t(:"custom_actions.delete"),
+                        custom_actions_action_path(action),
+                        method: :delete,
+                        data: { confirm: t(:"custom_actions.delete_confirm") },
+                        class: "button -danger" %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

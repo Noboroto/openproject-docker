@@ -34,6 +34,9 @@ x-op-app: &app
     DATABASE_URL: "${DATABASE_URL:-postgres://postgres:p4ssw0rd@op-db/openproject?pool=20&encoding=unicode&reconnect=true}"
     RAILS_MIN_THREADS: ${RAILS_MIN_THREADS:-4}
     RAILS_MAX_THREADS: ${RAILS_MAX_THREADS:-16}
+    # Performance: run multiple Puma workers to use the 3 vCPU host (default 1 in
+    # the image). 2 workers x RAILS_MAX_THREADS threads; fits the web 3g mem limit.
+    OPENPROJECT_WEB_WORKERS: ${OPENPROJECT_WEB_WORKERS:-2}
     # set to true to enable the email receiving feature. See ./docker/cron for more options
     IMAP_ENABLED: "${IMAP_ENABLED:-false}"
     SECRET_KEY_BASE: "${SECRET_KEY_BASE:-OVERWRITE_ME}"
@@ -58,28 +61,31 @@ services:
       POSTGRES_DB: openproject
     networks:
       - backend
+    # Rebalanced for a 3 vCPU / 8 GB host. Postgres benefits from RAM (page cache).
     deploy:
       resources:
         limits:
-          cpus: "1.5"
-          memory: "512m"
+          cpus: "1.0"
+          memory: "1536m"
         reservations:
-          cpus: "0.25"
-          memory: "256m"
+          cpus: "0.5"
+          memory: "512m"
 
   cache:
     image: memcached
+    # Bigger memcache slab improves Rails cache hit rate on a roomier host.
+    command: ["-m", "384"]
     <<: *restart_policy
     networks:
       - backend
     deploy:
       resources:
         limits:
-          cpus: "0.25"
-          memory: "128m"
+          cpus: "0.5"
+          memory: "512m"
         reservations:
-          cpus: "0.05"
-          memory: "64m"
+          cpus: "0.1"
+          memory: "128m"
 
   proxy:
     build:
@@ -122,14 +128,15 @@ services:
       timeout: 3s
       retries: 3
       start_period: 30s
+    # Primary app (Puma). Largest share on the 3 vCPU / 8 GB host.
     deploy:
       resources:
         limits:
-          cpus: "2"
-          memory: "1g"
+          cpus: "2.0"
+          memory: "3g"
         reservations:
-          cpus: "0.5"
-          memory: "256m"
+          cpus: "0.75"
+          memory: "1g"
 
   autoheal:
     image: willfarrell/autoheal:1.2.0
@@ -154,14 +161,15 @@ services:
       - op-db
       - cache
       - seeder
+    # Background jobs (GoodJob): date alerts, digests, audit purge, LDAP sync.
     deploy:
       resources:
         limits:
-          cpus: "2"
-          memory: "768m"
+          cpus: "1.5"
+          memory: "1536m"
         reservations:
-          cpus: "0.25"
-          memory: "256m"
+          cpus: "0.5"
+          memory: "512m"
 
   cron:
     <<: *app
@@ -187,11 +195,12 @@ services:
     restart: on-failure
     networks:
       - backend
+    # Runs once at startup (DB migrations + seed); transient, so give it headroom.
     deploy:
       resources:
         limits:
-          cpus: "1"
-          memory: "512m"
+          cpus: "1.5"
+          memory: "1536m"
 
   hocuspocus:
     image: openproject/hocuspocus:17.5.1
@@ -214,7 +223,7 @@ services:
 
   # Standalone MCP (Model Context Protocol) server for OpenProject.
   # Independent service — talks to OP only via REST API v3. No Ruby plugin needed.
-  # Build in CI/local and push to a registry; the 2-vCore server should `pull`.
+  # Build in CI/local and push to a registry; the server should `pull` (3 vCPU/8GB).
   op-mcp:
     build:
       context: ./mcp-server

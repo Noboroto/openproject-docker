@@ -1,5 +1,8 @@
 <%# Project-scoped list of action boards. Server-rendered; no Angular needed. %>
-<h2><%= t(:"action_boards.title") %></h2>
+<% html_title t(:"action_boards.title") %>
+<%= render Primer::OpenProject::PageHeader.new do |header|
+      header.with_title { t(:"action_boards.title") }
+    end %>
 
 <% if can_manage_action_boards?(@project) %>
   <p>

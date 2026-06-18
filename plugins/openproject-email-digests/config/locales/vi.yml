@@ -1,0 +1,40 @@
+vi:
+  email_digests:
+    menu_caption: "Tổng hợp email"
+    title: "Tổng hợp email"
+    intro: >-
+      Gộp hoạt động gói công việc của bạn thành email định kỳ thay vì thông báo
+      tức thì. Chọn tần suất nhận, tắt các dự án hoặc loại gây nhiễu, và đặt giờ
+      yên tĩnh.
+    frequency: "Tần suất tổng hợp"
+    frequency_off: "Tắt"
+    frequency_daily: "Hằng ngày"
+    frequency_weekly: "Hằng tuần"
+    quiet_from: "Giờ yên tĩnh từ (0-23)"
+    quiet_to: "Giờ yên tĩnh đến (0-23)"
+    quiet_hint: "Hoạt động xảy ra trong khoảng này sẽ không được thêm vào bản tổng hợp. Để trống để tắt. Khoảng thời gian có thể qua nửa đêm (ví dụ 22 đến 6)."
+    muted_projects: "Dự án đã tắt"
+    muted_projects_hint: "Hoạt động trong các dự án này bị loại khỏi bản tổng hợp."
+    muted_types: "Loại gói công việc đã tắt"
+    muted_types_hint: "Hoạt động trên các loại này bị loại khỏi bản tổng hợp."
+    saved: "Đã lưu cài đặt tổng hợp email."
+    subject:
+      one: "Bản tổng hợp OpenProject của bạn: 1 cập nhật"
+      other: "Bản tổng hợp OpenProject của bạn: %{count} cập nhật"
+    footer: "Bạn nhận bản tổng hợp %{frequency} này theo tùy chọn thông báo của mình."
+    admin_menu_caption: "Tổng hợp email"
+    admin_title: "Mặc định tổng hợp email"
+    admin_intro: >-
+      Cài đặt mặc định toàn hệ thống cho việc gửi bản tổng hợp.
+    digest_send_hour: "Giờ gửi hằng ngày/hằng tuần (0-23)"
+    digest_send_hour_hint: "Giờ trong ngày (giờ địa phương của hệ thống) bản tổng hợp được soạn và gửi. Bản tổng hợp hằng tuần gửi vào thứ Hai vào giờ này."
+  activerecord:
+    models:
+      email_digests/digest_preference: "Tùy chọn tổng hợp email"
+    attributes:
+      email_digests/digest_preference:
+        frequency: "Tần suất tổng hợp"
+        muted_project_ids: "Dự án đã tắt"
+        muted_type_ids: "Loại gói công việc đã tắt"
+        quiet_from_hour: "Giờ yên tĩnh từ"
+        quiet_to_hour: "Giờ yên tĩnh đến"

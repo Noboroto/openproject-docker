@@ -1,0 +1,22 @@
+<%# Shared name field for new/edit. `url` and `method` supplied by caller. %>
+<%= styled_form_tag(url, method: method) do %>
+  <section class="form--section">
+    <div class="form--field">
+      <label class="form--label" for="placeholder_user_name">
+        <%= t(:"placeholder_users.fields.name") %>
+      </label>
+      <div class="form--field-container">
+        <%= text_field_tag "placeholder_user[name]",
+                           @placeholder.name,
+                           id: "placeholder_user_name",
+                           class: "form--text-field",
+                           required: true %>
+      </div>
+    </div>
+  </section>
+
+  <p>
+    <%= submit_tag t(:"placeholder_users.actions.save"), class: "button -primary" %>
+    <%= link_to t(:"placeholder_users.actions.cancel"), { action: :index } %>
+  </p>
+<% end %>

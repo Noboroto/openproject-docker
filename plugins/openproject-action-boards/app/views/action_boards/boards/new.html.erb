@@ -1,7 +1,10 @@
 <%# Create a new action board. Columns are auto-seeded from the project's
     available statuses / members / versions for the chosen type (see
     BoardsController#build_columns_for). %>
-<h2><%= t(:"action_boards.new") %></h2>
+<% html_title t(:"action_boards.new") %>
+<%= render Primer::OpenProject::PageHeader.new do |header|
+      header.with_title { t(:"action_boards.new") }
+    end %>
 
 <%= form_with model: @board, url: project_action_boards_path(@project), method: :post, local: true do |f| %>
   <% if @board.errors.any? %>

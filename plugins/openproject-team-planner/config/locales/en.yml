@@ -1,0 +1,23 @@
+en:
+  project_module_teamplanner_ce: "Team planner"
+  permission_view_teamplanner_ce: "View team planner"
+  permission_manage_teamplanner_ce_views: "Manage team planner views"
+  teamplanner_ce:
+    menu: "Team planner"
+    title: "Team planner"
+    label_assignee: "Assignee"
+    label_unassigned: "Unassigned"
+    no_assignments: "No assignments in this date range."
+    date_range: "Date range"
+    from: "From"
+    to: "To"
+    apply: "Apply"
+    view_name: "View name"
+    saved_views: "Saved views"
+    delete_confirm: "Delete this saved view?"
+    actions:
+      save_view: "Save view"
+      delete_view: "Delete"
+    flash:
+      view_saved: "The team planner view has been saved."
+      view_deleted: "The team planner view has been deleted."

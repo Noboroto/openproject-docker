@@ -1,4 +1,7 @@
-<h2><%= t(:"dashboards_plus.title") %></h2>
+<% html_title t(:"dashboards_plus.title") %>
+<%= render Primer::OpenProject::PageHeader.new do |header|
+      header.with_title { t(:"dashboards_plus.title") }
+    end %>
 
 <section class="op-widget op-widget--health">
   <h3><%= t(:"dashboards_plus.project_health") %></h3>

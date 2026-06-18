@@ -60,8 +60,10 @@
 <div class="op-ab" data-controller="board-drag"
      data-board-drag-move-url-template-value="<%= project_action_board_move_card_path(@project, board_id: @board.id) %>"
      data-board-drag-csrf-value="<%= form_authenticity_token %>">
+  <%= render Primer::OpenProject::PageHeader.new do |header|
+        header.with_title { @board.name }
+      end %>
   <div class="op-ab__head">
-    <h2 style="margin:0;"><%= @board.name %></h2>
     <span class="op-ab__type"><%= t(:"action_boards.action_type.#{@board.action_type}") %></span>
   </div>
 

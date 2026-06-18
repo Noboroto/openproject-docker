@@ -1,0 +1,93 @@
+<% html_title t(:"project_templates.title") %>
+<%= render Primer::OpenProject::PageHeader.new do |header|
+      header.with_title { t(:"project_templates.title") }
+    end %>
+
+<p><%= t(:"project_templates.intro") %></p>
+
+<section class="form--section">
+  <fieldset class="form--fieldset">
+    <legend class="form--fieldset-legend"><%= t(:"project_templates.actions.mark_template") %></legend>
+
+    <%= styled_form_tag({ controller: "/project_templates/templates", action: :create },
+                        method: :post) do %>
+      <div class="form--field">
+        <label class="form--label" for="template_project_id">
+          <%= t(:"project_templates.fields.source_project") %>
+        </label>
+        <div class="form--field-container">
+          <%= select_tag "template[project_id]",
+                         options_from_collection_for_select(@candidate_projects, :id, :name),
+                         id: "template_project_id",
+                         include_blank: true,
+                         class: "form--select" %>
+        </div>
+      </div>
+
+      <div class="form--field">
+        <label class="form--label" for="template_name">
+          <%= t(:"project_templates.fields.name") %>
+        </label>
+        <div class="form--field-container">
+          <%= text_field_tag "template[name]", nil, id: "template_name",
+                             class: "form--text-field" %>
+        </div>
+      </div>
+
+      <div class="form--field">
+        <label class="form--label" for="template_description">
+          <%= t(:"project_templates.fields.description") %>
+        </label>
+        <div class="form--field-container">
+          <%= text_area_tag "template[description]", nil, id: "template_description",
+                            rows: 3, class: "form--text-area" %>
+        </div>
+      </div>
+
+      <div class="form--field">
+        <label class="form--label">
+          <%= check_box_tag "template[is_public]", "1", false, id: "template_is_public" %>
+          <%= t(:"project_templates.fields.is_public") %>
+        </label>
+      </div>
+
+      <p>
+        <%= styled_button_tag t(:"project_templates.actions.mark_template"),
+                              class: "-with-icon icon-add" %>
+      </p>
+    <% end %>
+  </fieldset>
+</section>
+
+<% if @templates.empty? %>
+  <p class="op-empty-state"><%= t(:"project_templates.empty") %></p>
+<% else %>
+  <table class="generic-table">
+    <thead>
+      <tr>
+        <th><%= t(:"project_templates.fields.name") %></th>
+        <th><%= t(:"project_templates.fields.source_project") %></th>
+        <th><%= t(:"project_templates.fields.work_packages") %></th>
+        <th><%= t(:"project_templates.fields.is_public") %></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @templates.each do |template| %>
+        <tr>
+          <td><%= template.name %></td>
+          <td><%= template.project&.name %></td>
+          <td><%= template.work_package_count %></td>
+          <td><%= template.is_public? ? t(:general_text_Yes) : t(:general_text_No) %></td>
+          <td>
+            <%= link_to t(:"project_templates.actions.delete"),
+                        project_templates_admin_destroy_path(template),
+                        method: :delete,
+                        data: { confirm: t(:"project_templates.actions.delete_confirm") },
+                        class: "button -danger" %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

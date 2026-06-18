@@ -1,0 +1,9 @@
+en:
+  attribute_help_texts_ext:
+    # This plugin enhances the CORE "Attribute help texts" feature; it adds no
+    # admin UI of its own, so these strings are only placeholders for any future
+    # companion menu/page. Core supplies all user-facing help-text strings.
+    name: "Attribute help texts (enhancement)"
+    description: >-
+      Accessibility and visibility enhancement for OpenProject's built-in
+      attribute help-text tooltips. No additional configuration is required.

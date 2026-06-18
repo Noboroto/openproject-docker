@@ -1,0 +1,43 @@
+<% html_title t(:"project_templates.actions.instantiate") %>
+<%= render Primer::OpenProject::PageHeader.new do |header|
+      header.with_title { t(:"project_templates.create_from", name: @template.name) }
+    end %>
+
+<p><%= t(:"project_templates.create_hint") %></p>
+
+<%= styled_form_tag({ controller: "/project_templates/templates", action: :instantiate,
+                      template_id: @template.id },
+                    method: :post) do %>
+  <section class="form--section">
+    <div class="form--field">
+      <label class="form--label" for="project_name">
+        <%= t(:"project_templates.fields.new_name") %>
+      </label>
+      <div class="form--field-container">
+        <%= text_field_tag "project[name]", params.dig(:project, :name),
+                           id: "project_name", required: true,
+                           class: "form--text-field" %>
+      </div>
+    </div>
+
+    <div class="form--field">
+      <label class="form--label" for="project_identifier">
+        <%= t(:"project_templates.fields.new_identifier") %>
+      </label>
+      <div class="form--field-container">
+        <%= text_field_tag "project[identifier]", params.dig(:project, :identifier),
+                           id: "project_identifier",
+                           class: "form--text-field" %>
+        <p class="form--field-instructions">
+          <%= t(:"project_templates.fields.identifier_hint") %>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <p>
+    <%= styled_button_tag t(:"project_templates.actions.instantiate"),
+                          class: "-with-icon icon-checkmark" %>
+    <%= link_to t(:button_cancel), project_templates_gallery_path, class: "button" %>
+  </p>
+<% end %>

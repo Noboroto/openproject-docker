@@ -48,9 +48,10 @@ services:
 
   # Local-only: expose the MCP server on the host for testing.
   # Production (docker-compose.yml alone) maps NO host port — proxy-only access.
+  # Host port 8001 (8000 is commonly taken by other local dev backends).
   op-mcp:
     ports:
-      - "127.0.0.1:8000:8000"
+      - "127.0.0.1:8001:8000"
 
 volumes:
   op_dev_bundle:

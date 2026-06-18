@@ -1,0 +1,9 @@
+<% html_title t(:"placeholder_users.actions.create") %>
+
+<%= render Primer::OpenProject::PageHeader.new do |header|
+      header.with_title { t(:"placeholder_users.actions.create") }
+    end %>
+
+<%= render "form",
+           url: { action: :create },
+           method: :post %>

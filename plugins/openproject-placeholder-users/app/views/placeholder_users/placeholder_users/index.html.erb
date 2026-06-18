@@ -1,0 +1,45 @@
+<% html_title t(:"placeholder_users.title") %>
+
+<%= render Primer::OpenProject::PageHeader.new do |header|
+      header.with_title { t(:"placeholder_users.title") }
+    end %>
+
+<p class="op-toast op-toast_info"><%= t(:"placeholder_users.hint.no_login") %></p>
+
+<p>
+  <%= link_to t(:"placeholder_users.actions.create"),
+              { action: :new },
+              class: "button -primary" %>
+</p>
+
+<table class="generic-table">
+  <thead>
+    <tr>
+      <th><%= t(:"placeholder_users.fields.name") %></th>
+      <th><%= t(:"placeholder_users.fields.actions") %></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @placeholders.each do |placeholder| %>
+      <tr>
+        <td><%= placeholder.name %></td>
+        <td>
+          <%= link_to t(:"placeholder_users.actions.edit"),
+                      { action: :edit, id: placeholder.id } %>
+          |
+          <%= link_to t(:"placeholder_users.actions.convert"),
+                      { action: :convert, id: placeholder.id } %>
+          |
+          <%= link_to t(:"placeholder_users.actions.delete"),
+                      { action: :destroy, id: placeholder.id },
+                      method: :delete,
+                      data: { confirm: t(:"placeholder_users.confirm.delete") } %>
+        </td>
+      </tr>
+    <% end %>
+
+    <% if @placeholders.empty? %>
+      <tr><td colspan="2"><em><%= t(:"placeholder_users.empty") %></em></td></tr>
+    <% end %>
+  </tbody>
+</table>

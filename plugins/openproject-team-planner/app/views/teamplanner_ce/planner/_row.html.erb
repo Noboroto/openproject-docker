@@ -1,0 +1,23 @@
+<%#
+  One assignee lane. `row` is a TeamplannerCe::AssignmentGrid::Row, `grid` the grid.
+  Bars are absolutely positioned over the day columns using % widths so the lane
+  scales with the table. Each bar's offset/span is precomputed by the PORO.
+%>
+<tr>
+  <th class="op-tp__assignee" title="<%= planner_assignee_name(row.assignee) %>">
+    <%= planner_assignee_name(row.assignee) %>
+  </th>
+  <%# Single spanning cell holds the absolutely-positioned bars for this lane. %>
+  <td class="op-tp__lane" colspan="<%= grid.day_count %>">
+    <% col_pct = 100.0 / grid.day_count %>
+    <% row.bars.each do |bar| %>
+      <% left  = (bar.offset * col_pct).round(4) %>
+      <% width = (bar.span * col_pct).round(4) %>
+      <div class="op-tp__bar"
+           style="left:<%= left %>%; width:<%= width %>%;"
+           title="<%= planner_card_label(bar.work_package) %>">
+        <%= link_to planner_card_label(bar.work_package), work_package_path(bar.work_package) %>
+      </div>
+    <% end %>
+  </td>
+</tr>

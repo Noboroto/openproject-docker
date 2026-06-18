@@ -1,5 +1,8 @@
 <%# Cost report: time entries with rate + cost columns and a grand total. %>
-<h2><%= t(:"cost.report_title") %></h2>
+<% html_title t(:"cost.report_title") %>
+<%= render Primer::OpenProject::PageHeader.new do |header|
+      header.with_title { t(:"cost.report_title") }
+    end %>
 
 <%= form_with url: project_time_reports_cost_reports_path(@project), method: :get, local: true do %>
   <label><%= t(:"time_reports.from_date") %>

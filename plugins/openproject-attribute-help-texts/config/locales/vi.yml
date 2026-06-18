@@ -1,0 +1,8 @@
+vi:
+  attribute_help_texts_ext:
+    # Plugin này tăng cường tính năng "Văn bản trợ giúp thuộc tính" có sẵn trong
+    # lõi; không thêm giao diện quản trị riêng. Lõi cung cấp toàn bộ chuỗi hiển thị.
+    name: "Văn bản trợ giúp thuộc tính (tăng cường)"
+    description: >-
+      Tăng cường khả năng truy cập và hiển thị cho chú giải văn bản trợ giúp
+      thuộc tính có sẵn trong OpenProject. Không cần cấu hình thêm.

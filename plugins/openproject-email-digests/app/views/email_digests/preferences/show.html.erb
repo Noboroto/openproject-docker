@@ -1,0 +1,94 @@
+<% html_title t(:"email_digests.title") %>
+<%= render Primer::OpenProject::PageHeader.new do |header|
+      header.with_title { t(:"email_digests.title") }
+    end %>
+
+<p class="form--field-instructions"><%= t(:"email_digests.intro") %></p>
+
+<%= styled_form_tag({ controller: "/email_digests/preferences", action: :update },
+                    method: :patch) do %>
+  <section class="form--section">
+    <fieldset class="form--fieldset">
+      <legend class="form--fieldset-legend"><%= t(:"email_digests.title") %></legend>
+
+      <div class="form--field">
+        <label class="form--label" for="digest_preference_frequency">
+          <%= t(:"email_digests.frequency") %>
+        </label>
+        <div class="form--field-container">
+          <%= select_tag "digest_preference[frequency]",
+                         options_for_select(
+                           EmailDigests::DigestPreference::FREQUENCIES.map { |f|
+                             [t(:"email_digests.frequency_#{f}"), f]
+                           },
+                           @preference.frequency),
+                         id: "digest_preference_frequency",
+                         class: "form--select" %>
+        </div>
+      </div>
+
+      <div class="form--field">
+        <label class="form--label" for="digest_preference_quiet_from_hour">
+          <%= t(:"email_digests.quiet_from") %>
+        </label>
+        <div class="form--field-container">
+          <%= number_field_tag "digest_preference[quiet_from_hour]",
+                               @preference.quiet_from_hour,
+                               id: "digest_preference_quiet_from_hour",
+                               min: 0, max: 23,
+                               class: "form--text-field -tiny" %>
+        </div>
+      </div>
+
+      <div class="form--field">
+        <label class="form--label" for="digest_preference_quiet_to_hour">
+          <%= t(:"email_digests.quiet_to") %>
+        </label>
+        <div class="form--field-container">
+          <%= number_field_tag "digest_preference[quiet_to_hour]",
+                               @preference.quiet_to_hour,
+                               id: "digest_preference_quiet_to_hour",
+                               min: 0, max: 23,
+                               class: "form--text-field -tiny" %>
+          <p class="form--field-instructions"><%= t(:"email_digests.quiet_hint") %></p>
+        </div>
+      </div>
+
+      <div class="form--field">
+        <label class="form--label" for="digest_preference_muted_project_ids">
+          <%= t(:"email_digests.muted_projects") %>
+        </label>
+        <div class="form--field-container">
+          <%= select_tag "digest_preference[muted_project_ids][]",
+                         options_from_collection_for_select(
+                           Project.visible(current_user).order(:name),
+                           :id, :name, @preference.muted_project_ids),
+                         multiple: true,
+                         id: "digest_preference_muted_project_ids",
+                         class: "form--select" %>
+          <p class="form--field-instructions"><%= t(:"email_digests.muted_projects_hint") %></p>
+        </div>
+      </div>
+
+      <div class="form--field">
+        <label class="form--label" for="digest_preference_muted_type_ids">
+          <%= t(:"email_digests.muted_types") %>
+        </label>
+        <div class="form--field-container">
+          <%= select_tag "digest_preference[muted_type_ids][]",
+                         options_from_collection_for_select(
+                           Type.order(:position),
+                           :id, :name, @preference.muted_type_ids),
+                         multiple: true,
+                         id: "digest_preference_muted_type_ids",
+                         class: "form--select" %>
+          <p class="form--field-instructions"><%= t(:"email_digests.muted_types_hint") %></p>
+        </div>
+      </div>
+    </fieldset>
+  </section>
+
+  <p>
+    <%= styled_button_tag t(:button_save), class: "-with-icon icon-checkmark" %>
+  </p>
+<% end %>

@@ -1,0 +1,38 @@
+vi:
+  audit_trail:
+    menu_caption: "Nhật ký kiểm toán"
+    title: "Nhật ký kiểm toán / ghi nhật ký bảo mật"
+    intro: >-
+      Bản ghi chỉ thêm (append-only), không thể sửa đổi, về các sự kiện liên quan
+      đến bảo mật: thay đổi thành viên và vai trò, xóa dự án, kích hoạt tài khoản và
+      các sự kiện đăng nhập. Sự kiện được ghi tự động và không thể chỉnh sửa. Thông
+      tin nhạy cảm (mật khẩu, token) không bao giờ được lưu.
+    no_events: "Không có sự kiện kiểm toán nào khớp với bộ lọc hiện tại."
+    system_actor: "Hệ thống"
+    fields:
+      actor: "Người thực hiện"
+      event: "Sự kiện"
+      target: "Đối tượng"
+      occurred_at: "Thời điểm"
+      ip_address: "Địa chỉ IP"
+      changes: "Thay đổi"
+    filters:
+      legend: "Bộ lọc"
+      event: "Sự kiện"
+      all_events: "Tất cả sự kiện"
+      from: "Từ"
+      to: "Đến"
+      apply: "Áp dụng bộ lọc"
+    actions:
+      export_csv: "Xuất CSV"
+    pagination:
+      previous: "Trước"
+      next: "Sau"
+    events:
+      member.created: "Đã thêm thành viên"
+      member.updated: "Đã cập nhật thành viên"
+      member.destroyed: "Đã xóa thành viên"
+      project.deleted: "Đã xóa dự án"
+      user.activated: "Đã kích hoạt người dùng"
+      user.logged_in: "Người dùng đã đăng nhập"
+      user.logged_out: "Người dùng đã đăng xuất"

@@ -1,6 +1,7 @@
 <% html_title t(:"branding.title") %>
-
-<h2><%= t(:"branding.title") %></h2>
+<%= render Primer::OpenProject::PageHeader.new do |header|
+      header.with_title { t(:"branding.title") }
+    end %>
 
 <%= styled_form_tag({ controller: "/branding/admin_settings", action: :update },
                     method: :patch, multipart: true) do %>

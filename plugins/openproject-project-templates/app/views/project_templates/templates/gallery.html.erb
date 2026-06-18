@@ -1,0 +1,14 @@
+<% html_title t(:"project_templates.gallery") %>
+<%= render Primer::OpenProject::PageHeader.new do |header|
+      header.with_title { t(:"project_templates.gallery") }
+    end %>
+
+<% if @templates.empty? %>
+  <p class="op-empty-state"><%= t(:"project_templates.empty_gallery") %></p>
+<% else %>
+  <div class="op-projtpl-gallery">
+    <% @templates.each do |template| %>
+      <%= render partial: "template_card", locals: { template: } %>
+    <% end %>
+  </div>
+<% end %>

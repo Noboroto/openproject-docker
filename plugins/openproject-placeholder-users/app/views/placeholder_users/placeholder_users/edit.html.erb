@@ -1,0 +1,9 @@
+<% html_title t(:"placeholder_users.actions.edit") %>
+
+<%= render Primer::OpenProject::PageHeader.new do |header|
+      header.with_title { t(:"placeholder_users.actions.edit") }
+    end %>
+
+<%= render "form",
+           url: { action: :update, id: @placeholder.id },
+           method: :patch %>

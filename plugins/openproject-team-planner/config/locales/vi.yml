@@ -1,0 +1,23 @@
+vi:
+  project_module_teamplanner_ce: "Lập kế hoạch nhóm"
+  permission_view_teamplanner_ce: "Xem lập kế hoạch nhóm"
+  permission_manage_teamplanner_ce_views: "Quản lý chế độ xem lập kế hoạch nhóm"
+  teamplanner_ce:
+    menu: "Lập kế hoạch nhóm"
+    title: "Lập kế hoạch nhóm"
+    label_assignee: "Người phụ trách"
+    label_unassigned: "Chưa phân công"
+    no_assignments: "Không có công việc nào trong khoảng thời gian này."
+    date_range: "Khoảng thời gian"
+    from: "Từ"
+    to: "Đến"
+    apply: "Áp dụng"
+    view_name: "Tên chế độ xem"
+    saved_views: "Chế độ xem đã lưu"
+    delete_confirm: "Xóa chế độ xem đã lưu này?"
+    actions:
+      save_view: "Lưu chế độ xem"
+      delete_view: "Xóa"
+    flash:
+      view_saved: "Đã lưu chế độ xem lập kế hoạch nhóm."
+      view_deleted: "Đã xóa chế độ xem lập kế hoạch nhóm."

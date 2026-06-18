@@ -20,3 +20,16 @@ gem "openproject-action_boards",   path: "plugins/openproject-action-boards"
 gem "openproject-time_reports",    path: "plugins/openproject-time-reports"
 gem "openproject-dashboards_plus", path: "plugins/openproject-dashboards-plus"
 gem "openproject-date_alerts",     path: "plugins/openproject-date-alerts"
+
+# --- Tier 2 plugins ----------------------------------------------------------
+gem "openproject-project_templates", path: "plugins/openproject-project-templates"
+# Renamed from team_planner: core ships an (EE-gated) module with that exact gem
+# name, so a CE-distinct name avoids the bundler/engine collision.
+gem "openproject-teamplanner_ce",  path: "plugins/openproject-team-planner"
+gem "openproject-ldap_group_sync", path: "plugins/openproject-ldap-group-sync"
+gem "openproject-placeholder_users", path: "plugins/openproject-placeholder-users"
+gem "openproject-email_digests",   path: "plugins/openproject-email-digests"
+gem "openproject-custom_actions",  path: "plugins/openproject-custom-actions"
+gem "openproject-audit_trail",     path: "plugins/openproject-audit-trail"
+# Thin extension — CE already ships attribute help texts; this only adds tooltip CSS.
+gem "openproject-attribute-help-texts", path: "plugins/openproject-attribute-help-texts"

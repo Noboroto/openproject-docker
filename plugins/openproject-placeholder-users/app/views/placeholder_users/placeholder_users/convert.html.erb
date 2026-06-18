@@ -1,0 +1,39 @@
+<% html_title t(:"placeholder_users.actions.convert") %>
+
+<%= render Primer::OpenProject::PageHeader.new do |header|
+      header.with_title { t(:"placeholder_users.actions.convert") }
+    end %>
+
+<p class="op-toast op-toast_info"><%= t(:"placeholder_users.hint.convert") %></p>
+
+<%= styled_form_tag({ action: :convert, id: @placeholder.id }, method: :post) do %>
+  <section class="form--section">
+    <div class="form--field">
+      <label class="form--label" for="placeholder_user_login">
+        <%= t(:"placeholder_users.fields.login") %>
+      </label>
+      <div class="form--field-container">
+        <%= text_field_tag "placeholder_user[login]", nil,
+                           id: "placeholder_user_login",
+                           class: "form--text-field",
+                           required: true %>
+      </div>
+    </div>
+
+    <div class="form--field">
+      <label class="form--label" for="placeholder_user_mail">
+        <%= t(:"placeholder_users.fields.mail") %>
+      </label>
+      <div class="form--field-container">
+        <%= email_field_tag "placeholder_user[mail]", nil,
+                            id: "placeholder_user_mail",
+                            class: "form--text-field" %>
+      </div>
+    </div>
+  </section>
+
+  <p>
+    <%= submit_tag t(:"placeholder_users.actions.convert"), class: "button -primary" %>
+    <%= link_to t(:"placeholder_users.actions.cancel"), { action: :index } %>
+  </p>
+<% end %>

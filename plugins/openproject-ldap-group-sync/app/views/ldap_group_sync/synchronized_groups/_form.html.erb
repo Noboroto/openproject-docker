@@ -1,0 +1,80 @@
+<%# Shared form for create/update. `url` and `method` are passed by new/edit. %>
+<%= styled_form_tag(url, method:) do %>
+  <% if @mapping.errors.any? %>
+    <div class="op-toast -error">
+      <ul>
+        <% @mapping.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <section class="form--section">
+    <div class="form--field">
+      <label class="form--label" for="synchronized_group_ldap_auth_source_id">
+        <%= t(:"ldap_group_sync.synchronized_group.ldap_auth_source") %>
+      </label>
+      <div class="form--field-container">
+        <%# verify against running 17-slim image: LdapAuthSource.all is the list
+            of configured LDAP auth sources. Confirm the class name. %>
+        <%= select_tag "synchronized_group[ldap_auth_source_id]",
+                       options_from_collection_for_select(
+                         (defined?(LdapAuthSource) ? LdapAuthSource.all : []),
+                         :id, :name, @mapping.ldap_auth_source_id),
+                       include_blank: true,
+                       id: "synchronized_group_ldap_auth_source_id" %>
+      </div>
+    </div>
+
+    <div class="form--field">
+      <label class="form--label" for="synchronized_group_group_id">
+        <%= t(:"ldap_group_sync.synchronized_group.group") %>
+      </label>
+      <div class="form--field-container">
+        <%= select_tag "synchronized_group[group_id]",
+                       options_from_collection_for_select(
+                         Group.order(:lastname), :id, :name, @mapping.group_id),
+                       include_blank: true,
+                       id: "synchronized_group_group_id" %>
+      </div>
+    </div>
+
+    <div class="form--field">
+      <label class="form--label" for="synchronized_group_dn">
+        <%= t(:"ldap_group_sync.synchronized_group.dn") %>
+      </label>
+      <div class="form--field-container">
+        <%= text_field_tag "synchronized_group[dn]", @mapping.dn,
+                           id: "synchronized_group_dn", size: 60 %>
+      </div>
+    </div>
+
+    <div class="form--field">
+      <div class="form--field-container">
+        <label class="form--label-with-check-box">
+          <%= hidden_field_tag "synchronized_group[sync_users]", "0" %>
+          <%= check_box_tag "synchronized_group[sync_users]", "1",
+                            @mapping.sync_users.nil? ? true : @mapping.sync_users,
+                            id: "synchronized_group_sync_users" %>
+          <%= t(:"ldap_group_sync.synchronized_group.sync_users") %>
+        </label>
+      </div>
+    </div>
+
+    <div class="form--field">
+      <div class="form--field-container">
+        <label class="form--label-with-check-box">
+          <%= check_box_tag "confirm_privileged", "1", false,
+                            id: "confirm_privileged" %>
+          <%= t(:"ldap_group_sync.synchronized_group.confirm_privileged") %>
+        </label>
+      </div>
+    </div>
+  </section>
+
+  <p>
+    <%= styled_button_tag t(:button_save), class: "-with-icon icon-checkmark" %>
+    <%= link_to t(:button_cancel), { action: :index } %>
+  </p>
+<% end %>

@@ -22,8 +22,11 @@ module OpenProject
     class Hooks < ::OpenProject::Hook::ViewListener
       # `context` carries the controller/request; the partial reads it to honor
       # the `?branding=off` safe-mode escape hatch.
+      # Partial lives at app/views/hooks/_theme_head.html.erb — the path must
+      # match or the hook render fails ("Failed to collect hook response …") on
+      # every page and the theme CSS/favicon never inject.
       render_on :view_layouts_base_html_head,
-                partial: "branding/theme_head"
+                partial: "hooks/theme_head"
     end
   end
 end

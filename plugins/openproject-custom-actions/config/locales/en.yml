@@ -1,0 +1,36 @@
+en:
+  project_module_custom_actions: "Custom actions"
+  permission_execute_custom_actions: "Apply custom work-package actions"
+  custom_actions:
+    menu_caption: "Custom actions"
+    title: "Custom work-package actions"
+    new: "New custom action"
+    edit: "Edit custom action"
+    delete: "Delete"
+    save: "Save"
+    cancel: "Cancel"
+    delete_confirm: "Delete this custom action? Work packages are not affected."
+    empty: "No custom actions yet. Create one to get started."
+    fields:
+      name: "Name"
+      position: "Position"
+      conditions: "Conditions (when applicable)"
+      changes: "Changes (what is applied)"
+      condition_status_id: "Only when status ID is"
+      condition_type_ids: "Only for type IDs (comma-separated)"
+      change_status_id: "Set status ID to"
+      change_assigned_to_id: "Set assignee (user ID)"
+      change_priority_id: "Set priority ID to"
+    hints:
+      conditions: "Leave a field blank to ignore that condition. All set conditions must match."
+      changes: "At least one change is required. Each change is applied through the core update service, so workflow rules and permissions still apply."
+    flash:
+      created: "The custom action has been created."
+      updated: "The custom action has been updated."
+      deleted: "The custom action has been deleted."
+      applied: "The custom action has been applied."
+    errors:
+      not_applicable: "This custom action does not apply to this work package."
+      apply_failed: "The custom action could not be applied."
+      no_changes: "must define at least one change"
+      illegal_change_keys: "contains changes that are not allowed: %{keys}"

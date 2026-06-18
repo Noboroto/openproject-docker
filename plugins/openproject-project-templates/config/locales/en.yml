@@ -1,0 +1,35 @@
+en:
+  project_templates:
+    menu_caption: "Project templates"
+    gallery: "Project templates"
+    title: "Project templates"
+    intro: >-
+      Mark an existing project as a reusable template. Authorized users can then
+      create brand-new projects from a template; cloning is performed by
+      OpenProject's core copy engine, so hierarchy, custom fields and permissions
+      are preserved.
+    empty: "No templates have been registered yet."
+    empty_gallery: "No templates are available to you."
+    create_from: "Create project from \"%{name}\""
+    create_hint: "Enter a name (and optional identifier) for the new project."
+    fields:
+      name: "Template name"
+      description: "Description"
+      source_project: "Source project"
+      is_public: "Available in gallery"
+      work_packages: "Work packages"
+      new_name: "New project name"
+      new_identifier: "Identifier (optional)"
+      identifier_hint: "Leave blank to let OpenProject derive a unique identifier from the name."
+    actions:
+      mark_template: "Mark project as template"
+      instantiate: "Create from template"
+      delete: "Remove template"
+      delete_confirm: "Remove this template registration? The source project is not deleted."
+    flash:
+      template_created: "The project template has been created."
+      template_deleted: "The project template has been removed."
+      project_created: "The new project has been created from the template."
+    errors:
+      too_large: "This template is too large to copy (limit: %{max} work packages)."
+      clone_failed: "The project could not be created from the template."

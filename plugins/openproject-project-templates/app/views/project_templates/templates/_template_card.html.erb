@@ -1,0 +1,19 @@
+<%# Renders a single template as a gallery card. `template` is a local. %>
+<div class="op-projtpl-card" style="border:1px solid #ddd;border-radius:6px;padding:1rem;margin:0.5rem 0;max-width:420px;">
+  <h3><%= template.name %></h3>
+
+  <% if template.description.present? %>
+    <p><%= template.description %></p>
+  <% end %>
+
+  <p class="op-projtpl-card--meta">
+    <%= t(:"project_templates.fields.work_packages") %>:
+    <%= template.work_package_count %>
+  </p>
+
+  <p>
+    <%= link_to t(:"project_templates.actions.instantiate"),
+                project_templates_new_path(template_id: template.id),
+                class: "button -primary -with-icon icon-add" %>
+  </p>
+</div>

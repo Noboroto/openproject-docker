@@ -1,0 +1,30 @@
+vi:
+  placeholder_users:
+    menu: "Người dùng giữ chỗ"
+    title: "Người dùng giữ chỗ"
+    empty: "Chưa có người dùng giữ chỗ nào."
+    fields:
+      name: "Tên"
+      login: "Tên đăng nhập"
+      mail: "Email"
+      actions: "Hành động"
+    actions:
+      create: "Thêm người dùng giữ chỗ"
+      edit: "Sửa"
+      delete: "Xóa"
+      convert: "Chuyển thành người dùng thật"
+      save: "Lưu"
+      cancel: "Hủy"
+    confirm:
+      delete: "Xóa người dùng giữ chỗ này?"
+    hint:
+      no_login: "Người dùng giữ chỗ không thể đăng nhập và không có email. Dùng họ làm người được giao gói công việc hoặc để lập kế hoạch nguồn lực trước khi có tài khoản thật."
+      convert: "Việc chuyển đổi giữ nguyên id, nên mọi phân công gói công việc hiện có sẽ tự động chuyển sang. Tài khoản mới được tạo ở trạng thái 'đã mời'."
+    flash:
+      created: "Đã tạo người dùng giữ chỗ."
+      updated: "Đã cập nhật người dùng giữ chỗ."
+      deleted: "Đã xóa người dùng giữ chỗ."
+      converted: "Đã chuyển người dùng giữ chỗ thành người dùng thật."
+    errors:
+      login_required: "Cần có tên đăng nhập để chuyển đổi người dùng giữ chỗ."
+      login_taken: "Tên đăng nhập đó đã được sử dụng."
