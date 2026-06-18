@@ -1,5 +1,5 @@
 :80 {
-    reverse_proxy /hocuspocus* hocuspocus:1234
+    reverse_proxy /hocuspocus* op-hocuspocus:1234
 
     reverse_proxy * http://${APP_HOST}:8080 {
         # The following directives are needed to make the proxy forward explicitly the X-Forwarded-* headers. If unset,

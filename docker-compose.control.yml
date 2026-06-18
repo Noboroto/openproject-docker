@@ -4,7 +4,7 @@ volumes:
   pgupgrade:
 
 services:
-  db:
+  op-db:
     restart: "no"
     entrypoint: ["echo", "disabled"]
   upgrade:
@@ -30,22 +30,22 @@ services:
       - "./backups:/backups"
       - "./control:/control"
     entrypoint: ["/control/backup/entrypoint.sh"]
-  web:
+  op-web:
     restart: "no"
     entrypoint: ["echo", "disabled"]
-  worker:
+  op-worker:
     restart: "no"
     entrypoint: ["echo", "disabled"]
-  cron:
+  op-cron:
     restart: "no"
     entrypoint: ["echo", "disabled"]
-  seeder:
+  op-seeder:
     restart: "no"
     entrypoint: ["echo", "disabled"]
-  proxy:
+  op-proxy:
     restart: "no"
     entrypoint: ["echo", "disabled"]
-  cache:
+  op-cache:
     restart: "no"
     entrypoint: ["echo", "disabled"]
 

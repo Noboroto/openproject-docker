@@ -24,10 +24,10 @@ x-op-app: &app
   environment:
     OPENPROJECT_HTTPS: "${OPENPROJECT_HTTPS:-true}"
     OPENPROJECT_HOST__NAME: "${OPENPROJECT_HOST__NAME:-localhost:8080}"
-    OPENPROJECT_ADDITIONAL__HOST__NAMES: "${OPENPROJECT_ADDITIONAL__HOST__NAMES:-web}" # to allow access from hocuspocus directly
+    OPENPROJECT_ADDITIONAL__HOST__NAMES: "${OPENPROJECT_ADDITIONAL__HOST__NAMES:-op-web}" # to allow access from hocuspocus directly
     OPENPROJECT_HSTS: "${OPENPROJECT_HSTS:-true}"
     OPENPROJECT_RAILS__CACHE__STORE: "memcache"
-    OPENPROJECT_CACHE__MEMCACHE__SERVER: "cache:11211"
+    OPENPROJECT_CACHE__MEMCACHE__SERVER: "op-cache:11211"
     OPENPROJECT_RAILS__RELATIVE__URL__ROOT: "${OPENPROJECT_RAILS__RELATIVE__URL__ROOT:-}"
     OPENPROJECT_COLLABORATIVE__EDITING__HOCUSPOCUS__URL: "${COLLABORATIVE_SERVER_URL:-wss://${OPENPROJECT_HOST__NAME}/hocuspocus}"
     OPENPROJECT_COLLABORATIVE__EDITING__HOCUSPOCUS__SECRET: "${COLLABORATIVE_SERVER_SECRET:-OVERRIDE_ME_PLEASE}"
@@ -71,7 +71,7 @@ services:
           cpus: "0.5"
           memory: "512m"
 
-  cache:
+  op-cache:
     image: memcached
     # Bigger memcache slab improves Rails cache hit rate on a roomier host.
     command: ["-m", "384"]
@@ -87,17 +87,17 @@ services:
           cpus: "0.1"
           memory: "128m"
 
-  proxy:
+  op-proxy:
     build:
       context: ./proxy
       args:
-        APP_HOST: web
+        APP_HOST: op-web
     image: openproject/proxy
     <<: *restart_policy
     expose:
       - "80"
     depends_on:
-      - web
+      - op-web
     networks:
       - frontend
     deploy:
@@ -109,7 +109,7 @@ services:
           cpus: "0.05"
           memory: "32m"
 
-  web:
+  op-web:
     <<: *app
     command: "./docker/prod/web"
     hostname: "${OPENPROJECT_HOST__NAME:-localhost:8080}"
@@ -118,8 +118,8 @@ services:
       - backend
     depends_on:
       - op-db
-      - cache
-      - seeder
+      - op-cache
+      - op-seeder
     labels:
       - autoheal=true
     healthcheck:
@@ -138,7 +138,7 @@ services:
           cpus: "0.75"
           memory: "1g"
 
-  autoheal:
+  op-autoheal:
     image: willfarrell/autoheal:1.2.0
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
@@ -152,15 +152,15 @@ services:
           cpus: "0.1"
           memory: "32m"
 
-  worker:
+  op-worker:
     <<: *app
     command: "./docker/prod/worker"
     networks:
       - backend
     depends_on:
       - op-db
-      - cache
-      - seeder
+      - op-cache
+      - op-seeder
     # Background jobs (GoodJob): date alerts, digests, audit purge, LDAP sync.
     deploy:
       resources:
@@ -171,15 +171,15 @@ services:
           cpus: "0.5"
           memory: "512m"
 
-  cron:
+  op-cron:
     <<: *app
     command: "./docker/prod/cron"
     networks:
       - backend
     depends_on:
       - op-db
-      - cache
-      - seeder
+      - op-cache
+      - op-seeder
     deploy:
       resources:
         limits:
@@ -189,7 +189,7 @@ services:
           cpus: "0.05"
           memory: "64m"
 
-  seeder:
+  op-seeder:
     <<: *app
     command: "./docker/prod/seeder"
     restart: on-failure
@@ -202,11 +202,11 @@ services:
           cpus: "1.5"
           memory: "1536m"
 
-  hocuspocus:
+  op-hocuspocus:
     image: openproject/hocuspocus:17.5.1
     environment:
       SECRET: ${COLLABORATIVE_SERVER_SECRET:-OVERRIDE_ME_PLEASE}
-      OPENPROJECT_URL: "${OPENPROJECT_URL:-http://web:8080}"
+      OPENPROJECT_URL: "${OPENPROJECT_URL:-http://op-web:8080}"
       OPENPROJECT_HTTPS: "${OPENPROJECT_HTTPS:-true}"
     networks:
       - backend
@@ -230,7 +230,7 @@ services:
       dockerfile: Dockerfile
     image: openproject-mcp:local
     environment:
-      OPENPROJECT_URL: "${OPENPROJECT_URL:-http://web:8080}"
+      OPENPROJECT_URL: "${OPENPROJECT_URL:-http://op-web:8080}"
       OPENPROJECT_TOKEN: "${OPENPROJECT_TOKEN:-}"        # API token (opapi-...), preferred
       OPENPROJECT_API_KEY: "${OPENPROJECT_API_KEY:-}"    # legacy fallback
       TRANSPORT: "streamable-http"
@@ -243,7 +243,7 @@ services:
       - backend
       - frontend
     depends_on:
-      web:
+      op-web:
         condition: service_healthy
     <<: *restart_policy
     deploy:
