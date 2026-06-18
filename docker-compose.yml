@@ -113,6 +113,11 @@ services:
     <<: *app
     command: "./docker/prod/web"
     hostname: "${OPENPROJECT_HOST__NAME:-localhost:8080}"
+    environment:
+      # Rails 8.1 check_all_pending! uses temporary connection pools whose
+      # migration_context lacks plugin paths, causing false-positive failures.
+      # Migrations are always run by op-seeder before this container starts.
+      OPENPROJECT_DISABLE__MIGRATIONS__CHECK: "true"
     networks:
       - frontend
       - backend
