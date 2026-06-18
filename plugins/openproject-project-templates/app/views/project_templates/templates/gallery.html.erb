@@ -1,6 +1,7 @@
 <% html_title t(:"project_templates.gallery") %>
 <%= render Primer::OpenProject::PageHeader.new do |header|
       header.with_title { t(:"project_templates.gallery") }
+      header.with_breadcrumbs(nil)
     end %>
 
 <% if @templates.empty? %>

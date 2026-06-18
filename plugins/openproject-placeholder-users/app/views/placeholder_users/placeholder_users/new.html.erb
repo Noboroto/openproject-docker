@@ -2,6 +2,7 @@
 
 <%= render Primer::OpenProject::PageHeader.new do |header|
       header.with_title { t(:"placeholder_users.actions.create") }
+      header.with_breadcrumbs(nil)
     end %>
 
 <%= render "form",

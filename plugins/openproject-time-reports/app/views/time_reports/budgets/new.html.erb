@@ -1,5 +1,6 @@
 <% html_title t(:"budget.new") %>
 <%= render Primer::OpenProject::PageHeader.new do |header|
       header.with_title { t(:"budget.new") }
+      header.with_breadcrumbs(nil)
     end %>
 <%= render "form" %>

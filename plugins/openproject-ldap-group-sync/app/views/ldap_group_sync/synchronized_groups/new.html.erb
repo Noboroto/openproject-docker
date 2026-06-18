@@ -2,6 +2,7 @@
 
 <%= render Primer::OpenProject::PageHeader.new do |header|
       header.with_title { t(:"ldap_group_sync.actions.new_mapping") }
+      header.with_breadcrumbs(nil)
     end %>
 
 <%= render "form", url: { action: :create }, method: :post %>

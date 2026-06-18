@@ -2,6 +2,7 @@
 
 <%= render Primer::OpenProject::PageHeader.new do |header|
       header.with_title { t(:"ldap_group_sync.title") }
+      header.with_breadcrumbs(nil)
     end %>
 
 <p class="form--field-instructions"><%= t(:"ldap_group_sync.intro") %></p>

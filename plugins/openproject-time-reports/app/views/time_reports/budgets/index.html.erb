@@ -1,7 +1,8 @@
 <%# Budget list with spent / remaining / percent-used progress bars. %>
 <% html_title t(:"budget.title") %>
-<%= render Primer::OpenProject::PageHeader.new do |header|
+<%= render(Primer::OpenProject::PageHeader.new) do |header|
       header.with_title { t(:"budget.title") }
+      header.with_breadcrumbs(nil)
     end %>
 
 <p><%= link_to t(:"budget.new"), new_project_time_reports_budget_path(@project) %></p>

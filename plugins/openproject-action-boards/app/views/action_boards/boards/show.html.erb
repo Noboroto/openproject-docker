@@ -62,6 +62,7 @@
      data-board-drag-csrf-value="<%= form_authenticity_token %>">
   <%= render Primer::OpenProject::PageHeader.new do |header|
         header.with_title { @board.name }
+        header.with_breadcrumbs(nil)
       end %>
   <div class="op-ab__head">
     <span class="op-ab__type"><%= t(:"action_boards.action_type.#{@board.action_type}") %></span>

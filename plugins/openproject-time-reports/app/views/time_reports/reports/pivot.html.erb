@@ -2,6 +2,7 @@
 <% html_title t(:"time_reports.pivot_title") %>
 <%= render Primer::OpenProject::PageHeader.new do |header|
       header.with_title { t(:"time_reports.pivot_title") }
+      header.with_breadcrumbs(nil)
     end %>
 
 <table class="generic-table">

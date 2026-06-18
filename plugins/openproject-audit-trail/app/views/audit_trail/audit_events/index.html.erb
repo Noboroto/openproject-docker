@@ -1,6 +1,7 @@
 <% html_title t(:"audit_trail.title") %>
 <%= render Primer::OpenProject::PageHeader.new do |header|
       header.with_title { t(:"audit_trail.title") }
+      header.with_breadcrumbs(nil)
     end %>
 
 <p class="form--field-instructions">

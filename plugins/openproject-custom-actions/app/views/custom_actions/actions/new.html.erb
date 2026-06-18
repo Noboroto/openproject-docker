@@ -1,6 +1,7 @@
 <% html_title t(:"custom_actions.new") %>
 <%= render Primer::OpenProject::PageHeader.new do |header|
       header.with_title { t(:"custom_actions.new") }
+      header.with_breadcrumbs(nil)
     end %>
 
 <%= render "form",
