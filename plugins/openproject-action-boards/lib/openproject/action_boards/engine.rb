@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "openproject/plugins"
+require "open_project/plugins"
 
 module OpenProject
   module ActionBoards
@@ -23,6 +23,13 @@ module OpenProject
       engine_name :openproject_action_boards
 
       include OpenProject::Plugins::ActsAsOpEngine
+
+      # Ignore this plugin's lib/ in zeitwerk (loaded manually via the gem entry);
+      # otherwise eager-load camelizes "openproject" -> "Openproject" and raises.
+      initializer "openproject_action_boards.zeitwerk_ignore_lib",
+                  before: :set_autoload_paths do
+        Rails.autoloaders.main.ignore(File.expand_path("../..", __dir__))
+      end
 
       register "openproject-action_boards",
                author_url: "https://example.com",

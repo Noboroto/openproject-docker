@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "openproject/plugins"
+require "open_project/plugins"
 
 module OpenProject
   module AuthSso

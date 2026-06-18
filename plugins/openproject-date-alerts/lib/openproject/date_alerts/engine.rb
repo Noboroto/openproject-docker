@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "openproject/plugins"
+require "open_project/plugins"
 
 module OpenProject
   module DateAlerts
@@ -22,6 +22,17 @@ module OpenProject
       engine_name :openproject_date_alerts
 
       include OpenProject::Plugins::ActsAsOpEngine
+
+      # The engine + version under lib/ are loaded manually via the gem entry
+      # file. Tell zeitwerk to IGNORE this plugin's lib/ so it doesn't try to
+      # autoload lib/openproject/* and camelize "openproject" -> "Openproject"
+      # (which raises NameError; our module is OpenProject). Runtime code lives
+      # under app/ and autoloads normally.
+      initializer "openproject_date_alerts.zeitwerk_ignore_lib",
+                  before: :set_autoload_paths do
+        # __dir__ = lib/openproject/date_alerts ; "../.." = the plugin's lib/
+        Rails.autoloaders.main.ignore(File.expand_path("../..", __dir__))
+      end
 
       register "openproject-date_alerts",
                author_url: "https://example.com",
@@ -51,23 +62,21 @@ module OpenProject
              icon: "reminder",
              after: :settings
 
-        # Register the recurring scan with OpenProject's GoodJob cron.
-        #
-        # verify against running 17-slim image: `add_cron_jobs` is the official
-        # ActsAsOpEngine hook in OP 17 (used by e.g. the GitHub/GitLab/LDAP
-        # engines) and merges into `config.good_job.cron`. Confirm the method
-        # name and the { cron:, class: } entry shape, and that
-        # `config.good_job.enable_cron` (OPENPROJECT_GOOD__JOB__ENABLE__CRON) is
-        # true on the target instance, otherwise the entry is registered but
-        # never fires.
-        add_cron_jobs do
-          {
-            "DateAlerts::ScanJob" => {
-              cron: "0 6 * * *", # daily at 06:00 instance-local time
-              class: "DateAlerts::ScanJob"
-            }
-          }
-        end
+      end
+
+      # Register the recurring daily scan with OpenProject's GoodJob cron by
+      # merging into config.good_job.cron (the real GoodJob mechanism — there is
+      # no `add_cron_jobs` plugin hook in OP 17). The cron only fires when
+      # config.good_job.enable_cron is true (OPENPROJECT_GOOD__JOB__ENABLE__CRON),
+      # which the OP `cron` service sets. Registered but dormant otherwise.
+      initializer "openproject_date_alerts.cron" do |app|
+        app.config.good_job ||= ActiveSupport::OrderedOptions.new
+        app.config.good_job.cron ||= {}
+        app.config.good_job.cron[:date_alerts_scan] = {
+          cron: "0 6 * * *", # daily at 06:00 instance-local time
+          class: "DateAlerts::ScanJob",
+          description: "Daily date-alert scan (openproject-date_alerts)"
+        }
       end
     end
   end

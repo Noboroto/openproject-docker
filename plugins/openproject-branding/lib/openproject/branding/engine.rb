@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "openproject/plugins"
+require "open_project/plugins"
 
 module OpenProject
   module Branding
@@ -13,6 +13,13 @@ module OpenProject
       engine_name :openproject_branding
 
       include OpenProject::Plugins::ActsAsOpEngine
+
+      # Ignore this plugin's lib/ in zeitwerk (loaded manually via the gem entry);
+      # otherwise eager-load camelizes "openproject" -> "Openproject" and raises.
+      initializer "openproject_branding.zeitwerk_ignore_lib",
+                  before: :set_autoload_paths do
+        Rails.autoloaders.main.ignore(File.expand_path("../..", __dir__))
+      end
 
       register "openproject-branding",
                author_url: "https://example.com",
@@ -39,9 +46,11 @@ module OpenProject
              after:   :settings
       end
 
-      # Autoload + register the view-hook listener that injects the compiled
-      # theme CSS and favicon override into the layout <head>.
-      initializer "branding.register_hooks" do
+      # Register the view-hook listener that injects the compiled theme CSS and
+      # favicon override into the layout <head>. Loaded in to_prepare (after the
+      # framework + OpenProject::Hook + ApplicationHelper are available), NOT in an
+      # initializer (too early — the hook base class include would fail).
+      config.to_prepare do
         require "openproject/branding/hooks"
       end
     end

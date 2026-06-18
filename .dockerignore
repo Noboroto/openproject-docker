@@ -1,0 +1,14 @@
+.git
+plans/
+.env
+.env.local
+.env.*.local
+docker-compose.dev.yml
+docker-compose.control.yml
+mcp-server/
+proxy/
+control/
+.serena/
+**/__pycache__/
+**/.pytest_cache/
+**/spec/

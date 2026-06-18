@@ -5,14 +5,16 @@
 # These paths are baked into the custom image (Phase 3, Dockerfile.app) at
 # /app/plugins/<dir>. Locally the dev container mounts ./plugins at /app/plugins.
 
-# --- Third-party (fully-free) gems plugins build on --------------------------
-# MIT OmniAuth strategies for the SSO plugin.
-gem "omniauth-saml"
-gem "omniauth_openid_connect"
+# NOTE: SSO (SAML + OIDC) is ALREADY shipped in OpenProject Community as the
+# bundled modules `openproject-auth_saml` (omniauth-saml) and
+# `openproject-openid_connect` (omniauth_openid_connect). Our standalone
+# `openproject-auth_sso` plugin is therefore redundant and re-declaring those
+# omniauth gems conflicts with OP's pinned versions (boot crash). It is removed
+# from the build. Configure SSO via OP's built-in Administration → Authentication.
+# (Plugin source kept under plugins/openproject-auth-sso/ for reference only.)
 
 # --- Tier 1 plugins ----------------------------------------------------------
 gem "openproject-branding",        path: "plugins/openproject-branding"
-gem "openproject-auth_sso",        path: "plugins/openproject-auth-sso"
 gem "openproject-mfa_enforcement", path: "plugins/openproject-mfa-enforcement"
 gem "openproject-action_boards",   path: "plugins/openproject-action-boards"
 gem "openproject-time_reports",    path: "plugins/openproject-time-reports"

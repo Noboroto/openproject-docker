@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "openproject/plugins"
+require "open_project/plugins"
 
 module OpenProject
   module TimeReports
@@ -17,6 +17,13 @@ module OpenProject
 
       include OpenProject::Plugins::ActsAsOpEngine
 
+      # Ignore this plugin's lib/ in zeitwerk (loaded manually via the gem entry);
+      # otherwise eager-load camelizes "openproject" -> "Openproject" and raises.
+      initializer "openproject_time_reports.zeitwerk_ignore_lib",
+                  before: :set_autoload_paths do
+        Rails.autoloaders.main.ignore(File.expand_path("../..", __dir__))
+      end
+
       register "openproject-time_reports",
                author_url: "https://example.com",
                bundled: false,
@@ -30,16 +37,19 @@ module OpenProject
         project_module :time_reports do
           # Time-report viewing (hours only — no monetary data).
           permission :view_time_reports,
-                     { "time_reports/reports" => %i[index pivot export] }
+                     { "time_reports/reports" => %i[index pivot export] },
+                     permissible_on: :project
 
           # Cost reports expose money (hours x rate). Kept DISTINCT from
           # view_time_reports so a user can see hours without seeing cost.
           permission :view_cost_reports,
-                     { "time_reports/cost_reports" => %i[index export] }
+                     { "time_reports/cost_reports" => %i[index export] },
+                     permissible_on: :project
 
           # Budget CRUD.
           permission :manage_budgets,
-                     { "time_reports/budgets" => %i[index new create edit update destroy] }
+                     { "time_reports/budgets" => %i[index new create edit update destroy] },
+                     permissible_on: :project
         end
 
         # verify against running 17-slim image: the :project_menu name and the

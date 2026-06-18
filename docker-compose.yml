@@ -11,7 +11,14 @@ volumes:
 x-op-restart-policy: &restart_policy
   restart: on-failure:3
 x-op-image: &image
-  image: openproject/openproject:${TAG:-17-slim}
+  # Custom image = official OP + our plugins (see Dockerfile.app).
+  # Build locally/CI and push to a registry; the server only pulls.
+  build:
+    context: .
+    dockerfile: Dockerfile.app
+    args:
+      TAG: ${TAG:-17-slim}
+  image: openproject-custom:${TAG:-17-slim}
 x-op-app: &app
   <<: [*image, *restart_policy]
   environment:

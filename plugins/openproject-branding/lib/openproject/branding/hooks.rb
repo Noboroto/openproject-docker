@@ -1,5 +1,10 @@
 # frozen_string_literal: true
 
+# Loaded from the engine's `config.to_prepare` (NOT an initializer): by then the
+# core has loaded OpenProject::Hook::ViewListener AND Rails has autoloaded
+# ApplicationHelper (which the hook base class includes). Requiring it earlier
+# fails on an uninitialized ApplicationHelper.
+
 module OpenProject
   module Branding
     # View-hook listener that injects the compiled theme CSS and favicon override
