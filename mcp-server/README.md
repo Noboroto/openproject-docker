@@ -93,15 +93,19 @@ python server.py --transport stdio    # for Claude Desktop
 ## Remote access (server deployment)
 
 **Deploy maps NO host port** (only the proxy is exposed). `op-mcp` joins the
-`frontend` network so the proxy can route to it. Expose a subdomain via the
-**Nginx Proxy Manager UI**:
+`frontend` network, and **op-proxy (Caddy) routes `/mcp` → `op-mcp:8000`** via
+`proxy/Caddyfile.template`:
 
-- Forward Hostname/IP: `op-mcp` · Port: `8000` · scheme `http`
-- Enable **Websockets Support** (streamable-http keeps a long-lived connection)
-- SSL tab → request a Let's Encrypt cert, force HTTPS
-- Do **not** hand-edit the nginx config files.
+```
+reverse_proxy /mcp* op-mcp:8000 {
+    flush_interval -1
+}
+```
 
-Then point an HTTP MCP client at `https://<your-mcp-subdomain>/mcp`.
+So the endpoint is served on the **same domain** as OpenProject —
+`https://<your-op-domain>/mcp` — and any edge proxy just forwards the whole
+domain to op-proxy. Rebuild op-proxy after changing the Caddyfile:
+`docker compose build op-proxy && docker compose up -d op-proxy`.
 
 ### Local testing without the proxy
 

@@ -93,16 +93,23 @@ python server.py                    # streamable-http on :8000  → http://127.0
 python server.py --transport stdio  # stdio (for desktop clients)
 ```
 
-### D. Remote (production, behind Nginx Proxy Manager)
+### D. Remote (production) — same domain via op-proxy
 
-The deploy exposes **no host port** — only the proxy. `op-mcp` joins the `frontend`
-network. In the **NPM UI** add a proxy host:
+The deploy exposes **no host port**. `op-mcp` joins the `frontend` network, and
+**op-proxy (Caddy) routes `/mcp` → `op-mcp:8000` automatically** — see
+[`proxy/Caddyfile.template`](./proxy/Caddyfile.template):
 
-- Forward Hostname/IP `op-mcp` · Port `8000` · scheme `http`
-- Enable **Websockets Support** (streamable-http holds a long-lived connection)
-- SSL tab → Let's Encrypt cert, force HTTPS
+```
+reverse_proxy /mcp* op-mcp:8000 {
+    flush_interval -1        # stream SSE frames live (no buffering)
+}
+```
 
-Then point clients at `https://<your-mcp-subdomain>/mcp`. Do **not** hand-edit nginx config files.
+So the MCP endpoint is served on the **same domain** as OpenProject:
+`https://<your-op-domain>/mcp`. Any edge proxy in front (e.g. Nginx Proxy
+Manager) just forwards the whole domain to op-proxy as usual — **no per-path
+proxy config needed**. Rebuild op-proxy after editing the Caddyfile:
+`docker compose build op-proxy && docker compose up -d op-proxy`.
 
 ---
 
@@ -214,11 +221,10 @@ OpenProject (admin-only). It:
 - runs a **health check** that pings the server's `/health` endpoint and reports
   reachability, HTTP status, and latency.
 
-> **Proxy routing required for the same-domain path.** For `https://<your-op-domain>/mcp`
-> to reach the MCP server, the proxy must forward `/mcp` → `op-mcp:8000`. In Nginx
-> Proxy Manager add a custom location `/mcp` on the OpenProject proxy host pointing
-> at `op-mcp:8000` (Websockets on). Otherwise expose `op-mcp` on its own subdomain
-> and set that as the public base URL.
+> **Same-domain routing is built in.** op-proxy's Caddyfile routes `/mcp` →
+> `op-mcp:8000` (see §4-D), so `https://<your-op-domain>/mcp` reaches the MCP
+> server with no extra per-path config on any edge proxy. If you instead front
+> op-mcp on its own subdomain, set that as the public base URL below.
 
 The MCP server exposes `GET /health` (liveness, no MCP handshake needed):
 

@@ -1,6 +1,12 @@
 :80 {
     reverse_proxy /hocuspocus* op-hocuspocus:1234
 
+    # Standalone MCP server (streamable-HTTP/SSE). Same domain, /mcp path.
+    # flush_interval -1 disables response buffering so SSE frames stream live.
+    reverse_proxy /mcp* op-mcp:8000 {
+        flush_interval -1
+    }
+
     reverse_proxy * http://${APP_HOST}:8080 {
         # The following directives are needed to make the proxy forward explicitly the X-Forwarded-* headers. If unset,
         # Caddy will reset them. See: https://caddyserver.com/docs/caddyfile/directives/reverse_proxy#defaults
