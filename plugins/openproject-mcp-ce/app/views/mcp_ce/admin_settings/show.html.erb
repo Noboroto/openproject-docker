@@ -6,6 +6,18 @@
 
 <p class="op-toast-zen"><%= t(:"mcp_ce.intro") %></p>
 
+<style>
+  .mcp-ce-note {
+    border-left: 4px solid var(--primer-borderColor-accent-emphasis, #0969da);
+    background: var(--primer-bgColor-accent-muted, rgba(9, 105, 218, 0.06));
+    padding: 8px 12px;
+    border-radius: 3px;
+    line-height: 1.5;
+    max-width: 900px;
+  }
+  .mcp-ce-note code { white-space: nowrap; }
+</style>
+
 <%# ── Shortcuts ────────────────────────────────────────────────────── %>
 <%# The path clients connect to: public (derived from this domain) if available,
     otherwise the in-stack endpoint. Copy buttons use Primer's <clipboard-copy>. %>
@@ -35,9 +47,9 @@
 
     <div class="form--field">
       <div class="form--field-container" style="display:block">
-        <p class="op-toast op-toast_info">
+        <div class="mcp-ce-note">
           <%= t(:"mcp_ce.auth_note_html", header: content_tag(:code, @token_header)) %>
-        </p>
+        </div>
       </div>
     </div>
   </fieldset>

@@ -16,10 +16,10 @@ vi:
       danh nghĩa chủ nhân của token được gửi lên. Mở Tài khoản của tôi → Access
       tokens ở tab mới để tạo/sao chép token.
     auth_note_html: >-
-      Xác thực theo từng người dùng: gửi API token của bạn ở mỗi request qua header
-      %{header} (hoặc <code>Authorization: Bearer &lt;token&gt;</code>). Các đoạn cấu
-      hình bên dưới đã có sẵn header này — chỉ cần thay <code>opapi-YOUR_TOKEN</code>
-      bằng token của bạn. Không chia sẻ token; mỗi người dùng token riêng.
+      <strong>Xác thực theo từng người dùng.</strong> Gửi API token của bạn ở mỗi
+      request qua header %{header}. Các đoạn cấu hình bên dưới đã có sẵn — chỉ cần
+      thay <code>opapi-YOUR_TOKEN</code> bằng token của bạn. Không chia sẻ token;
+      mỗi người dùng token riêng.
     client_legend: "Cấu hình client"
     client_intro: >-
       Cấu hình sao chép-dán cho các client MCP phổ biến. Thay opapi-YOUR_TOKEN bằng

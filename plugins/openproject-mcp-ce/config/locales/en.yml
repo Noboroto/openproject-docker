@@ -16,10 +16,10 @@ en:
       as whoever's token is sent. Opens My account → Access tokens in a new tab to
       create/copy one.
     auth_note_html: >-
-      Per-user authentication: send your API token on every request via the
-      %{header} header (or <code>Authorization: Bearer &lt;token&gt;</code>). The
-      snippets below already include it — just replace <code>opapi-YOUR_TOKEN</code>
-      with your own token. Never share a token; each person uses their own.
+      <strong>Per-user authentication.</strong> Send your API token on every
+      request via the %{header} header. The snippets below already include it —
+      just replace <code>opapi-YOUR_TOKEN</code> with your own token. Never share a
+      token; each person uses their own.
     client_legend: "Client setup"
     client_intro: >-
       Copy-paste configuration for common MCP clients. Replace opapi-YOUR_TOKEN with
