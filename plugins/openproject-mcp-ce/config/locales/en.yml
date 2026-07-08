@@ -12,12 +12,18 @@ en:
     copy: "Copy"
     get_token: "Get API token"
     token_hint: >-
-      MCP clients authenticate with an OpenProject API token. Opens My account →
-      Access tokens in a new tab to create/copy one.
+      Each user connects with their OWN OpenProject API token — the MCP server acts
+      as whoever's token is sent. Opens My account → Access tokens in a new tab to
+      create/copy one.
+    auth_note_html: >-
+      Per-user authentication: send your API token on every request via the
+      %{header} header (or <code>Authorization: Bearer &lt;token&gt;</code>). The
+      snippets below already include it — just replace <code>opapi-YOUR_TOKEN</code>
+      with your own token. Never share a token; each person uses their own.
     client_legend: "Client setup"
     client_intro: >-
-      Copy-paste configuration for common MCP clients. The URL uses your connection
-      path above; adjust the server name if you like.
+      Copy-paste configuration for common MCP clients. Replace opapi-YOUR_TOKEN with
+      your API token; adjust the server name if you like.
     client:
       claude_code: "Claude Code (CLI)"
       vscode: "VS Code (.vscode/mcp.json)"

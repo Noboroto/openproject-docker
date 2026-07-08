@@ -235,8 +235,12 @@ services:
     image: openproject-mcp:local
     environment:
       OPENPROJECT_URL: "${OPENPROJECT_URL:-http://op-web:8080}"
-      OPENPROJECT_TOKEN: "${OPENPROJECT_TOKEN:-}"        # API token (opapi-...), preferred
-      OPENPROJECT_API_KEY: "${OPENPROJECT_API_KEY:-}"    # legacy fallback
+      # Per-user mode: each client sends its own token (X-OpenProject-Token header),
+      # so these are OPTIONAL server-side fallbacks — used only when a request
+      # carries no token (e.g. stdio, or a shared-token setup). Leave blank for
+      # pure per-user auth.
+      OPENPROJECT_TOKEN: "${OPENPROJECT_TOKEN:-}"        # API token (opapi-...), preferred fallback
+      OPENPROJECT_API_KEY: "${OPENPROJECT_API_KEY:-}"    # legacy HTTP-Basic fallback
       TRANSPORT: "streamable-http"
       HOST: "0.0.0.0"
       PORT: "8000"

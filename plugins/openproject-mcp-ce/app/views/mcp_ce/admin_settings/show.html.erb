@@ -32,6 +32,14 @@
         <p class="form--field-instructions"><%= t(:"mcp_ce.token_hint") %></p>
       </div>
     </div>
+
+    <div class="form--field">
+      <div class="form--field-container" style="display:block">
+        <p class="op-toast op-toast_info">
+          <%= t(:"mcp_ce.auth_note_html", header: content_tag(:code, @token_header)) %>
+        </p>
+      </div>
+    </div>
   </fieldset>
 </section>
 

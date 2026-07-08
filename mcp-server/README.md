@@ -27,12 +27,29 @@ A plain-HTTP **`GET /health`** liveness route (no MCP handshake) returns
 | Env var | Purpose |
 |---|---|
 | `OPENPROJECT_URL` | Base URL, e.g. `http://web:8080` (in-stack) or `https://op.example.com` |
-| `OPENPROJECT_TOKEN` | API token (`opapi-...`) — **preferred**, sent as Bearer |
+| `OPENPROJECT_TOKEN` | **Optional** fallback token (`opapi-...`), sent as Bearer when a request carries none |
 | `OPENPROJECT_API_KEY` | Legacy fallback — HTTP Basic, username `apikey` |
 | `TRANSPORT` | `streamable-http` (default) or `stdio` |
 | `HOST` / `PORT` | bind address (default `0.0.0.0:8000`) |
 
 Generate a token in OpenProject: **My Account → Access tokens → + API Token**.
+
+### Per-user authentication
+
+Over `streamable-http` the server runs **per-user**: each request authenticates
+with the **caller's own** API token, so the MCP acts as whoever is connected —
+no shared server-side identity. Clients send the token on every request:
+
+- `X-OpenProject-Token: opapi-...`  — **preferred** (a custom header no MCP client
+  hijacks for its own OAuth), or
+- `Authorization: Bearer opapi-...` — standard bearer, accepted as a fallback.
+
+Precedence: a request token **overrides** `OPENPROJECT_TOKEN`. The env token is
+only used when a request supplies none — i.e. the `stdio` transport (no HTTP
+headers) or a deliberately shared-token deployment. With no request token **and**
+no env token, tools return a `401` explaining how to authenticate. See
+[`auth.py`](./auth.py) (header capture + ContextVar) and `_auth()` in
+[`client.py`](./client.py).
 
 ## Run with Docker (in the stack)
 

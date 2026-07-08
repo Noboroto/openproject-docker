@@ -12,12 +12,18 @@ vi:
     copy: "Sao chép"
     get_token: "Lấy API token"
     token_hint: >-
-      Client MCP xác thực bằng API token của OpenProject. Mở Tài khoản của tôi →
-      Access tokens ở tab mới để tạo/sao chép token.
+      Mỗi người kết nối bằng API token CỦA CHÍNH MÌNH — máy chủ MCP hành động dưới
+      danh nghĩa chủ nhân của token được gửi lên. Mở Tài khoản của tôi → Access
+      tokens ở tab mới để tạo/sao chép token.
+    auth_note_html: >-
+      Xác thực theo từng người dùng: gửi API token của bạn ở mỗi request qua header
+      %{header} (hoặc <code>Authorization: Bearer &lt;token&gt;</code>). Các đoạn cấu
+      hình bên dưới đã có sẵn header này — chỉ cần thay <code>opapi-YOUR_TOKEN</code>
+      bằng token của bạn. Không chia sẻ token; mỗi người dùng token riêng.
     client_legend: "Cấu hình client"
     client_intro: >-
-      Cấu hình sao chép-dán cho các client MCP phổ biến. URL dùng đường dẫn kết nối
-      ở trên; bạn có thể đổi tên server nếu muốn.
+      Cấu hình sao chép-dán cho các client MCP phổ biến. Thay opapi-YOUR_TOKEN bằng
+      API token của bạn; bạn có thể đổi tên server nếu muốn.
     client:
       claude_code: "Claude Code (CLI)"
       vscode: "VS Code (.vscode/mcp.json)"

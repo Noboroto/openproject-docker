@@ -36,9 +36,11 @@ In OpenProject UI: **Avatar → My account → Access tokens → + API token**.
 
 Copy the value — it looks like `opapi-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx`.
 
-> The same token works two ways with the same value: as a **Bearer** token
-> (`OPENPROJECT_TOKEN`, preferred) or as HTTP Basic with username `apikey`
-> (`OPENPROJECT_API_KEY`, legacy fallback). Use `OPENPROJECT_TOKEN`.
+> **Per-user auth.** Over HTTP the server acts as whoever's token is sent, so
+> **each user uses their own** token. HTTP clients pass it per request via the
+> `X-OpenProject-Token` header (preferred) or `Authorization: Bearer` — see
+> §5. For `stdio` (one local user) the token comes from `OPENPROJECT_TOKEN` in
+> the env instead. Never share a token.
 
 ---
 
@@ -47,13 +49,15 @@ Copy the value — it looks like `opapi-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 | Var | Purpose | Default |
 |---|---|---|
 | `OPENPROJECT_URL` | Base URL of the instance. In-stack: `http://op-web:8080`. Remote: `https://op.example.com` | `http://op-web:8080` |
-| `OPENPROJECT_TOKEN` | API token (`opapi-...`) — preferred, sent as Bearer | — |
+| `OPENPROJECT_TOKEN` | **Optional** fallback token (`opapi-...`), sent as Bearer when a request carries none | — |
 | `OPENPROJECT_API_KEY` | Legacy fallback (HTTP Basic, username `apikey`) | — |
 | `TRANSPORT` | `streamable-http` (web/Docker) or `stdio` (desktop clients) | `streamable-http` |
 | `HOST` / `PORT` | Bind address for streamable-http | `0.0.0.0` / `8000` |
 
-You must set **one of** `OPENPROJECT_TOKEN` or `OPENPROJECT_API_KEY` — the server
-refuses to start otherwise.
+In **per-user** HTTP mode neither var is required — clients send their own token
+per request (§5). Set `OPENPROJECT_TOKEN` only as a shared fallback or for the
+`stdio` transport (which has no HTTP headers). With no request token and no env
+token, tools return a `401` telling the caller how to authenticate.
 
 ---
 
@@ -114,11 +118,16 @@ There are two transports. Pick by client:
 **HTTP transport** (server already running via Docker mode A/B or remote D):
 
 ```bash
-# local stack
-claude mcp add --transport http openproject http://127.0.0.1:8000/mcp
+# local stack — pass YOUR token as a header (per-user auth)
+claude mcp add --transport http openproject http://127.0.0.1:8000/mcp \
+  --header "X-OpenProject-Token: opapi-xxxxxxxx"
 # remote
-claude mcp add --transport http openproject https://<your-mcp-subdomain>/mcp
+claude mcp add --transport http openproject https://<your-mcp-subdomain>/mcp \
+  --header "X-OpenProject-Token: opapi-xxxxxxxx"
 ```
+
+> The `openproject-mcp-ce` admin page (§6) generates these snippets with the
+> header already wired in — copy from there and just drop in your token.
 
 **stdio transport** (Claude Code launches Python itself):
 

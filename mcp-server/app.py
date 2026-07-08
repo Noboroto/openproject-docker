@@ -9,9 +9,12 @@ from __future__ import annotations
 from contextlib import asynccontextmanager
 
 from mcp.server.fastmcp import FastMCP
+from starlette.datastructures import Headers
 from starlette.requests import Request
 from starlette.responses import JSONResponse
+from starlette.types import ASGIApp, Receive, Scope, Send
 
+from auth import extract_token, reset_request_token, set_request_token
 from client import OpenProjectClient
 
 # Module-global client, set during lifespan startup. Version-robust: tools call
@@ -48,6 +51,29 @@ mcp = FastMCP(
     stateless_http=True,
     lifespan=lifespan,
 )
+
+
+class TokenCaptureMiddleware:
+    """ASGI middleware for per-user mode.
+
+    Stashes the caller's OpenProject token (from `X-OpenProject-Token` or
+    `Authorization: Bearer`) into a ContextVar for the duration of each HTTP
+    request, so the shared client can act as that user. Added to the app in
+    server.py; a no-op on the stdio transport (no HTTP layer).
+    """
+
+    def __init__(self, app: ASGIApp) -> None:
+        self.app = app
+
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        if scope["type"] != "http":
+            await self.app(scope, receive, send)
+            return
+        marker = set_request_token(extract_token(Headers(scope=scope)))
+        try:
+            await self.app(scope, receive, send)
+        finally:
+            reset_request_token(marker)
 
 
 @mcp.custom_route("/health", methods=["GET"])

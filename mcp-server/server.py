@@ -40,11 +40,21 @@ def main() -> None:
     args = parser.parse_args()
 
     if args.transport == "stdio":
+        # No HTTP layer -> no per-request token; falls back to the env token.
         mcp.run(transport="stdio")
     else:
-        mcp.settings.host = os.environ.get("HOST", "0.0.0.0")
-        mcp.settings.port = int(os.environ.get("PORT", "8000"))
-        mcp.run(transport="streamable-http")
+        import uvicorn
+        from app import TokenCaptureMiddleware
+
+        # Build the ASGI app ourselves so we can wrap it with the middleware that
+        # captures each caller's OpenProject token for per-user auth.
+        app = mcp.streamable_http_app()
+        app.add_middleware(TokenCaptureMiddleware)
+        uvicorn.run(
+            app,
+            host=os.environ.get("HOST", "0.0.0.0"),
+            port=int(os.environ.get("PORT", "8000")),
+        )
 
 
 if __name__ == "__main__":

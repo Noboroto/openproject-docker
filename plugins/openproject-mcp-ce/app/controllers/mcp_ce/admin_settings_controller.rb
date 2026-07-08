@@ -22,6 +22,13 @@ module McpCe
     HEALTH_OPEN_TIMEOUT = 3
     HEALTH_READ_TIMEOUT = 3
 
+    # The MCP server runs in per-user mode: each client authenticates with the
+    # connecting user's OWN OpenProject API token, sent as this header. Snippets
+    # embed a placeholder the user replaces with a token from My account → Access
+    # tokens. (The server also accepts `Authorization: Bearer <token>`.)
+    TOKEN_HEADER = "X-OpenProject-Token"
+    TOKEN_PLACEHOLDER = "opapi-YOUR_TOKEN"
+
     def show
       @settings    = current_settings
       @base_url    = base_url
@@ -38,8 +45,9 @@ module McpCe
 
       # The URL clients connect to: the public (proxy) endpoint when available,
       # else the in-stack one. Used for the copy-ready setup snippets.
-      @client_path = @public_endpoint.presence || @mcp_endpoint
-      @snippets    = client_snippets(@client_path)
+      @client_path  = @public_endpoint.presence || @mcp_endpoint
+      @snippets     = client_snippets(@client_path)
+      @token_header = TOKEN_HEADER
 
       @health = flash[:mcp_health]
     end
@@ -92,14 +100,25 @@ module McpCe
 
     # Copy-ready client setup snippets for the given connection URL. Keyed by a
     # client id (matches the i18n labels + the view's clipboard-copy element ids).
+    #
+    # Per-user mode: every snippet carries the caller's API token via the
+    # TOKEN_HEADER so the connecting user acts as themselves. The user swaps
+    # TOKEN_PLACEHOLDER for a real token from My account → Access tokens.
     def client_snippets(url)
+      hdr   = TOKEN_HEADER
+      token = TOKEN_PLACEHOLDER
       {
-        "claude_code" => "claude mcp add --transport http openproject #{url}",
+        "claude_code" =>
+          %(claude mcp add --transport http openproject #{url} --header "#{hdr}: #{token}"),
         "vscode" => <<~JSON.strip,
           // .vscode/mcp.json
           {
             "servers": {
-              "openproject": { "type": "http", "url": "#{url}" }
+              "openproject": {
+                "type": "http",
+                "url": "#{url}",
+                "headers": { "#{hdr}": "#{token}" }
+              }
             }
           }
         JSON
@@ -107,11 +126,16 @@ module McpCe
           # ~/.codex/config.toml
           [mcp_servers.openproject]
           url = "#{url}"
+          http_headers = { "#{hdr}" = "#{token}" }
         TOML
         "json" => <<~JSON.strip
           {
             "mcpServers": {
-              "openproject": { "type": "http", "url": "#{url}" }
+              "openproject": {
+                "type": "http",
+                "url": "#{url}",
+                "headers": { "#{hdr}": "#{token}" }
+              }
             }
           }
         JSON
