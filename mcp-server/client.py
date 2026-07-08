@@ -47,9 +47,23 @@ class OpenProjectClient:
         self._env_token = os.environ.get("OPENPROJECT_TOKEN", "").strip()
         self._legacy = os.environ.get("OPENPROJECT_API_KEY", "").strip()
 
-        # No auth on the pool — resolved per request so callers act as themselves.
+        # When OpenProject runs with OPENPROJECT_HTTPS=true it 301-redirects any
+        # plain-http request to https. op-mcp reaches op-web internally over http
+        # (http://op-web:8080), so without a hint every API call gets a 301 that
+        # httpx won't follow. Sending X-Forwarded-Proto tells OpenProject the
+        # effective external scheme, so it serves the request instead of
+        # redirecting. Default "https" matches the usual deployment; set
+        # OPENPROJECT_FORWARDED_PROTO to "" to disable (e.g. http-only local OP).
+        default_headers: dict[str, str] = {}
+        fwd_proto = os.environ.get("OPENPROJECT_FORWARDED_PROTO", "https").strip()
+        if fwd_proto:
+            default_headers["X-Forwarded-Proto"] = fwd_proto
+
+        # Auth is NOT on the pool — resolved per request so callers act as
+        # themselves. Only scheme/transport hints live here.
         self._http = httpx.AsyncClient(
             base_url=self._base,
+            headers=default_headers,
             timeout=30.0,
             limits=httpx.Limits(max_connections=10, max_keepalive_connections=5),
         )

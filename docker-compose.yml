@@ -241,6 +241,10 @@ services:
       # pure per-user auth.
       OPENPROJECT_TOKEN: "${OPENPROJECT_TOKEN:-}"        # API token (opapi-...), preferred fallback
       OPENPROJECT_API_KEY: "${OPENPROJECT_API_KEY:-}"    # legacy HTTP-Basic fallback
+      # OP runs with OPENPROJECT_HTTPS=true and 301-redirects plain-http calls;
+      # op-mcp reaches op-web over internal http, so it sends X-Forwarded-Proto
+      # to avoid the redirect. Default "https"; set "" only for http-only OP.
+      OPENPROJECT_FORWARDED_PROTO: "${OPENPROJECT_FORWARDED_PROTO:-https}"
       TRANSPORT: "streamable-http"
       HOST: "0.0.0.0"
       PORT: "8000"

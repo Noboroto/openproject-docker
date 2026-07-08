@@ -251,7 +251,8 @@ it should call `list_projects` and return your projects.
 
 | Symptom | Fix |
 |---|---|
-| Server exits at startup: "Set OPENPROJECT_TOKEN…" | No token in env — set `OPENPROJECT_TOKEN`. |
+| Every tool errors `OpenProject API 301` | OP redirects internal http→https (`OPENPROJECT_HTTPS=true`). op-mcp sends `X-Forwarded-Proto: https` by default to avoid it; if you overrode `OPENPROJECT_FORWARDED_PROTO`, restore it to `https`. |
+| Every tool errors `401` with `X-OpenProject-Token` set | Header not reaching op-mcp, or wrong/revoked token. Verify the proxy forwards custom headers and re-mint the token. |
 | `401 Unauthorized` | Token wrong/revoked, or basic-auth disabled. Re-mint token; prefer `OPENPROJECT_TOKEN` (Bearer). |
 | `404` on every call | `OPENPROJECT_URL` wrong (missing scheme, or pointing at proxy without `/`). The server appends `/api/v3` itself — don't include it. |
 | Claude Code can't reach HTTP server | Server not up / wrong port. Use mode B for a `127.0.0.1:8000` mapping; check `docker compose ps op-mcp`. |
