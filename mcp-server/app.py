@@ -9,6 +9,7 @@ from __future__ import annotations
 from contextlib import asynccontextmanager
 
 from mcp.server.fastmcp import FastMCP
+from mcp.server.transport_security import TransportSecuritySettings
 from starlette.datastructures import Headers
 from starlette.requests import Request
 from starlette.responses import JSONResponse
@@ -50,6 +51,13 @@ mcp = FastMCP(
     ),
     stateless_http=True,
     lifespan=lifespan,
+    # op-mcp always runs behind a trusted reverse proxy (op-proxy/NPM) that
+    # controls the Host header, so allow any host — disable the SDK's default
+    # DNS-rebinding protection, which otherwise 421s requests whose Host is not
+    # localhost (e.g. the public domain proj.example.com/mcp).
+    transport_security=TransportSecuritySettings(
+        enable_dns_rebinding_protection=False,
+    ),
 )
 
 
