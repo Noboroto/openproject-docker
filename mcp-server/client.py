@@ -127,8 +127,3 @@ class OpenProjectClient:
         headers, auth = self._auth()
         resp = await self._http.delete(path, headers=headers, auth=auth)
         self._raise(resp)
-
-    async def lock_version(self, work_package_id: int) -> int:
-        """Fetch current lockVersion for a WP (required before PATCH)."""
-        wp = await self.get(f"/work_packages/{work_package_id}")
-        return wp["lockVersion"]

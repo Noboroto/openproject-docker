@@ -8,6 +8,11 @@ from cachetools import TTLCache
 # Static lookups (types/statuses/priorities) rarely change — cache 5 min.
 lookup_cache: TTLCache = TTLCache(maxsize=64, ttl=300)
 
+# Work package schemas, keyed by path. One entry per (project, type) pair, so
+# allow more room than the lookup cache. Only an admin editing a type changes
+# these, but keep the TTL short enough that such an edit shows up promptly.
+schema_cache: TTLCache = TTLCache(maxsize=256, ttl=300)
+
 
 def to_iso_duration(hours: float) -> str:
     """Convert decimal hours to a valid ISO 8601 duration.

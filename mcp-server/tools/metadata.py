@@ -62,6 +62,29 @@ async def list_priorities() -> dict[str, Any]:
     }
 
 
+@mcp.tool(annotations={"readOnlyHint": True, "title": "List categories"})
+async def list_categories(project_id: int) -> dict[str, Any]:
+    """List a project's work package categories. Categories are project-scoped."""
+    rows = await _cached(f"categories:{project_id}", f"/projects/{project_id}/categories")
+    if isinstance(rows, dict):
+        return rows
+    return {"categories": [{"id": c["id"], "name": c.get("name")} for c in rows]}
+
+
+@mcp.tool(annotations={"readOnlyHint": True, "title": "List versions"})
+async def list_versions(project_id: int) -> dict[str, Any]:
+    """List a project's versions (sprints, releases). Versions are project-scoped."""
+    rows = await _cached(f"versions:{project_id}", f"/projects/{project_id}/versions")
+    if isinstance(rows, dict):
+        return rows
+    return {
+        "versions": [
+            {"id": v["id"], "name": v.get("name"), "status": v.get("status")}
+            for v in rows
+        ]
+    }
+
+
 @mcp.tool(annotations={"readOnlyHint": True, "title": "List time entry activities"})
 async def list_time_entry_activities() -> dict[str, Any]:
     """List time-entry activities (Development, Management, ...) for logging time."""

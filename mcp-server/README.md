@@ -4,16 +4,29 @@ A **standalone** Model Context Protocol server for OpenProject. It talks to your
 OpenProject instance only through the **REST API v3** — it needs no Ruby plugin
 and works against any OpenProject (Community or Enterprise).
 
-## Tools (20)
+## Tools (23)
 
 | Group | Tools |
 |---|---|
 | Projects | `list_projects`, `get_project` |
-| Work packages | `list_work_packages`, `get_work_package`, `validate_work_package`, `create_work_package`, `update_work_package`, `delete_work_package` |
+| Work packages | `list_work_packages`, `get_work_package`, `list_work_package_fields`, `validate_work_package`, `create_work_package`, `update_work_package`, `delete_work_package` |
 | Users | `list_users`, `get_user` |
-| Lookups | `list_types`, `list_statuses`, `list_priorities`, `list_time_entry_activities` |
+| Lookups | `list_types`, `list_statuses`, `list_priorities`, `list_categories`, `list_versions`, `list_time_entry_activities` |
 | Comments | `list_comments`, `create_comment` |
 | Time entries | `list_time_entries`, `create_time_entry`, `update_time_entry`, `delete_time_entry` |
+
+### Work package fields
+
+Beyond the basics, create/update accept `accountable_id` (the API calls this
+`responsible`), `category_id`, `version_id`, `story_points`, `remaining_hours`,
+and a `custom_fields` dict of raw schema keys (`{"customField3": 5}`).
+
+Which fields exist depends on the project and type: `storyPoints` requires the
+backlogs module, and categories/versions are project-scoped. The server reads
+the live schema for the target project+type before every write, so a field that
+does not exist there is **skipped and reported under `warnings`** instead of
+failing the whole call. `list_work_package_fields` shows exactly what is
+settable for a given project+type.
 
 Plus MCP **Resources** (`openproject://projects`, `openproject://work_packages/{id}`)
 and **Prompts** (`weekly_time_report`, `sprint_backlog`).

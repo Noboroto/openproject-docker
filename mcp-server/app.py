@@ -47,7 +47,15 @@ mcp = FastMCP(
         "Tools to manage OpenProject: projects, work packages (tasks), users, "
         "types/statuses/priorities, comments, and time entries. For updates, "
         "lockVersion is fetched automatically. Use validate_work_package to "
-        "dry-run a create before committing."
+        "dry-run a create before committing.\n\n"
+        "Work package fields depend on the project and type: story points need "
+        "the backlogs module, and categories/versions are project-scoped. "
+        "Writes are checked against the live schema, so an unsupported field is "
+        "skipped rather than failing the call — ALWAYS check the `warnings` key "
+        "in a create/update result and tell the user which fields were not "
+        "applied. Call list_work_package_fields(project_id, type_id) to see what "
+        "is settable, and pass anything without a dedicated parameter via "
+        "`custom_fields` using its raw schema key (e.g. {\"customField3\": 5})."
     ),
     stateless_http=True,
     lifespan=lifespan,

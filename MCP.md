@@ -17,9 +17,9 @@ This guide covers: getting a token, the run modes, and wiring the server into
 | Group | Tools |
 |---|---|
 | Projects | `list_projects`, `get_project` |
-| Work packages | `list_work_packages`, `get_work_package`, `validate_work_package`, `create_work_package`, `update_work_package`, `delete_work_package` |
+| Work packages | `list_work_packages`, `get_work_package`, `list_work_package_fields`, `validate_work_package`, `create_work_package`, `update_work_package`, `delete_work_package` |
 | Users | `list_users`, `get_user` |
-| Lookups | `list_types`, `list_statuses`, `list_priorities`, `list_time_entry_activities` |
+| Lookups | `list_types`, `list_statuses`, `list_priorities`, `list_categories`, `list_versions`, `list_time_entry_activities` |
 | Comments | `list_comments`, `create_comment` |
 | Time entries | `list_time_entries`, `create_time_entry`, `update_time_entry`, `delete_time_entry` |
 
@@ -27,6 +27,12 @@ This guide covers: getting a token, the run modes, and wiring the server into
 - Prompts: `weekly_time_report`, `sprint_backlog`
 - Safety: `lockVersion` is fetched automatically before every update;
   `validate_work_package` dry-runs a create before you commit it.
+- Metadata: `accountable_id` (API name `responsible`), `category_id`,
+  `version_id`, `story_points`, `remaining_hours`, and arbitrary `custom_fields`
+  are settable. Availability is checked against the live per-project/type schema,
+  so unsupported fields (e.g. `story_points` without the backlogs module) are
+  skipped with a `warnings` entry rather than failing the write. Use
+  `list_work_package_fields` to see what a given project+type accepts.
 
 ---
 
