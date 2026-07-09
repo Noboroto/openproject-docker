@@ -50,6 +50,8 @@ mcp = FastMCP(
         "dry-run a create before committing.\n\n"
         "Work package fields depend on the project and type: story points need "
         "the backlogs module, and categories/versions are project-scoped. "
+        "Categories are read-only in the API — they can only be created by a "
+        "project admin in the web UI. "
         "Writes are checked against the live schema, so an unsupported field is "
         "skipped rather than failing the call — ALWAYS check the `warnings` key "
         "in a create/update result and tell the user which fields were not "

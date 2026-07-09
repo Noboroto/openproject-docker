@@ -64,7 +64,13 @@ async def list_priorities() -> dict[str, Any]:
 
 @mcp.tool(annotations={"readOnlyHint": True, "title": "List categories"})
 async def list_categories(project_id: int) -> dict[str, Any]:
-    """List a project's work package categories. Categories are project-scoped."""
+    """List a project's work package categories. Categories are project-scoped.
+
+    Read-only: OpenProject's API v3 exposes no endpoint to create, rename, or
+    delete a category, so no tool here can do it. A category must be added by a
+    project admin under Project settings -> Work package categories. If the one
+    you need is missing, say so and point the user there rather than retrying.
+    """
     rows = await _cached(f"categories:{project_id}", f"/projects/{project_id}/categories")
     if isinstance(rows, dict):
         return rows

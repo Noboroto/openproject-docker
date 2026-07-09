@@ -22,7 +22,10 @@ Beyond the basics, create/update accept `accountable_id` (the API calls this
 and a `custom_fields` dict of raw schema keys (`{"customField3": 5}`).
 
 Which fields exist depends on the project and type: `storyPoints` requires the
-backlogs module, and categories/versions are project-scoped. The server reads
+backlogs module, and categories/versions are project-scoped. Categories can be
+assigned but not created here — OpenProject's API v3 has no write endpoint for
+them, so a project admin must add them under *Project settings → Work package
+categories*. The server reads
 the live schema for the target project+type before every write, so a field that
 does not exist there is **skipped and reported under `warnings`** instead of
 failing the whole call. `list_work_package_fields` shows exactly what is
