@@ -34,8 +34,13 @@ x-op-app: &app
     DATABASE_URL: "${DATABASE_URL:-postgres://postgres:p4ssw0rd@op-db/openproject?pool=20&encoding=unicode&reconnect=true}"
     RAILS_MIN_THREADS: ${RAILS_MIN_THREADS:-4}
     RAILS_MAX_THREADS: ${RAILS_MAX_THREADS:-16}
+    # Ruby on glibc suffers malloc arena bloat; the image ships libjemalloc.so.2
+    # and its entrypoint LD_PRELOADs it only when this is exactly "true".
+    # The image bakes USE_JEMALLOC=false, so it must be overridden here.
+    USE_JEMALLOC: "${USE_JEMALLOC:-false}"
     # Performance: run multiple Puma workers to use the 3 vCPU host (default 1 in
-    # the image). 2 workers x RAILS_MAX_THREADS threads; fits the web 3g mem limit.
+    # the image). OPENPROJECT_WEB_WORKERS x RAILS_MAX_THREADS threads; each worker
+    # is a full copy of the app, so workers dominate the web 3g mem limit.
     OPENPROJECT_WEB_WORKERS: ${OPENPROJECT_WEB_WORKERS:-2}
     # set to true to enable the email receiving feature. See ./docker/cron for more options
     IMAP_ENABLED: "${IMAP_ENABLED:-false}"
