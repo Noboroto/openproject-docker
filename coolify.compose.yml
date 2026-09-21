@@ -1,0 +1,255 @@
+# Coolify-native variant of docker-compose.yml.
+#
+#   * No `networks:` blocks. Coolify gives the resource a single network and registers
+#     each compose SERVICE name as an alias there, so op-web, op-db, op-cache and
+#     op-hocuspocus still resolve one another. The old `frontend` network was only the
+#     shared proxy network, and `backend` was internal to this stack.
+#   * The two data stores are absolute bind mounts. Coolify renames compose-declared
+#     volumes, and PGDATA/OPDATA previously resolved to directories INSIDE this git
+#     working tree, which a fresh clone would not contain. The live 91 MB Postgres
+#     cluster was relocated to /srv/appdata/openproject/pgdata and the (empty) assets
+#     directory to /srv/appdata/openproject/assets.
+#   * POSTGRES_VERSION must stay 17: that is the on-disk format of the relocated
+#     cluster, and an older image refuses to start on it.
+x-op-restart-policy: &restart_policy
+  restart: on-failure:3
+x-op-image: &image
+  # Custom image = official OP + our plugins (see Dockerfile.app).
+  # Build locally/CI and push to a registry; the server only pulls.
+  build:
+    context: .
+    dockerfile: Dockerfile.app
+    args:
+      TAG: ${TAG:-17-slim}
+  image: openproject-custom:${TAG:-17-slim}
+x-op-app: &app
+  <<: [*image, *restart_policy]
+  environment:
+    OPENPROJECT_HTTPS: "${OPENPROJECT_HTTPS:-true}"
+    OPENPROJECT_HOST__NAME: "${OPENPROJECT_HOST__NAME:-localhost:8080}"
+    OPENPROJECT_ADDITIONAL__HOST__NAMES: "${OPENPROJECT_ADDITIONAL__HOST__NAMES:-op-web}" # to allow access from hocuspocus directly
+    OPENPROJECT_HSTS: "${OPENPROJECT_HSTS:-true}"
+    OPENPROJECT_RAILS__CACHE__STORE: "memcache"
+    OPENPROJECT_CACHE__MEMCACHE__SERVER: "op-cache:11211"
+    OPENPROJECT_RAILS__RELATIVE__URL__ROOT: "${OPENPROJECT_RAILS__RELATIVE__URL__ROOT:-}"
+    OPENPROJECT_COLLABORATIVE__EDITING__HOCUSPOCUS__URL: "${COLLABORATIVE_SERVER_URL:-wss://${OPENPROJECT_HOST__NAME}/hocuspocus}"
+    OPENPROJECT_COLLABORATIVE__EDITING__HOCUSPOCUS__SECRET: "${COLLABORATIVE_SERVER_SECRET:-OVERRIDE_ME_PLEASE}"
+    DATABASE_URL: "${DATABASE_URL:-postgres://postgres:p4ssw0rd@op-db/openproject?pool=20&encoding=unicode&reconnect=true}"
+    RAILS_MIN_THREADS: ${RAILS_MIN_THREADS:-4}
+    RAILS_MAX_THREADS: ${RAILS_MAX_THREADS:-16}
+    # Ruby on glibc suffers malloc arena bloat; the image ships libjemalloc.so.2
+    # and its entrypoint LD_PRELOADs it only when this is exactly "true".
+    # The image bakes USE_JEMALLOC=false, so it must be overridden here.
+    USE_JEMALLOC: "${USE_JEMALLOC:-false}"
+    # Performance: run multiple Puma workers to use the 3 vCPU host (default 1 in
+    # the image). OPENPROJECT_WEB_WORKERS x RAILS_MAX_THREADS threads; each worker
+    # is a full copy of the app, so workers dominate the web 3g mem limit.
+    OPENPROJECT_WEB_WORKERS: ${OPENPROJECT_WEB_WORKERS:-2}
+    # set to true to enable the email receiving feature. See ./docker/cron for more options
+    IMAP_ENABLED: "${IMAP_ENABLED:-false}"
+    SECRET_KEY_BASE: "${SECRET_KEY_BASE:-OVERWRITE_ME}"
+    # Rails 8.1 check_all_pending! uses temporary connection pools whose
+    # migration_context lacks plugin paths → false-positive PendingMigrationError.
+    # Seeder always runs migrations before any app container starts, so this is safe.
+    OPENPROJECT_DISABLE__MIGRATIONS__CHECK: "true"
+  volumes:
+    - "/srv/appdata/openproject/assets:/var/openproject/assets"
+
+services:
+  op-db:
+    # The default here should really be 17 but is still 13 as to not break existing setups.
+    # New installations using the provided .env.example will use 17 to begin with.
+    # The default here will change to 17 as well with the next major update (18).
+    #
+    # Refer to the docs on how to upgrade to postgres 17 before then:
+    #   https://www.openproject.org/docs/installation-and-operations/misc/migration-to-postgresql17/
+    image: postgres:${POSTGRES_VERSION:-13}
+    <<: *restart_policy
+    stop_grace_period: "3s"
+    volumes:
+      - "/srv/appdata/openproject/pgdata:/var/lib/postgresql/data"
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-p4ssw0rd}
+      POSTGRES_DB: openproject
+    # Rebalanced for a 3 vCPU / 8 GB host. Postgres benefits from RAM (page cache).
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: "1536m"
+        reservations:
+          cpus: "0.5"
+          memory: "512m"
+
+  op-cache:
+    image: memcached
+    # Bigger memcache slab improves Rails cache hit rate on a roomier host.
+    command: ["-m", "384"]
+    <<: *restart_policy
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: "512m"
+        reservations:
+          cpus: "0.1"
+          memory: "128m"
+
+  op-proxy:
+    build:
+      context: ./proxy
+      args:
+        APP_HOST: op-web
+    image: openproject/proxy
+    <<: *restart_policy
+    expose:
+      - "80"
+    depends_on:
+      - op-web
+    deploy:
+      resources:
+        limits:
+          cpus: "0.25"
+          memory: "64m"
+        reservations:
+          cpus: "0.05"
+          memory: "32m"
+
+  op-web:
+    <<: *app
+    command: "./docker/prod/web"
+    hostname: "${OPENPROJECT_HOST__NAME:-localhost:8080}"
+    depends_on:
+      - op-db
+      - op-cache
+      - op-seeder
+    labels:
+      - autoheal=true
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080${OPENPROJECT_RAILS__RELATIVE__URL__ROOT:-}/health_checks/default"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 180s
+    # Primary app (Puma). Largest share on the 3 vCPU / 8 GB host.
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: "3g"
+        reservations:
+          cpus: "0.75"
+          memory: "1g"
+
+  op-autoheal:
+    image: willfarrell/autoheal:1.2.0
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    environment:
+      AUTOHEAL_CONTAINER_LABEL: autoheal
+      AUTOHEAL_START_PERIOD: 600
+      AUTOHEAL_INTERVAL: 30
+    deploy:
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: "32m"
+
+  op-worker:
+    <<: *app
+    command: "./docker/prod/worker"
+    depends_on:
+      - op-db
+      - op-cache
+      - op-seeder
+    # Background jobs (GoodJob): date alerts, digests, audit purge, LDAP sync.
+    deploy:
+      resources:
+        limits:
+          cpus: "1.5"
+          memory: "1536m"
+        reservations:
+          cpus: "0.5"
+          memory: "512m"
+
+  op-cron:
+    <<: *app
+    command: "./docker/prod/cron"
+    depends_on:
+      - op-db
+      - op-cache
+      - op-seeder
+    deploy:
+      resources:
+        limits:
+          cpus: "0.25"
+          memory: "256m"
+        reservations:
+          cpus: "0.05"
+          memory: "64m"
+
+  op-seeder:
+    <<: *app
+    command: "./docker/prod/seeder"
+    restart: on-failure
+    # Runs once at startup (DB migrations + seed); transient, so give it headroom.
+    deploy:
+      resources:
+        limits:
+          cpus: "1.5"
+          memory: "1536m"
+
+  op-hocuspocus:
+    image: openproject/hocuspocus:17.5.1
+    environment:
+      SECRET: ${COLLABORATIVE_SERVER_SECRET:-OVERRIDE_ME_PLEASE}
+      OPENPROJECT_URL: "${OPENPROJECT_URL:-http://op-web:8080}"
+      OPENPROJECT_HTTPS: "${OPENPROJECT_HTTPS:-true}"
+    <<: *restart_policy
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: "256m"
+        reservations:
+          cpus: "0.1"
+          memory: "64m"
+
+  # Standalone MCP (Model Context Protocol) server for OpenProject.
+  # Independent service — talks to OP only via REST API v3. No Ruby plugin needed.
+  # Build in CI/local and push to a registry; the server should `pull` (3 vCPU/8GB).
+  op-mcp:
+    build:
+      context: ./mcp-server
+      dockerfile: Dockerfile
+    image: openproject-mcp:local
+    environment:
+      OPENPROJECT_URL: "${OPENPROJECT_URL:-http://op-web:8080}"
+      # Per-user mode: each client sends its own token (X-OpenProject-Token header),
+      # so these are OPTIONAL server-side fallbacks — used only when a request
+      # carries no token (e.g. stdio, or a shared-token setup). Leave blank for
+      # pure per-user auth.
+      OPENPROJECT_TOKEN: "${OPENPROJECT_TOKEN:-}"        # API token (opapi-...), preferred fallback
+      OPENPROJECT_API_KEY: "${OPENPROJECT_API_KEY:-}"    # legacy HTTP-Basic fallback
+      # OP runs with OPENPROJECT_HTTPS=true and 301-redirects plain-http calls;
+      # op-mcp reaches op-web over internal http, so it sends X-Forwarded-Proto
+      # to avoid the redirect. Default "https"; set "" only for http-only OP.
+      OPENPROJECT_FORWARDED_PROTO: "${OPENPROJECT_FORWARDED_PROTO:-https}"
+      TRANSPORT: "streamable-http"
+      HOST: "0.0.0.0"
+      PORT: "8000"
+    # No host port mapping in deploy — reach op-mcp only via the proxy.
+    # On `frontend` so the external proxy (NPM) can route a subdomain to op-mcp:8000.
+    # For local testing, docker-compose.dev.yml adds a 127.0.0.1:8000 mapping.
+    depends_on:
+      op-web:
+        condition: service_healthy
+    <<: *restart_policy
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: "256m"
+        reservations:
+          cpus: "0.1"
+          memory: "64m"
