@@ -44,7 +44,7 @@ module OpenProject
                bundled: false,
                settings: {
                  default: {
-                   # Trigger a per-user sync after a successful LDAP login.
+                   # Run a full sync after a successful LDAP login (one queued at a time).
                    "sync_on_login" => true,
                    # When true, users no longer in the LDAP group are removed
                    # from the mapped OP group on each run. When false, sync only
@@ -67,34 +67,12 @@ module OpenProject
              if: ->(*) { User.current.admin? }
       end
 
-      # Per-login sync hook.
-      #
-      # verify against running 17-slim image: confirm the exact event name CE
-      # publishes on a successful LDAP authentication before relying on it. As of
-      # OP 17 the documented pattern is OpenProject::Notifications /
-      # ActiveSupport::Notifications. If the precise event differs across 17
-      # minors, this subscription is simply inert (no per-login sync) and the
-      # scheduled cron below still keeps groups in sync. We deliberately do NOT
-      # reopen / monkey-patch the core authentication classes.
+      # Per-login sync: core announces logins only through the `:user_logged_in`
+      # hook (there is no login event on OpenProject::Notifications), so the
+      # listener lives in hooks.rb. We deliberately do NOT reopen / monkey-patch
+      # the core authentication classes.
       config.to_prepare do
-        next unless defined?(OpenProject::Notifications)
-
-        # Use a stable subscriber id so reloads in development don't stack
-        # duplicate subscribers.
-        OpenProject::Notifications.subscribe(
-          OpenProject::Events::USER_LOGGED_IN
-        ) do |payload|
-          next unless OpenProject::LdapGroupSync.settings["sync_on_login"]
-
-          user = payload[:current_user] || payload[:user]
-          next unless user&.id
-
-          ::LdapGroupSync::SynchronizationJob.perform_later(user_id: user.id)
-        end
-      rescue NameError
-        # OpenProject::Events::USER_LOGGED_IN not defined in this image — skip
-        # per-login wiring; the scheduled cron is the source of truth.
-        nil
+        require "openproject/ldap_group_sync/hooks"
       end
 
       # Register the recurring full sync with OpenProject's GoodJob cron by

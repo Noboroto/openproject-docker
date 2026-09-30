@@ -31,7 +31,7 @@ OpenProject group, and keep OP membership mirroring LDAP on a schedule and
 | LDAP query          | `LdapGroupSync::GroupMembershipResolver` (Net::LDAP, paged + capped)      |
 | Apply diff          | `LdapGroupSync::SynchronizeService` (core Groups services, `User.system`) |
 | Schedule            | `LdapGroupSync::SynchronizationJob` via `config.good_job.cron`            |
-| Per-login sync      | subscribe to the CE login event (inert if event name differs)            |
+| Per-login sync      | `:user_logged_in` hook (`lib/.../hooks.rb`), LDAP users only; full sync   |
 | Admin UI            | `LdapGroupSync::SynchronizedGroupsController` (`require_admin`)           |
 
 The resolver only decides **who** should be in the group; the service computes
@@ -73,8 +73,9 @@ Flagged with `verify against running 17-slim image` comments in source:
 - Core Groups services signatures
   (`Groups::AddUsersService.new(group, current_user:).call(ids:)` and the
   `RemoveUsersService` counterpart) and their `ServiceResult` return.
-- The successful-login event name (`OpenProject::Events::USER_LOGGED_IN`) — the
-  subscription is inert if it differs, and the cron still keeps groups in sync.
+- The `:user_logged_in` hook called by `Users::LoginService` with `{ user:, request:, session: }`
+  (core has no login event on `OpenProject::Notifications`). Login sync enqueues a full sync,
+  limited to one queued/running job by GoodJob concurrency control.
 - `ApplicationJob` base class + GoodJob cron entry shape.
 
 ## Security
