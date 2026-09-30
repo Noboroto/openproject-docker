@@ -7,9 +7,10 @@ reimplementation of the *feature idea*, not a copy of the Enterprise add-on.
 
 ## What it does
 
-- Subscribes to OpenProject's published `ActiveSupport::Notifications` (membership /
-  role changes, project deletion, account activation, login events) and writes an
-  audit row per event: actor, event, target, scrubbed change set, IP, timestamp.
+- Records membership changes (`member_created` / `member_updated` / `member_destroyed`,
+  from `OpenProject::Notifications`) and successful logins (`user_logged_in`, from the
+  `:user_logged_in` hook) and writes an audit row per event: actor, event, target,
+  scrubbed change set, IP, timestamp.
 - Stores events in `op_audit_events` — **append-only**: the model is `readonly?` once
   persisted, so any UPDATE raises `ActiveRecord::ReadOnlyRecord`. Rows are created
   ONLY by the recorder (no HTTP write path) and removed only by the retention purge.

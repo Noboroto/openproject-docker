@@ -82,7 +82,7 @@
               <% end %>
             </td>
             <td><%= h(event.ip_address) %></td>
-            <td><code><%= h(event.changes.to_json) %></code></td>
+            <td><code><%= h(event.change_set.to_json) %></code></td>
           </tr>
         <% end %>
       <% end %>

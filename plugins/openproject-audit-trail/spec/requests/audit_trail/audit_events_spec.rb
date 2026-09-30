@@ -10,7 +10,7 @@ RSpec.describe "Audit trail viewer", type: :request do
 
   before do
     Setting.plugin_openproject_audit_trail = { "retention_days" => 365, "capture_ip" => false }
-    AuditTrail::AuditEvent.create!(event: "project.deleted", occurred_at: Time.current)
+    AuditTrail::AuditEvent.create!(event: "member_destroyed", occurred_at: Time.current)
   end
 
   describe "GET /admin/audit_trail" do
@@ -28,8 +28,8 @@ RSpec.describe "Audit trail viewer", type: :request do
 
     it "filters by event name" do
       login_as admin
-      AuditTrail::AuditEvent.create!(event: "user.activated", occurred_at: Time.current)
-      get "/admin/audit_trail", params: { event: "user.activated" }
+      AuditTrail::AuditEvent.create!(event: "user_logged_in", occurred_at: Time.current)
+      get "/admin/audit_trail", params: { event: "user_logged_in" }
       expect(response).to have_http_status(:ok)
     end
   end
@@ -48,7 +48,7 @@ RSpec.describe "Audit trail viewer", type: :request do
       expect(response.headers["Content-Type"]).to include("text/csv")
       expect(response.headers["Content-Disposition"]).to include("attachment")
       expect(response.body).to include("occurred_at,event")
-      expect(response.body).to include("project.deleted")
+      expect(response.body).to include("member_destroyed")
     end
   end
 end

@@ -79,7 +79,7 @@ module AuditTrail
     end
 
     def csv_header
-      %w[occurred_at event actor_id target_type target_id ip_address changes]
+      %w[occurred_at event actor_id target_type target_id ip_address change_set]
     end
 
     def csv_row(event)
@@ -90,7 +90,7 @@ module AuditTrail
         event.target_type,
         event.target_id,
         event.ip_address,
-        event.changes.to_json
+        event.change_set.to_json
       ]
     end
   end

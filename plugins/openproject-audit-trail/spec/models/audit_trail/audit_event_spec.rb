@@ -6,7 +6,7 @@ require "spec_helper"
 # migration must have run so op_audit_events exists.
 RSpec.describe AuditTrail::AuditEvent, type: :model do
   subject(:event) do
-    described_class.create!(event: "member.created", occurred_at: Time.current)
+    described_class.create!(event: "member_created", occurred_at: Time.current)
   end
 
   it "is valid with an event name and occurred_at" do

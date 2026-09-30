@@ -7,31 +7,21 @@ module AuditTrail
   # Security: NEVER persist secrets. Every payload's change set is run through
   # `scrub` which drops password/token/secret-shaped keys before storage.
   class Recorder
-    # Centralized list of subscribed event names. Keeping them here (not scattered
-    # in the engine) makes it a single place to adjust when verifying against the
-    # running image.
-    #
-    # VERIFY against running 17-slim image: confirm these exact names are what OP
-    # publishes. OpenProject sends events through `OpenProject::Notifications`,
-    # which forwards to ActiveSupport::Notifications. Likely candidates below;
-    # an event that is never published simply never produces a row (no error).
-    #
-    #   member.created / member.updated / member.destroyed   # role/membership changes  -- VERIFY
-    #   project.deleted                                       # project deletion          -- VERIFY
-    #   user.activated                                        # account activation        -- VERIFY
-    #   user.logged_in / user.logged_out                      # auth events               -- VERIFY (names uncertain)
-    #
-    # If OP namespaces events (e.g. "members.created" plural, or symbol constants
-    # under OpenProject::Events), update this constant accordingly.
-    SUBSCRIBED_EVENTS = %w[
-      member.created
-      member.updated
-      member.destroyed
-      project.deleted
-      user.activated
-      user.logged_in
-      user.logged_out
+    # Events core publishes through OpenProject::Notifications (the values of the
+    # OpenProject::Events::MEMBER_* constants). A name core never sends is never
+    # recorded and fails silently, so these must match core exactly.
+    NOTIFICATION_EVENTS = %w[
+      member_created
+      member_updated
+      member_destroyed
     ].freeze
+
+    # Logins arrive through the `:user_logged_in` view hook, not a notification
+    # (see OpenProject::AuditTrail::Hooks).
+    LOGIN_EVENT = "user_logged_in"
+
+    # Every event this plugin can record; drives the filter dropdown.
+    SUBSCRIBED_EVENTS = (NOTIFICATION_EVENTS + [LOGIN_EVENT]).freeze
 
     # Keys (case-insensitive, substring match) whose values must never be stored.
     SENSITIVE_KEY_PATTERNS = %w[
@@ -44,23 +34,28 @@ module AuditTrail
     # dev reloads without double-recording.
     class Listener
       def call(name, _started, _finished, _unique_id, payload)
-        Recorder.new.record(event: name, payload: payload || {})
+        # OpenProject::Notifications.send instruments `payload: { member: ... }`,
+        # so the data sits one level down.
+        payload ||= {}
+        Recorder.new.record(event: name, payload: payload.fetch(:payload, payload))
       rescue StandardError => e
         # Auditing must never break the originating request.
-        Rails.logger.error("[audit_trail] failed to record #{name}: #{e.message}")
+        Rails.logger.error("[audit_trail] failed to record #{name}: #{e.class}: #{e.message}")
       end
     end
 
-    def record(event:, payload:)
+    # `actor` / `ip` override the request-derived defaults for callers that know
+    # them better, e.g. the login hook, where User.current is not set yet.
+    def record(event:, payload:, actor: nil, ip: nil)
       target = extract_target(payload)
 
       AuditEvent.create!(
         event: event.to_s,
-        actor_id: current_actor_id,
+        actor_id: actor&.id || current_actor_id,
         target_type: target&.class&.base_class&.name,
         target_id: (target.id if target.respond_to?(:id)),
-        changes: scrub(extract_changes(payload)),
-        ip_address: (client_ip if capture_ip?),
+        change_set: scrub(extract_changes(payload)),
+        ip_address: ((ip || client_ip) if capture_ip?),
         occurred_at: Time.current
       )
     end

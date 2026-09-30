@@ -10,11 +10,11 @@ Gem::Specification.new do |s|
   s.email       = ["dev@example.com"]
   s.homepage    = "https://example.com"
   s.summary     = "Append-only audit trail / security logging for OpenProject"
-  s.description = "Records security-relevant events (membership/role changes, " \
-                  "project deletion, user activation, login events) into an " \
+  s.description = "Records security-relevant events (membership changes and " \
+                  "logins) into an " \
                   "append-only, immutable audit table with an admin viewer and " \
-                  "CSV export. Subscribes to OpenProject's published " \
-                  "ActiveSupport::Notifications — no core monkey-patching. " \
+                  "CSV export. Uses OpenProject notifications and hooks — " \
+                  "no core monkey-patching. " \
                   "Secrets (passwords, tokens) are scrubbed before persistence."
   s.license     = "GPL-3.0-or-later"
 

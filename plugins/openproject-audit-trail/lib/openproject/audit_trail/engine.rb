@@ -62,16 +62,14 @@ module OpenProject
       # models. Wrapped per-subscription so a recorder failure can never break
       # the originating request.
       #
-      # VERIFY against running 17-slim image: the exact event names below. OP
-      # publishes events via `OpenProject::Notifications` (which forwards to
-      # ActiveSupport::Notifications). Names are centralized in
-      # ::AuditTrail::Recorder::SUBSCRIBED_EVENTS so an unmatched/renamed event is
-      # easy to adjust; an event that never fires is simply never recorded
-      # (no crash). Re-confirm with, e.g.:
-      #   docker run --rm openproject/openproject:17-slim \
-      #     grep -rn "OpenProject::Notifications.send" /app/app /app/lib | grep -iE "member|project|user"
+      # OP publishes events via `OpenProject::Notifications` (which forwards to
+      # ActiveSupport::Notifications). Names live in
+      # ::AuditTrail::Recorder::NOTIFICATION_EVENTS; logins come through the
+      # `:user_logged_in` hook in hooks.rb instead.
       config.to_prepare do
-        ::AuditTrail::Recorder::SUBSCRIBED_EVENTS.each do |event|
+        require "openproject/audit_trail/hooks"
+
+        ::AuditTrail::Recorder::NOTIFICATION_EVENTS.each do |event|
           # Idempotent across reloads: unsubscribe stale listeners first so a
           # dev reload doesn't double-record.
           ActiveSupport::Notifications.notifier

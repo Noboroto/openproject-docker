@@ -12,15 +12,15 @@ RSpec.describe AuditTrail::Recorder, type: :model do
   describe "#record" do
     it "creates an audit event for a notification" do
       expect do
-        recorder.record(event: "project.deleted", payload: {})
+        recorder.record(event: "member_destroyed", payload: {})
       end.to change(AuditTrail::AuditEvent, :count).by(1)
 
-      expect(AuditTrail::AuditEvent.last.event).to eq("project.deleted")
+      expect(AuditTrail::AuditEvent.last.event).to eq("member_destroyed")
     end
 
     it "scrubs sensitive keys from the change set" do
       recorder.record(
-        event: "member.updated",
+        event: "member_updated",
         payload: {
           changes: {
             "name" => "Alice",
@@ -32,24 +32,24 @@ RSpec.describe AuditTrail::Recorder, type: :model do
         }
       )
 
-      changes = AuditTrail::AuditEvent.last.changes
+      changes = AuditTrail::AuditEvent.last.change_set
       expect(changes).to include("name" => "Alice")
       expect(changes.keys).not_to include("password", "hashed_password", "auth_source_token", "api_key")
     end
 
     it "scrubs sensitive keys nested inside the change set" do
       recorder.record(
-        event: "member.updated",
+        event: "member_updated",
         payload: { changes: { "credentials" => { "token" => "t", "login" => "bob" } } }
       )
 
-      nested = AuditTrail::AuditEvent.last.changes["credentials"]
+      nested = AuditTrail::AuditEvent.last.change_set["credentials"]
       expect(nested).to eq("login" => "bob")
     end
 
     it "records a nil actor for system events" do
       allow(User).to receive(:current).and_return(nil)
-      recorder.record(event: "user.activated", payload: {})
+      recorder.record(event: "user_logged_in", payload: {})
       expect(AuditTrail::AuditEvent.last.actor_id).to be_nil
     end
 
@@ -59,7 +59,7 @@ RSpec.describe AuditTrail::Recorder, type: :model do
         double(base_class: double(name: "Project"))
       )
 
-      recorder.record(event: "project.deleted", payload: { project: target })
+      recorder.record(event: "member_destroyed", payload: { project: target })
 
       last = AuditTrail::AuditEvent.last
       expect(last.target_type).to eq("Project")
