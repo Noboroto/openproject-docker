@@ -8,6 +8,9 @@ kanban-board*.png
 backups/
 /plans
 
+# Agent memory: synced between machines by Syncthing, not by git
+.serena/
+
 # Local Docker volumes — never commit DB data
 /lib/
 /openproject/
