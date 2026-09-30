@@ -17,8 +17,8 @@ x-op-image: &image
     context: .
     dockerfile: Dockerfile.app
     args:
-      TAG: ${TAG:-17-slim}
-  image: openproject-custom:${TAG:-17-slim}
+      TAG: ${TAG:-17.9.0-slim}
+  image: openproject-custom:${TAG:-17.9.0-slim}
 x-op-app: &app
   <<: [*image, *restart_policy]
   environment:
@@ -81,7 +81,7 @@ services:
           memory: "512m"
 
   op-cache:
-    image: memcached
+    image: memcached:1.6.45
     # Bigger memcache slab improves Rails cache hit rate on a roomier host.
     command: ["-m", "384"]
     <<: *restart_policy
@@ -212,7 +212,7 @@ services:
           memory: "1536m"
 
   op-hocuspocus:
-    image: openproject/hocuspocus:17.5.1
+    image: openproject/hocuspocus:17.9.0
     environment:
       SECRET: ${COLLABORATIVE_SERVER_SECRET:-OVERRIDE_ME_PLEASE}
       OPENPROJECT_URL: "${OPENPROJECT_URL:-http://op-web:8080}"

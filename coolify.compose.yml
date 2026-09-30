@@ -23,8 +23,8 @@ x-op-image: &image
     context: .
     dockerfile: Dockerfile.app
     args:
-      TAG: ${TAG:-17-slim}
-  image: openproject-custom:${TAG:-17-slim}
+      TAG: ${TAG:-17.9.0-slim}
+  image: openproject-custom:${TAG:-17.9.0-slim}
 x-op-app: &app
   <<: [*image, *restart_policy]
   environment:
@@ -60,13 +60,9 @@ x-op-app: &app
 
 services:
   op-db:
-    # The default here should really be 17 but is still 13 as to not break existing setups.
-    # New installations using the provided .env.example will use 17 to begin with.
-    # The default here will change to 17 as well with the next major update (18).
-    #
-    # Refer to the docs on how to upgrade to postgres 17 before then:
-    #   https://www.openproject.org/docs/installation-and-operations/misc/migration-to-postgresql17/
-    image: postgres:${POSTGRES_VERSION:-13}
+    # Default 17, unlike upstream's 13: the relocated prod cluster is PG17 on disk, and an
+    # older image refuses to start on it if POSTGRES_VERSION ever goes missing from the env.
+    image: postgres:${POSTGRES_VERSION:-17}
     cpus: 2
     <<: *restart_policy
     stop_grace_period: "3s"
@@ -86,7 +82,7 @@ services:
           memory: "512m"
 
   op-cache:
-    image: memcached
+    image: memcached:1.6.45
     cpus: 2
     # Bigger memcache slab improves Rails cache hit rate on a roomier host.
     command: ["-m", "384"]
@@ -211,7 +207,7 @@ services:
           memory: "1536m"
 
   op-hocuspocus:
-    image: openproject/hocuspocus:17.5.1
+    image: openproject/hocuspocus:17.9.0
     cpus: 2
     environment:
       SECRET: ${COLLABORATIVE_SERVER_SECRET}

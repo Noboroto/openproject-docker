@@ -10,7 +10,7 @@
 
 services:
   op-dev:
-    image: openproject/openproject:${TAG:-17-slim}
+    image: openproject/openproject:${TAG:-17.9.0-slim}
     command: sleep infinity
     environment:
       OPENPROJECT_HTTPS: "false"

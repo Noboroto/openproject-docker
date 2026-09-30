@@ -1,6 +1,6 @@
-﻿# Dockerfile.app
-# Extends the official OpenProject 17-slim image with our custom plugins.
-ARG TAG=17-slim
+# Dockerfile.app
+# Extends the official OpenProject image (pinned patch tag) with our custom plugins.
+ARG TAG=17.9.0-slim
 
 # -- Stage 1: Angular build --
 # Standalone Team Planner CE Angular app (FullCalendar resource-timeline).
@@ -44,6 +44,6 @@ RUN apt-get update \
     && bundle config unset --local frozen \
     && bundle config set --local path '/app/vendor/bundle' \
     && BUNDLE_WITHOUT="" bundle install --jobs 4 --retry 3 \
-    && chown -R app:app /app/vendor/bundle /app/Gemfile.lock /app/plugins 2>/dev/null || true
+    && (chown -R app:app /app/vendor/bundle /app/Gemfile.lock /app/plugins 2>/dev/null || true)
 
 USER app
