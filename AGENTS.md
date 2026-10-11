@@ -107,3 +107,13 @@ Ghi chú vận hành:
 - Không để lại process mồ côi: container/dev server tự bật thì tự tắt khi xong; port bận thì dừng chủ cũ,
   đừng đổi port.
 - Đánh giá theo cả pipeline (image build → stack lên → UI/MCP chạy), không chỉ unit test xanh.
+
+## Tận dụng package có sẵn
+
+Luật của chủ repo (10/10/2026), áp cho mọi phiên agent và mọi repo trong whitelist Syncthing.
+
+- Trước khi viết một tính năng, module, công cụ hay giao diện: tìm package/thư viện/template đang được bảo trì (npm, PyPI, GitHub, tài liệu qua Context7) và dùng hoặc mở rộng nó. Chỉ tự viết phần không package nào đáp ứng.
+- Không viết lại toàn bộ thứ mà một package tốt đã làm được.
+- Chọn theo: còn bảo trì (có bản phát hành gần đây), giấy phép phù hợp, hợp stack hiện có, mức độ phổ biến.
+- Khi buộc phải tự viết: ghi lý do vào docs hoặc serena memory — đã xét package nào, vì sao loại từng cái.
+- Báo cáo/plan so sánh phương án phải liệt kê cả các package chuyên dụng có sẵn, không chỉ framework chung.
