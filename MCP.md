@@ -47,6 +47,11 @@ Copy the value — it looks like `opapi-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 > `X-OpenProject-Token` header (preferred) or `Authorization: Bearer` — see
 > §5. For `stdio` (one local user) the token comes from `OPENPROJECT_TOKEN` in
 > the env instead. Never share a token.
+>
+> **Project scope.** A token cannot be limited to one project in OpenProject. To
+> keep an agent inside one project, also send `X-OpenProject-Project: dapt`
+> (identifier or numeric id): every tool then refuses anything outside it. This
+> narrows the token; it never widens it. Details: `mcp-server/README.md`.
 
 ---
 
@@ -59,6 +64,7 @@ Copy the value — it looks like `opapi-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 | `OPENPROJECT_API_KEY` | Legacy fallback (HTTP Basic, username `apikey`) | — |
 | `TRANSPORT` | `streamable-http` (web/Docker) or `stdio` (desktop clients) | `streamable-http` |
 | `HOST` / `PORT` | Bind address for streamable-http | `0.0.0.0` / `8000` |
+| `OPENPROJECT_PROJECT` | Project scope for requests that send no `X-OpenProject-Project`. Applies to every caller — leave unset on a shared server | — |
 
 In **per-user** HTTP mode neither var is required — clients send their own token
 per request (§5). Set `OPENPROJECT_TOKEN` only as a shared fallback or for the

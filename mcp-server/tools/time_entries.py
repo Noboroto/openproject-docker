@@ -7,7 +7,20 @@ from typing import Any
 
 from app import mcp, get_client
 from client import OpenProjectError
+from scope import check_project, check_resource, check_work_package, in_scope, resolve_scope
 from utils import elements, page_meta, link_title, to_iso_duration
+
+
+async def _check_entry(op: Any, time_entry_id: int) -> dict[str, Any] | None:
+    """Refuse an existing time entry outside the scoped project."""
+    scoped, err = await resolve_scope(op)
+    if err or scoped is None:
+        return err
+    try:
+        entry = await op.get(f"/time_entries/{time_entry_id}")
+    except OpenProjectError as e:
+        return {"error": str(e), "details": e.body}
+    return await check_resource(op, entry, f"time entry {time_entry_id}")
 
 
 @mcp.tool(annotations={"readOnlyHint": True, "title": "List time entries"})
@@ -22,6 +35,12 @@ async def list_time_entries(
 ) -> dict[str, Any]:
     """List time entries, optionally filtered. Dates: YYYY-MM-DD."""
     op = get_client()
+    if denied := await check_project(op, project_id):
+        return denied
+    scoped, err = await resolve_scope(op)
+    if err:
+        return err
+    project_id = project_id or scoped
     filters: list[dict[str, Any]] = []
     if project_id:
         filters.append({"project": {"operator": "=", "values": [str(project_id)]}})
@@ -51,7 +70,7 @@ async def list_time_entries(
             "workPackage": link_title(e, "workPackage"),
             "activity": link_title(e, "activity"),
         }
-        for e in elements(data)
+        for e in in_scope(elements(data), scoped)
     ]
     return {"timeEntries": entries, "pagination": page_meta(data, page_size)}
 
@@ -72,6 +91,8 @@ async def create_time_entry(
     op = get_client()
     if not project_id and not work_package_id:
         return {"error": "Provide project_id or work_package_id"}
+    if denied := await check_project(op, project_id) or await check_work_package(op, work_package_id):
+        return denied
     body: dict[str, Any] = {
         "hours": to_iso_duration(hours),
         "spentOn": spent_on,
@@ -99,6 +120,8 @@ async def update_time_entry(
 ) -> dict[str, Any]:
     """Update an existing time entry. Only passed fields change."""
     op = get_client()
+    if denied := await _check_entry(op, time_entry_id):
+        return denied
     body: dict[str, Any] = {"_links": {}}
     if hours is not None:
         body["hours"] = to_iso_duration(hours)
@@ -121,6 +144,8 @@ async def update_time_entry(
 async def delete_time_entry(time_entry_id: int) -> dict[str, Any]:
     """Permanently delete a time entry."""
     op = get_client()
+    if denied := await _check_entry(op, time_entry_id):
+        return denied
     try:
         await op.delete(f"/time_entries/{time_entry_id}")
     except OpenProjectError as e:

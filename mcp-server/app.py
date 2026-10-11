@@ -15,7 +15,14 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse
 from starlette.types import ASGIApp, Receive, Scope, Send
 
-from auth import extract_token, reset_request_token, set_request_token
+from auth import (
+    extract_project,
+    extract_token,
+    reset_request_project,
+    reset_request_token,
+    set_request_project,
+    set_request_token,
+)
 from client import OpenProjectClient
 
 # Module-global client, set during lifespan startup. Version-robust: tools call
@@ -59,6 +66,9 @@ mcp = FastMCP(
         "is settable, and pass anything without a dedicated parameter via "
         "`custom_fields` using its raw schema key (e.g. {\"customField3\": 5})."
     ),
+    # Required for per-user auth and project scope: each request runs inside the
+    # middleware's ContextVars. A stateful session would run tools outside them,
+    # silently dropping the caller's token and X-OpenProject-Project.
     stateless_http=True,
     lifespan=lifespan,
     # op-mcp always runs behind a trusted reverse proxy (op-proxy/NPM) that
@@ -87,10 +97,13 @@ class TokenCaptureMiddleware:
         if scope["type"] != "http":
             await self.app(scope, receive, send)
             return
-        marker = set_request_token(extract_token(Headers(scope=scope)))
+        headers = Headers(scope=scope)
+        marker = set_request_token(extract_token(headers))
+        project_marker = set_request_project(extract_project(headers))
         try:
             await self.app(scope, receive, send)
         finally:
+            reset_request_project(project_marker)
             reset_request_token(marker)
 
 

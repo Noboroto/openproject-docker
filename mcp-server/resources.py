@@ -5,14 +5,19 @@ from __future__ import annotations
 import json
 
 from app import mcp, get_client
+from scope import check_resource, scoped_project_id
 from utils import elements
 
 
 @mcp.resource("openproject://projects")
 async def projects_resource() -> str:
-    """All accessible projects as JSON (read-only context)."""
+    """All accessible projects as JSON (only the scoped one when scoped)."""
     op = get_client()
-    data = await op.get("/projects", pageSize=100)
+    scoped = await scoped_project_id(op)
+    filters = (
+        json.dumps([{"id": {"operator": "=", "values": [str(scoped)]}}]) if scoped is not None else None
+    )
+    data = await op.get("/projects", filters=filters, pageSize=100)
     rows = [{"id": p["id"], "identifier": p.get("identifier"), "name": p.get("name")}
             for p in elements(data)]
     return json.dumps(rows, indent=2)
@@ -23,6 +28,8 @@ async def work_package_resource(work_package_id: str) -> str:
     """A single work package as JSON (read-only context)."""
     op = get_client()
     wp = await op.get(f"/work_packages/{work_package_id}")
+    if denied := await check_resource(op, wp, f"work package {work_package_id}"):
+        raise PermissionError(denied["error"])
     return json.dumps(wp, indent=2)
 
 

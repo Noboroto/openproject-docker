@@ -6,6 +6,7 @@ from typing import Any
 
 from app import mcp, get_client
 from client import OpenProjectError
+from scope import check_project, resolve_scope
 from utils import elements, lookup_cache
 
 
@@ -25,6 +26,13 @@ async def _cached(key: str, path: str) -> list[dict[str, Any]] | dict[str, Any]:
 @mcp.tool(annotations={"readOnlyHint": True, "title": "List types"})
 async def list_types(project_id: int | None = None) -> dict[str, Any]:
     """List work package types (Task, Bug, ...). Optionally scoped to a project."""
+    op = get_client()
+    if denied := await check_project(op, project_id):
+        return denied
+    scoped, err = await resolve_scope(op)
+    if err:
+        return err
+    project_id = project_id or scoped
     path = f"/projects/{project_id}/types" if project_id else "/types"
     key = f"types:{project_id or 'all'}"
     rows = await _cached(key, path)
@@ -71,6 +79,8 @@ async def list_categories(project_id: int) -> dict[str, Any]:
     project admin under Project settings -> Work package categories. If the one
     you need is missing, say so and point the user there rather than retrying.
     """
+    if denied := await check_project(get_client(), project_id):
+        return denied
     rows = await _cached(f"categories:{project_id}", f"/projects/{project_id}/categories")
     if isinstance(rows, dict):
         return rows
@@ -80,6 +90,8 @@ async def list_categories(project_id: int) -> dict[str, Any]:
 @mcp.tool(annotations={"readOnlyHint": True, "title": "List versions"})
 async def list_versions(project_id: int) -> dict[str, Any]:
     """List a project's versions (sprints, releases). Versions are project-scoped."""
+    if denied := await check_project(get_client(), project_id):
+        return denied
     rows = await _cached(f"versions:{project_id}", f"/projects/{project_id}/versions")
     if isinstance(rows, dict):
         return rows

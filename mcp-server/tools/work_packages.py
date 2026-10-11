@@ -13,6 +13,15 @@ from typing import Any
 from app import mcp, get_client
 from client import OpenProjectError
 from schema import build_body, schema_for, schema_for_wp, writable_fields
+from scope import (
+    check_project,
+    check_resource,
+    check_work_package,
+    check_write_body,
+    in_scope,
+    resolve_scope,
+    scoped_filters,
+)
 from utils import elements, page_meta, link_id, link_title, to_iso_duration
 
 
@@ -115,13 +124,23 @@ async def list_work_packages(
       '[{"status":{"operator":"o","values":[]}}]' (o = open).
     """
     op = get_client()
+    if denied := await check_project(op, project_id):
+        return denied
+    scoped, err = await resolve_scope(op)
+    if err:
+        return err
+    # A scoped session never lists across projects or into subprojects, even
+    # when no id is passed or the caller's filters ask for more.
+    if scoped is not None:
+        project_id = scoped
+        filters = scoped_filters(filters, scoped)
     path = f"/projects/{project_id}/work_packages" if project_id else "/work_packages"
     try:
         data = await op.get(path, filters=filters, pageSize=page_size, offset=page)
     except OpenProjectError as e:
         return {"error": str(e), "details": e.body}
     return {
-        "workPackages": [_summarize(wp) for wp in elements(data)],
+        "workPackages": [_summarize(wp) for wp in in_scope(elements(data), scoped)],
         "pagination": page_meta(data, page_size),
     }
 
@@ -134,6 +153,8 @@ async def get_work_package(work_package_id: int) -> dict[str, Any]:
         wp = await op.get(f"/work_packages/{work_package_id}")
     except OpenProjectError as e:
         return {"error": str(e), "details": e.body}
+    if denied := await check_resource(op, wp, f"work package {work_package_id}"):
+        return denied
     out = _summarize(wp)
     out["description"] = (wp.get("description") or {}).get("raw", "")
     out["author"] = link_title(wp, "author")
@@ -159,6 +180,8 @@ async def list_work_package_fields(project_id: int, type_id: int) -> dict[str, A
     `custom_fields` argument for anything without a dedicated parameter.
     """
     op = get_client()
+    if denied := await check_project(op, project_id):
+        return denied
     schema = await schema_for(op, project_id, type_id)
     if schema is None:
         return {"error": f"No schema for project {project_id} / type {type_id}."}
@@ -186,6 +209,8 @@ async def validate_work_package(
     warnings for any field that does not exist on this project/type.
     """
     op = get_client()
+    if denied := await check_project(op, project_id):
+        return denied
     schema = await schema_for(op, project_id, type_id)
     body, warnings = build_body(
         schema,
@@ -248,6 +273,8 @@ async def create_work_package(
     `warnings` rather than failing the create.
     """
     op = get_client()
+    if denied := await check_project(op, project_id) or await check_work_package(op, parent_id):
+        return denied
     schema = await schema_for(op, project_id, type_id)
     body, warnings = build_body(
         schema,
@@ -261,6 +288,8 @@ async def create_work_package(
             story_points=story_points, custom_fields=custom_fields,
         ),
     )
+    if denied := await check_write_body(op, body):
+        return denied
     try:
         wp = await op.post(f"/projects/{project_id}/work_packages", body)
     except OpenProjectError as e:
@@ -302,6 +331,11 @@ async def update_work_package(
         current = await op.get(f"/work_packages/{work_package_id}")
     except OpenProjectError as e:
         return {"error": str(e), "details": e.body}
+    if denied := (
+        await check_resource(op, current, f"work package {work_package_id}")
+        or await check_work_package(op, parent_id)
+    ):
+        return denied
 
     # Changing the type changes the schema, so validate against the target type.
     if type_id is not None:
@@ -327,6 +361,8 @@ async def update_work_package(
             custom_fields=custom_fields,
         ),
     )
+    if denied := await check_write_body(op, body):
+        return denied
     body["lockVersion"] = lock_version if lock_version is not None else current["lockVersion"]
     try:
         wp = await op.patch(f"/work_packages/{work_package_id}", body)
@@ -339,6 +375,8 @@ async def update_work_package(
 async def delete_work_package(work_package_id: int) -> dict[str, Any]:
     """Permanently delete a work package. This cannot be undone."""
     op = get_client()
+    if denied := await check_work_package(op, work_package_id):
+        return denied
     try:
         await op.delete(f"/work_packages/{work_package_id}")
     except OpenProjectError as e:

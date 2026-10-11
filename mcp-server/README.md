@@ -47,6 +47,7 @@ A plain-HTTP **`GET /health`** liveness route (no MCP handshake) returns
 | `OPENPROJECT_API_KEY` | Legacy fallback — HTTP Basic, username `apikey` |
 | `TRANSPORT` | `streamable-http` (default) or `stdio` |
 | `HOST` / `PORT` | bind address (default `0.0.0.0:8000`) |
+| `OPENPROJECT_PROJECT` | **Optional** project scope for every request that sends none (see below). Applies to all callers, so leave it unset on a shared server |
 
 Generate a token in OpenProject: **My Account → Access tokens → + API Token**.
 
@@ -66,6 +67,17 @@ headers) or a deliberately shared-token deployment. With no request token **and*
 no env token, tools return a `401` explaining how to authenticate. See
 [`auth.py`](./auth.py) (header capture + ContextVar) and `_auth()` in
 [`client.py`](./client.py).
+
+### Project scope (optional)
+
+OpenProject API tokens cannot be limited to one project: a token carries every
+permission its user has. To keep an agent inside one project, a client may also
+send `X-OpenProject-Project: <identifier or id>` (e.g. `dapt`). Every tool then
+refuses anything outside that project — listing defaults to it, and
+`list_projects` returns only it. An unknown or invisible project fails every call.
+
+This only narrows what the caller's token can already do; the caller's role in
+OpenProject remains the real permission boundary. See [`scope.py`](./scope.py).
 
 ## Run with Docker (in the stack)
 

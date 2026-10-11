@@ -6,6 +6,7 @@ from typing import Any
 
 from app import mcp, get_client
 from client import OpenProjectError
+from scope import check_work_package
 from utils import elements
 
 
@@ -13,6 +14,8 @@ from utils import elements
 async def list_comments(work_package_id: int) -> dict[str, Any]:
     """List activities/comments on a work package."""
     op = get_client()
+    if denied := await check_work_package(op, work_package_id):
+        return denied
     try:
         data = await op.get(f"/work_packages/{work_package_id}/activities")
     except OpenProjectError as e:
@@ -36,6 +39,8 @@ async def list_comments(work_package_id: int) -> dict[str, Any]:
 async def create_comment(work_package_id: int, comment: str) -> dict[str, Any]:
     """Add a comment to a work package (markdown supported)."""
     op = get_client()
+    if denied := await check_work_package(op, work_package_id):
+        return denied
     body = {"comment": {"format": "markdown", "raw": comment}}
     try:
         result = await op.post(f"/work_packages/{work_package_id}/activities", body)
