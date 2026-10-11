@@ -6,12 +6,13 @@ from typing import Any
 from cachetools import TTLCache
 
 # Static lookups (types/statuses/priorities) rarely change — cache 5 min.
-lookup_cache: TTLCache = TTLCache(maxsize=64, ttl=300)
+# Keyed per caller (auth.caller_key) because answers depend on who asks.
+lookup_cache: TTLCache = TTLCache(maxsize=512, ttl=300)
 
-# Work package schemas, keyed by path. One entry per (project, type) pair, so
-# allow more room than the lookup cache. Only an admin editing a type changes
-# these, but keep the TTL short enough that such an edit shows up promptly.
-schema_cache: TTLCache = TTLCache(maxsize=256, ttl=300)
+# Work package schemas, keyed by caller + path. One entry per (user, project,
+# type), so allow more room than the lookup cache. Only an admin editing a type
+# changes these, but keep the TTL short enough that such an edit shows up promptly.
+schema_cache: TTLCache = TTLCache(maxsize=1024, ttl=300)
 
 
 def to_iso_duration(hours: float) -> str:

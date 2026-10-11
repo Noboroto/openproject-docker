@@ -23,6 +23,7 @@ narrows what the caller's token could already do; it never grants access.
 from __future__ import annotations
 
 import contextvars
+import hashlib
 import os
 from typing import Mapping
 
@@ -48,6 +49,17 @@ def reset_request_token(marker: contextvars.Token) -> None:
 
 def get_request_token() -> str | None:
     return _request_token.get()
+
+
+def caller_key() -> str:
+    """Short fingerprint of the credentials this request runs as.
+
+    Caches of API responses are keyed by it: what OpenProject returns depends on
+    who asks, so one user's cached answer must never be served to another.
+    """
+    token = get_request_token() or os.environ.get("OPENPROJECT_TOKEN", "") \
+        or os.environ.get("OPENPROJECT_API_KEY", "")
+    return hashlib.sha256(token.encode()).hexdigest()[:16]
 
 
 def set_request_project(project: str | None) -> contextvars.Token:

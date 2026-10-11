@@ -167,6 +167,34 @@ class TestWriteBody:
         assert run(scope.check_write_body(StubClient(), {"_links": {"parent": {"href": None}}}), "dapt") is None
 
 
+class TestCallerIsolation:
+    def test_schema_cache_never_answers_another_user(self):
+        """A schema cached for user A is not served to user B (writable flags differ per role)."""
+        import schema
+        from auth import reset_request_token, set_request_token
+
+        class Site:
+            def __init__(self, label):
+                self.label, self.calls = label, 0
+
+            async def get(self, path, **_):
+                self.calls += 1
+                return {"seen_by": self.label}
+
+        async def as_user(token, op):
+            marker = set_request_token(token)
+            try:
+                return await schema.fetch_schema(op, "/work_packages/schemas/3-1")
+            finally:
+                reset_request_token(marker)
+
+        schema.schema_cache.clear()
+        a, b = Site("A"), Site("B")
+        assert asyncio.run(as_user("token-a", a)) == {"seen_by": "A"}
+        assert asyncio.run(as_user("token-b", b)) == {"seen_by": "B"}
+        assert asyncio.run(as_user("token-a", a)) == {"seen_by": "A"} and a.calls == 1
+
+
 class TestListing:
     def test_filters_pinned_to_scope_and_subprojects_dropped(self):
         caller = json.dumps([

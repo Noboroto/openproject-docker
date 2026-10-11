@@ -16,7 +16,6 @@ so they are not project data and stay readable while scoped.
 
 from __future__ import annotations
 
-import hashlib
 import json
 import os
 import re
@@ -24,7 +23,7 @@ from typing import Any
 
 from cachetools import TTLCache
 
-from auth import get_project_scope, get_request_token
+from auth import caller_key, get_project_scope
 from client import OpenProjectClient, OpenProjectError
 from utils import link_id
 
@@ -42,11 +41,6 @@ _scope_ids: TTLCache = TTLCache(maxsize=128, ttl=300)
 
 class ScopeError(Exception):
     pass
-
-
-def _caller_key() -> str:
-    token = get_request_token() or os.environ.get("OPENPROJECT_TOKEN", "")
-    return hashlib.sha256(token.encode()).hexdigest()[:16]
 
 
 def _refusal(what: str) -> dict[str, Any]:
@@ -72,7 +66,7 @@ async def scoped_project_id(op: OpenProjectClient) -> int | None:
         raise ScopeError(f"header asks for '{scope}' but the server is limited to '{env_scope}'")
     if not _SCOPE_RE.match(scope):
         raise ScopeError("expected a project identifier or numeric id")
-    key = (_caller_key(), scope)
+    key = (caller_key(), scope)
     if key not in _scope_ids:
         project = await op.get(f"/projects/{scope}")
         if project.get("_type") != "Project" or "id" not in project:

@@ -5,12 +5,15 @@ from __future__ import annotations
 from typing import Any
 
 from app import mcp, get_client
+from auth import caller_key
 from client import OpenProjectError
 from scope import check_project, resolve_scope
 from utils import elements, lookup_cache
 
 
 async def _cached(key: str, path: str) -> list[dict[str, Any]] | dict[str, Any]:
+    # Per caller: categories/versions/types depend on what this user may see.
+    key = f"{caller_key()}:{key}"
     if key in lookup_cache:
         return lookup_cache[key]
     op = get_client()

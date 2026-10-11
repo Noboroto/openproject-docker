@@ -25,6 +25,7 @@ from __future__ import annotations
 
 from typing import Any
 
+from auth import caller_key
 from client import OpenProjectClient, OpenProjectError
 from utils import schema_cache
 
@@ -73,13 +74,15 @@ def _href(field_type: str, value: Any) -> str | None:
 async def fetch_schema(op: OpenProjectClient, path: str) -> dict[str, Any] | None:
     """GET a work package schema, cached. Returns None if it cannot be read."""
     path = _rel(path)
-    if path in schema_cache:
-        return schema_cache[path]
+    # Per caller: `writable` flags depend on the user's role in the project.
+    key = f"{caller_key()}:{path}"
+    if key in schema_cache:
+        return schema_cache[key]
     try:
         data = await op.get(path)
     except OpenProjectError:
         return None
-    schema_cache[path] = data
+    schema_cache[key] = data
     return data
 
 
