@@ -140,6 +140,29 @@ class TestWriteBody:
         body = self.body(project="/api/v3/projects/3", parent="/api/v3/work_packages/101")
         assert run(scope.check_write_body(StubClient(), body), "dapt") is None
 
+    @pytest.mark.parametrize("href", [
+        "/api/v3/projects/1?x=/3",       # OpenProject resolves project 1; last segment says 3
+        "/api/v3/projects/1#/3",
+        "/api/v3/projects/1/../3",
+        "https://evil.example/api/v3/projects/3",
+        "/api/v3/work_packages/3",        # wrong collection for a project link
+        "/api/v3/projects/3x",
+    ])
+    def test_crafted_project_href_refused(self, href):
+        out = run(scope.check_write_body(StubClient(), self.body(project=href)), "dapt")
+        assert "Out of scope" in out["error"]
+
+    def test_crafted_parent_href_refused(self):
+        out = run(scope.check_write_body(StubClient(), self.body(parent="/api/v3/work_packages/202?x=/101")), "dapt")
+        assert "Out of scope" in out["error"]
+
+    def test_trailing_slash_in_scope_allowed(self):
+        assert run(scope.check_write_body(StubClient(), self.body(project="/api/v3/projects/3/")), "dapt") is None
+
+    def test_top_level_project_or_parent_refused(self):
+        assert "Out of scope" in run(scope.check_write_body(StubClient(), {"project": 1}), "dapt")["error"]
+        assert "Out of scope" in run(scope.check_write_body(StubClient(), {"parent": 202}), "dapt")["error"]
+
     def test_clearing_parent_allowed(self):
         assert run(scope.check_write_body(StubClient(), {"_links": {"parent": {"href": None}}}), "dapt") is None
 
