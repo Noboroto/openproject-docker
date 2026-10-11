@@ -18,7 +18,7 @@ from utils import elements, page_meta, link_id, link_title, to_iso_duration
 
 def _summarize(wp: dict[str, Any]) -> dict[str, Any]:
     links = wp.get("_links", {})
-    return {
+    out = {
         "id": wp["id"],
         "subject": wp.get("subject"),
         "status": link_title(wp, "status"),
@@ -36,6 +36,11 @@ def _summarize(wp: dict[str, Any]) -> dict[str, Any]:
         "lockVersion": wp.get("lockVersion"),
         "_meta": {"hasParent": bool(links.get("parent", {}).get("href"))},
     }
+    # Milestones carry a single `date` instead of startDate/dueDate; without it
+    # a dated milestone reads as undated.
+    if "date" in wp:
+        out["date"] = wp["date"]
+    return out
 
 
 def _fields(
