@@ -57,8 +57,9 @@ Ghi chú vận hành:
 - Field work package phụ thuộc project + type: hỏi schema sống (`list_work_package_fields`) thay vì hardcode.
   MCP server kiểm tra ghi theo schema sống; field không hỗ trợ bị bỏ qua kèm `warnings`, không làm hỏng call.
 - Locale plugin: mọi key có ở cả `config/locales/en.yml` và `vi.yml`.
-- Snippet cấu hình MCP trong plugin `openproject-mcp-ce` dùng hằng `TOKEN_HEADER` / `TOKEN_PLACEHOLDER` của
-  controller — sửa một chỗ, đừng copy chuỗi.
+- Snippet cấu hình MCP trong plugin `openproject-mcp-ce` dùng hằng `TOKEN_HEADER` / `PROJECT_HEADER` /
+  `*_PLACEHOLDER` của module `McpCe::ConnectionInfo` (chung cho trang admin và My account) — sửa một chỗ,
+  đừng copy chuỗi.
 
 ## §4. Bảo mật / dữ liệu
 

@@ -6,6 +6,9 @@ en:
       Connect AI clients (Claude Code, Claude Desktop, Codex, …) to this
       OpenProject instance through the standalone MCP server. This page shows the
       connection path and lets you verify the server is reachable.
+    user_intro: >-
+      Connect your AI client (Claude Code, Claude Desktop, Codex, …) to OpenProject
+      through the MCP server. The agent acts as you, using your own API token.
     shortcuts_legend: "Shortcuts"
     shortcut_path: "MCP connection path"
     shortcut_token: "API token"
@@ -29,6 +32,14 @@ en:
       vscode: "VS Code (.vscode/mcp.json)"
       codex: "Codex (~/.codex/config.toml)"
       json: "Sample JSON (generic client)"
+    scope_legend: "Limit to one project (optional)"
+    scope_note_html: >-
+      An API token cannot be limited to one project — an AI agent using it can act
+      on every project you can see. To keep the agent inside one project, also send
+      the %{header} header with the project identifier (from the project URL, e.g.
+      <code>/projects/dapt</code> → <code>dapt</code>) or its numeric id. Every tool
+      then refuses anything outside that project. It only narrows your access, never
+      widens it. Replace <code>your-project-identifier</code> below.
     connection_legend: "Connection"
     endpoint_internal: "In-stack endpoint"
     endpoint_internal_hint: >-

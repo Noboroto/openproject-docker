@@ -6,7 +6,7 @@ module OpenProject
   module McpCe
     # Rails engine + OpenProject plugin registration for "MCP-CE".
     #
-    # MCP-CE is a thin, admin-only companion to the standalone OpenProject MCP
+    # MCP-CE is a thin companion to the standalone OpenProject MCP
     # server (the `op-mcp` service already defined in docker-compose). It does NOT
     # run the MCP server itself — it only surfaces, inside OpenProject:
     #   1. the connection PATH/URL AI clients should point at, and
@@ -39,8 +39,16 @@ module OpenProject
                    "mcp_public_url" => ""
                  }
                } do
-        # Global, admin-only feature: no project_module. Adds "MCP Server" under
-        # Administration. Guarded by require_admin in the controller.
+        # Global feature: no project_module. Every user finds the connection
+        # guide under My account, next to Access tokens where they mint the token
+        # it needs.
+        menu :my_menu,
+             :mcp_ce_connection,
+             { controller: "/mcp_ce/connection", action: :show },
+             caption: :"mcp_ce.menu_caption",
+             after:   :access_tokens
+
+        # Health check + settings stay admin-only (require_admin in the controller).
         menu :admin_menu,
              :mcp_ce_settings,
              { controller: "/mcp_ce/admin_settings", action: :show },

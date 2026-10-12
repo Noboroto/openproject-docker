@@ -6,74 +6,7 @@
 
 <p class="op-toast-zen"><%= t(:"mcp_ce.intro") %></p>
 
-<style>
-  .mcp-ce-note {
-    border-left: 4px solid var(--primer-borderColor-accent-emphasis, #0969da);
-    background: var(--primer-bgColor-accent-muted, rgba(9, 105, 218, 0.06));
-    padding: 8px 12px;
-    border-radius: 3px;
-    line-height: 1.5;
-    max-width: 900px;
-  }
-  .mcp-ce-note code { white-space: nowrap; }
-</style>
-
-<%# ── Shortcuts ────────────────────────────────────────────────────── %>
-<%# The path clients connect to: public (derived from this domain) if available,
-    otherwise the in-stack endpoint. Copy buttons use Primer's <clipboard-copy>. %>
-<% client_path = @public_endpoint.presence || @mcp_endpoint %>
-<section class="form--section">
-  <fieldset class="form--fieldset">
-    <legend class="form--fieldset-legend"><%= t(:"mcp_ce.shortcuts_legend") %></legend>
-
-    <div class="form--field">
-      <span class="form--label"><%= t(:"mcp_ce.shortcut_path") %></span>
-      <div class="form--field-container" style="display:block">
-        <code id="mcp-client-path"><%= client_path %></code>
-        <clipboard-copy for="mcp-client-path" class="button" style="margin-left:8px" aria-label="<%= t(:"mcp_ce.copy") %>">
-          <%= t(:"mcp_ce.copy") %>
-        </clipboard-copy>
-      </div>
-    </div>
-
-    <div class="form--field">
-      <span class="form--label"><%= t(:"mcp_ce.shortcut_token") %></span>
-      <div class="form--field-container">
-        <%= link_to t(:"mcp_ce.get_token"), "/my/access_tokens",
-                    class: "button -with-icon icon-key", target: "_blank", rel: "noopener" %>
-        <p class="form--field-instructions"><%= t(:"mcp_ce.token_hint") %></p>
-      </div>
-    </div>
-
-    <div class="form--field">
-      <div class="form--field-container" style="display:block">
-        <div class="mcp-ce-note">
-          <%= t(:"mcp_ce.auth_note_html", header: content_tag(:code, @token_header)) %>
-        </div>
-      </div>
-    </div>
-  </fieldset>
-</section>
-
-<%# ── Client setup (copy-ready) ─────────────────────────────────────── %>
-<section class="form--section">
-  <fieldset class="form--fieldset">
-    <legend class="form--fieldset-legend"><%= t(:"mcp_ce.client_legend") %></legend>
-    <p class="form--field-instructions"><%= t(:"mcp_ce.client_intro") %></p>
-
-    <% @snippets.each do |key, code| %>
-      <div class="form--field">
-        <span class="form--label"><%= t(:"mcp_ce.client.#{key}") %></span>
-        <div class="form--field-container" style="display:block">
-          <pre style="max-width:680px;overflow:auto;margin:0 0 4px;"><code id="snippet-<%= key %>"><%= code %></code></pre>
-          <clipboard-copy for="snippet-<%= key %>" class="button" aria-label="<%= t(:"mcp_ce.copy") %>">
-            <%= t(:"mcp_ce.copy") %>
-          </clipboard-copy>
-        </div>
-      </div>
-    <% end %>
-  </fieldset>
-</section>
+<%= render "mcp_ce/client_setup" %>
 
 <%# ── Connection paths ─────────────────────────────────────────────── %>
 <section class="form--section">

@@ -1,6 +1,6 @@
 # openproject-mcp-ce
 
-Admin-only **companion plugin** for the standalone [OpenProject MCP server](../../mcp-server)
+**Companion plugin** for the standalone [OpenProject MCP server](../../mcp-server)
 (`op-mcp`, already defined in `docker-compose.yml`). It does **not** run the MCP
 server — it only surfaces, inside OpenProject:
 
@@ -11,7 +11,13 @@ server — it only surfaces, inside OpenProject:
 
 ## Where
 
-**Administration → MCP Server** (`/admin/mcp`). Admin-only (`require_admin`).
+- **My account → MCP Server** (`/my/mcp`) — every logged-in user. Read-only guide:
+  client path, API-token link, copy-ready snippets, and the optional
+  `X-OpenProject-Project` header that limits an agent to one project.
+- **Administration → MCP Server** (`/admin/mcp`) — admin only (`require_admin`).
+  The same guide plus in-stack endpoint, health check and settings.
+
+Both pages share `McpCe::ConnectionInfo` and the `mcp_ce/_client_setup` partial.
 
 ## Settings (no DB table)
 

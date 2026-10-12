@@ -6,6 +6,10 @@ vi:
       Kết nối các trình AI (Claude Code, Claude Desktop, Codex, …) tới OpenProject
       này thông qua máy chủ MCP độc lập. Trang này hiển thị đường dẫn kết nối và
       cho phép kiểm tra máy chủ có hoạt động hay không.
+    user_intro: >-
+      Kết nối trình AI của bạn (Claude Code, Claude Desktop, Codex, …) tới
+      OpenProject qua máy chủ MCP. Agent hành động dưới danh nghĩa của bạn, bằng API
+      token của chính bạn.
     shortcuts_legend: "Lối tắt"
     shortcut_path: "Đường dẫn kết nối MCP"
     shortcut_token: "API token"
@@ -29,6 +33,14 @@ vi:
       vscode: "VS Code (.vscode/mcp.json)"
       codex: "Codex (~/.codex/config.toml)"
       json: "JSON mẫu (client tổng quát)"
+    scope_legend: "Giới hạn trong một project (tuỳ chọn)"
+    scope_note_html: >-
+      API token không giới hạn được theo project — agent AI dùng token có thể thao
+      tác trên mọi project bạn thấy. Để giữ agent trong một project, gửi thêm header
+      %{header} với identifier của project (lấy từ URL, ví dụ
+      <code>/projects/dapt</code> → <code>dapt</code>) hoặc id số. Mọi tool sẽ từ
+      chối thao tác ngoài project đó. Header này chỉ thu hẹp quyền, không bao giờ mở
+      rộng. Thay <code>your-project-identifier</code> bên dưới.
     connection_legend: "Kết nối"
     endpoint_internal: "Endpoint nội bộ (trong stack)"
     endpoint_internal_hint: >-
