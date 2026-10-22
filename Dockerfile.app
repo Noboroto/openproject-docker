@@ -6,7 +6,7 @@ ARG TAG=17.9.0-slim
 # Standalone Team Planner CE Angular app (FullCalendar resource-timeline).
 # Output: dist/teamplanner_ce/browser/{main.js,polyfills.js}
 # Served as static files from /app/public/teamplanner_ce/.
-FROM node:24.16.0-alpine AS angular-build
+FROM node:24.22.1-alpine AS angular-build
 WORKDIR /build
 
 # Install pnpm
