@@ -1,6 +1,6 @@
 # Dockerfile.app
 # Extends the official OpenProject image (pinned patch tag) with our custom plugins.
-ARG TAG=17.9.0-slim
+ARG TAG=17.9.3-slim
 
 # -- Stage 1: Angular build --
 # Standalone Team Planner CE Angular app (FullCalendar resource-timeline).

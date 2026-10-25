@@ -17,8 +17,8 @@ x-op-image: &image
     context: .
     dockerfile: Dockerfile.app
     args:
-      TAG: ${TAG:-17.9.0-slim}
-  image: openproject-custom:${TAG:-17.9.0-slim}
+      TAG: ${TAG:-17.9.3-slim}
+  image: openproject-custom:${TAG:-17.9.3-slim}
 x-op-app: &app
   <<: [*image, *restart_policy]
   environment:
@@ -212,7 +212,7 @@ services:
           memory: "1536m"
 
   op-hocuspocus:
-    image: openproject/hocuspocus:17.9.0
+    image: openproject/hocuspocus:17.9.3
     environment:
       SECRET: ${COLLABORATIVE_SERVER_SECRET:-OVERRIDE_ME_PLEASE}
       OPENPROJECT_URL: "${OPENPROJECT_URL:-http://op-web:8080}"
