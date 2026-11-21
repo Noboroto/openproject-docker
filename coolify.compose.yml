@@ -57,8 +57,30 @@ x-op-app: &app
     OPENPROJECT_DISABLE__MIGRATIONS__CHECK: "true"
   volumes:
     - "/srv/appdata/openproject/assets:/var/openproject/assets"
+  depends_on: &app_depends_on
+    op-db:
+      condition: service_started
+    op-cache:
+      condition: service_started
+    op-assets-init:
+      condition: service_completed_successfully
 
 services:
+  # The image runs as `app` (uid 1000) and its slim entrypoint never chowns, so a
+  # root-owned host bind mount makes every attachment upload fail with EACCES on
+  # mkdir of assets/files (HTTP 500, DB row left without a file). Fix ownership as
+  # root once per deploy, before any app container starts. The exit status comes
+  # from the final ownership check, not from find: old containers may delete a file
+  # mid-walk, and that must not block the app from starting.
+  op-assets-init:
+    <<: *image
+    user: "0:0"
+    entrypoint: ["sh", "-c"]
+    command: ["mkdir -p /var/openproject/assets/files && find /var/openproject/assets ! -user app -exec chown -h app:app {} + ; [ \"$$(stat -c %U /var/openproject/assets/files)\" = app ]"]
+    restart: "no"
+    volumes:
+      - "/srv/appdata/openproject/assets:/var/openproject/assets"
+
   op-db:
     # Default 17, unlike upstream's 13: the relocated prod cluster is PG17 on disk, and an
     # older image refuses to start on it if POSTGRES_VERSION ever goes missing from the env.
@@ -119,9 +141,9 @@ services:
     command: "./docker/prod/web"
     hostname: "${OPENPROJECT_HOST__NAME:-localhost:8080}"
     depends_on:
-      - op-db
-      - op-cache
-      - op-seeder
+      <<: *app_depends_on
+      op-seeder:
+        condition: service_started
     labels:
       - autoheal=true
     healthcheck:
@@ -158,9 +180,9 @@ services:
     <<: *app
     command: "./docker/prod/worker"
     depends_on:
-      - op-db
-      - op-cache
-      - op-seeder
+      <<: *app_depends_on
+      op-seeder:
+        condition: service_started
     # Background jobs (GoodJob): date alerts, digests, audit purge, LDAP sync.
     deploy:
       resources:
@@ -175,9 +197,9 @@ services:
     <<: *app
     command: "./docker/prod/cron"
     depends_on:
-      - op-db
-      - op-cache
-      - op-seeder
+      <<: *app_depends_on
+      op-seeder:
+        condition: service_started
     deploy:
       resources:
         limits:
