@@ -1,12 +1,12 @@
 # Dockerfile.app
 # Extends the official OpenProject image (pinned patch tag) with our custom plugins.
-ARG TAG=17.9.0-slim
+ARG TAG=17.9.3-slim
 
 # -- Stage 1: Angular build --
 # Standalone Team Planner CE Angular app (FullCalendar resource-timeline).
 # Output: dist/teamplanner_ce/browser/{main.js,polyfills.js}
 # Served as static files from /app/public/teamplanner_ce/.
-FROM node:24.16.0-alpine AS angular-build
+FROM node:24.22.1-alpine AS angular-build
 WORKDIR /build
 
 # Install pnpm
